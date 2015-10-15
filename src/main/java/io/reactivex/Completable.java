@@ -515,63 +515,39 @@ public class Completable {
      * @throws NullPointerException if flowable is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public static Completable fromFlowable(final Observable<?> flowable) {
-        Objects.requireNonNull(flowable);
-        return create(cs -> {
-            flowable.subscribe(new Subscriber<Object>() {
+    public static <T> Completable fromFlowable(final Observable<T> flowable) {
+        Objects.requireNonNull(flowable, "flowable is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber cs) {
+                flowable.subscribe(new Subscriber<T>() {
 
-                @Override
-                public void onComplete() {
-                    cs.onComplete();
-                }
+                    @Override
+                    public void onComplete() {
+                        cs.onComplete();
+                    }
 
-                @Override
-                public void onError(Throwable t) {
-                    cs.onError(t);
-                }
+                    @Override
+                    public void onError(Throwable t) {
+                        cs.onError(t);
+                    }
 
-                @Override
-                public void onNext(Object t) {
-                    // ignored
-                }
+                    @Override
+                    public void onNext(T t) {
+                        // ignored
+                    }
 
-                @Override
-                public void onSubscribe(Subscription s) {
-                    cs.onSubscribe(s::cancel);
-                    s.request(Long.MAX_VALUE);
-                }
-                
-            });
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        cs.onSubscribe(Disposables.from(s));
+                        s.request(Long.MAX_VALUE);
+                    }
+                    
+                });
+            }
         });
     }
     
-    /**
-     * Returns a Completable instance that reacts to the termination of the given CompletableFuture.
-     * <p>
-     * Note that cancellation from any of the subscribers to this Completable will cancel the future.
-     * @param future the future to react to
-     * @return the new Completable instance
-     */
-    @SchedulerSupport(SchedulerKind.NONE)
-    public static Completable fromFuture(CompletableFuture<?> future) {
-        Objects.requireNonNull(future);
-        return create(s -> {
-            MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
-            s.onSubscribe(mad);
-            
-            Future<?> f = future.whenComplete((v, e) -> {
-                if (!mad.isDisposed()) {
-                    if (e != null) {
-                        s.onError(e);
-                    } else {
-                        s.onComplete();
-                    }
-                }
-            });
-            mad.set(() -> f.cancel(true));
-        });
-    }
-
     /**
      * Returns a Completable instance that subscribes to the given NbpObservable, ignores all values and
      * emits only the terminal event.
@@ -580,10 +556,10 @@ public class Completable {
      * @throws NullPointerException if flowable is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public static Completable fromNbpObservable(NbpObservable<?> observable) {
+    public static <T> Completable fromNbpObservable(NbpObservable<T> observable) {
         Objects.requireNonNull(observable);
         return create(s -> {
-            observable.subscribe(new NbpSubscriber<Object>() {
+            observable.subscribe(new NbpSubscriber<T>() {
 
                 @Override
                 public void onComplete() {
@@ -596,7 +572,7 @@ public class Completable {
                 }
 
                 @Override
-                public void onNext(Object value) {
+                public void onNext(T value) {
                     // ignored
                 }
 

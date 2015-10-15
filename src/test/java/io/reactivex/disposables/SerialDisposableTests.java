@@ -115,7 +115,7 @@ public class SerialDisposableTests {
         final int count = 10;
         final CountDownLatch end = new CountDownLatch(count);
 
-        final List<Thread> threads = new ArrayList<>();
+        final List<Thread> threads = new ArrayList<Thread>();
         for (int i = 0; i < count; i++) {
             final Thread t = new Thread() {
                 @Override
@@ -150,12 +150,12 @@ public class SerialDisposableTests {
     public void concurrentSetDisposableShouldNotInterleave()
             throws InterruptedException {
         final int count = 10;
-        final List<Disposable> subscriptions = new ArrayList<>();
+        final List<Disposable> subscriptions = new ArrayList<Disposable>();
 
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch end = new CountDownLatch(count);
 
-        final List<Thread> threads = new ArrayList<>();
+        final List<Thread> threads = new ArrayList<Thread>();
         for (int i = 0; i < count; i++) {
             final Disposable subscription = mock(Disposable.class);
             subscriptions.add(subscription);

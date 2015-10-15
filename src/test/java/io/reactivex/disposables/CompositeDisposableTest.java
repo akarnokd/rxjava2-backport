@@ -68,7 +68,7 @@ public class CompositeDisposableTest {
             });
         }
 
-        final List<Thread> threads = new ArrayList<>();
+        final List<Thread> threads = new ArrayList<Thread>();
         for (int i = 0; i < count; i++) {
             final Thread t = new Thread() {
                 @Override
@@ -249,7 +249,7 @@ public class CompositeDisposableTest {
 
         });
 
-        final List<Thread> threads = new ArrayList<>();
+        final List<Thread> threads = new ArrayList<Thread>();
         for (int i = 0; i < count; i++) {
             final Thread t = new Thread() {
                 @Override
