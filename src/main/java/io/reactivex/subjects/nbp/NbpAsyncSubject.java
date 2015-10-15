@@ -227,14 +227,19 @@ public final class NbpAsyncSubject<T> extends NbpSubject<T, T> {
             if (NotificationLite.isError(v)) {
                 t.onError(NotificationLite.getError(v));
             } else {
-                t.onNext(NotificationLite.getValue(v));
+                t.onNext(NotificationLite.<T>getValue(v));
                 t.onComplete();
             }
         }
         
         @Override
-        public void accept(NbpSubscriber<? super T> t) {
-            BooleanDisposable bd = new BooleanDisposable(() -> remove(t));
+        public void accept(final NbpSubscriber<? super T> t) {
+            BooleanDisposable bd = new BooleanDisposable(new Runnable() {
+                @Override
+                public void run() {
+                    remove(t);
+                }
+            });
             t.onSubscribe(bd);
             if (add(t)) {
                 if (bd.isDisposed()) {

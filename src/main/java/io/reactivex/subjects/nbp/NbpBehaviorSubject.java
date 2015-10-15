@@ -14,27 +14,28 @@
 package io.reactivex.subjects.nbp;
 
 import java.lang.reflect.Array;
-import java.util.Objects;
 import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.StampedLock;
+import java.util.concurrent.locks.*;
 
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
+import io.reactivex.internal.functions.Objects;
 import io.reactivex.internal.util.*;
 import io.reactivex.plugins.RxJavaPlugins;
 
 public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
 
     public static <T> NbpBehaviorSubject<T> create() {
-        State<T> state = new State<>();
-        return new NbpBehaviorSubject<>(state);
+        State<T> state = new State<T>();
+        return new NbpBehaviorSubject<T>(state);
     }
     
     // TODO a plain create() would create a method ambiguity with Observable.create with javac
     public static <T> NbpBehaviorSubject<T> createDefault(T defaultValue) {
-        Objects.requireNonNull(defaultValue);
-        State<T> state = new State<>();
+        Objects.requireNonNull(defaultValue, "defaultValue is null");
+        State<T> state = new State<T>();
         state.lazySet(defaultValue);
-        return new NbpBehaviorSubject<>(state);
+        return new NbpBehaviorSubject<T>(state);
     }
     
     final State<T> state;
@@ -159,10 +160,14 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
 
         long index;
         
-        final StampedLock lock;
+        final ReadWriteLock lock;
+        final Lock readLock;
+        final Lock writeLock;
         
         public State() {
-            this.lock = new StampedLock();
+            this.lock = new ReentrantReadWriteLock();
+            this.readLock = lock.readLock();
+            this.writeLock = lock.writeLock();
             SUBSCRIBERS.lazySet(this, EMPTY);
         }
         
@@ -233,7 +238,7 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
         
         @Override
         public void accept(NbpSubscriber<? super T> s) {
-            BehaviorDisposable<T> bs = new BehaviorDisposable<>(s, this);
+            BehaviorDisposable<T> bs = new BehaviorDisposable<T>(s, this);
             s.onSubscribe(bs);
             if (!bs.cancelled) {
                 if (add(bs)) {
@@ -262,12 +267,12 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
         }
         
         void setCurrent(Object o) {
-            long stamp = lock.writeLock();
+            writeLock.lock();
             try {
                 index++;
                 lazySet(o);
             } finally {
-                lock.unlockWrite(stamp);
+                writeLock.unlock();
             }
         }
         
@@ -309,7 +314,7 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
         }
     }
     
-    static final class BehaviorDisposable<T> implements Disposable {
+    static final class BehaviorDisposable<T> implements Disposable, Predicate<Object> {
         
         final NbpSubscriber<? super T> actual;
         final State<T> state;
@@ -352,19 +357,14 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
                 }
                 
                 State<T> s = state;
-                StampedLock lock = s.lock;
+                Lock lock = s.readLock;
                 
-                long stamp = lock.tryOptimisticRead();
-                index = s.index;
-                o = s.get();
-                if (!lock.validate(stamp)) {
-                    stamp = lock.readLock();
-                    try {
-                        index = s.index;
-                        o = s.get();
-                    } finally {
-                        lock.unlockRead(stamp);
-                    }
+                lock.lock();
+                try {
+                    index = s.index;
+                    o = s.get();
+                } finally {
+                    lock.unlock();
                 }
                 
                 emitting = o != null;
@@ -372,7 +372,7 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
             }
             
             if (o != null) {
-                if (emit(o)) {
+                if (test(o)) {
                     return;
                 }
             
@@ -395,7 +395,7 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
                     if (emitting) {
                         AppendOnlyLinkedArrayList<Object> q = queue;
                         if (q == null) {
-                            q = new AppendOnlyLinkedArrayList<>(4);
+                            q = new AppendOnlyLinkedArrayList<Object>(4);
                             queue = q;
                         }
                         q.add(value);
@@ -406,10 +406,11 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
                 fastPath = true;
             }
 
-            emit(value);
+            test(value);
         }
 
-        boolean emit(Object o) {
+        @Override
+        public boolean test(Object o) {
             if (cancelled) {
                 return true;
             }
@@ -431,7 +432,7 @@ public final class NbpBehaviorSubject<T> extends NbpSubject<T, T> {
                     queue = null;
                 }
                 
-                q.forEachWhile(this::emit);
+                q.forEachWhile(this);
             }
         }
     }

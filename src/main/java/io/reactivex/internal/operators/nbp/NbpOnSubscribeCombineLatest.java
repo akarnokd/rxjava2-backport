@@ -15,11 +15,12 @@ package io.reactivex.internal.operators.nbp;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable;
 import io.reactivex.NbpObservable.*;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.exceptions.CompositeException;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.internal.queue.SpscLinkedArrayQueue;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
@@ -68,7 +69,7 @@ public final class NbpOnSubscribeCombineLatest<T, R> implements NbpOnSubscribe<R
             return;
         }
         
-        LatestCoordinator<T, R> lc = new LatestCoordinator<>(s, combiner, count, bufferSize, delayError);
+        LatestCoordinator<T, R> lc = new LatestCoordinator<T, R>(s, combiner, count, bufferSize, delayError);
         lc.subscribe(sources);
     }
     
@@ -108,14 +109,14 @@ public final class NbpOnSubscribeCombineLatest<T, R> implements NbpOnSubscribe<R
             this.delayError = delayError;
             this.latest = new Object[count];
             this.subscribers = new CombinerSubscriber[count];
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.queue = new SpscLinkedArrayQueue<Object>(bufferSize);
         }
         
         public void subscribe(NbpObservable<? extends T>[] sources) {
             NbpSubscriber<T>[] as = subscribers;
             int len = as.length;
             for (int i = 0; i < len; i++) {
-                as[i] = new CombinerSubscriber<>(this, i);
+                as[i] = new CombinerSubscriber<T, R>(this, i);
             }
             lazySet(0); // release array contents
             actual.onSubscribe(this);
@@ -295,8 +296,10 @@ public final class NbpOnSubscribeCombineLatest<T, R> implements NbpOnSubscribe<R
         void onError(Throwable e) {
             for (;;) {
                 Throwable curr = error;
-                if (curr != null) {
-                    e.addSuppressed(curr);
+                if (curr instanceof CompositeException) {
+                    CompositeException ce = new CompositeException((CompositeException)curr);
+                    ce.suppress(e);
+                    e = ce;
                 }
                 Throwable next = e;
                 if (ERROR.compareAndSet(this, curr, next)) {
@@ -317,7 +320,10 @@ public final class NbpOnSubscribeCombineLatest<T, R> implements NbpOnSubscribe<R
         static final AtomicReferenceFieldUpdater<CombinerSubscriber, Disposable> S =
                 AtomicReferenceFieldUpdater.newUpdater(CombinerSubscriber.class, Disposable.class, "s");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         public CombinerSubscriber(LatestCoordinator<T, R> parent, int index) {
             this.parent = parent;

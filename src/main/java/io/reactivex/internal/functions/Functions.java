@@ -12,6 +12,8 @@
  */
 package io.reactivex.internal.functions;
 
+import java.util.Comparator;
+
 import io.reactivex.functions.*;
 
 /**
@@ -193,5 +195,58 @@ public enum Functions {
      */
     public static LongConsumer emptyLongConsumer() {
         return EMPTY_LONGCONSUMER;
+    }
+    
+    static final Predicate<Object> ALWAYS_TRUE = new Predicate<Object>() {
+        @Override
+        public boolean test(Object o) {
+            return true;
+        }
+    };
+
+    static final Predicate<Object> ALWAYS_FALSE = new Predicate<Object>() {
+        @Override
+        public boolean test(Object o) {
+            return true;
+        }
+    };
+    
+    static final Supplier<Object> NULL_SUPPLIER = new Supplier<Object>() {
+        @Override
+        public Object get() {
+            return null;
+        }
+    };
+    
+    static final Comparator<Object> NATURAL_COMPARATOR = new Comparator<Object>() {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @Override
+        public int compare(Object a, Object b) {
+            return ((Comparable)a).compareTo(b);
+        }
+    };
+    
+    @SuppressWarnings("unchecked")
+    public static <T> Predicate<T> alwaysTrue() {
+        return (Predicate<T>)ALWAYS_TRUE;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Predicate<T> alwaysFalse() {
+        return (Predicate<T>)ALWAYS_FALSE;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Supplier<T> nullSupplier() {
+        return (Supplier<T>)NULL_SUPPLIER;
+    }
+    
+    /**
+     * Returns a natural order comparator which casts the parameters to Comparable.
+     * @return a natural order comparator which casts the parameters to Comparable
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Comparator<T> naturalOrder() {
+        return (Comparator<T>)NATURAL_COMPARATOR;
     }
 }

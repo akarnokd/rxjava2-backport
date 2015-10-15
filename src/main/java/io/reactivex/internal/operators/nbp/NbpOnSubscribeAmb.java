@@ -59,7 +59,7 @@ public final class NbpOnSubscribeAmb<T> implements NbpOnSubscribe<T> {
             return;
         }
 
-        AmbCoordinator<T> ac = new AmbCoordinator<>(s, count);
+        AmbCoordinator<T> ac = new AmbCoordinator<T>(s, count);
         ac.subscribe(sources);
     }
     
@@ -82,7 +82,7 @@ public final class NbpOnSubscribeAmb<T> implements NbpOnSubscribe<T> {
             AmbInnerSubscriber<T>[] as = subscribers;
             int len = as.length;
             for (int i = 0; i < len; i++) {
-                as[i] = new AmbInnerSubscriber<>(this, i + 1, actual);
+                as[i] = new AmbInnerSubscriber<T>(this, i + 1, actual);
             }
             WINNER.lazySet(this, 0); // release the contents of 'as'
             actual.onSubscribe(this);
@@ -135,7 +135,10 @@ public final class NbpOnSubscribeAmb<T> implements NbpOnSubscribe<T> {
         
         boolean won;
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         public AmbInnerSubscriber(AmbCoordinator<T> parent, int index, NbpSubscriber<? super T> actual) {
             this.parent = parent;

@@ -32,6 +32,20 @@ public final class CompositeException extends RuntimeException {
         super(message);
     }
     
+    public CompositeException(Iterable<? extends Throwable> exceptions) {
+        if (exceptions == null) {
+            suppressed.add(new NullPointerException("exceptions is null"));
+        } else {
+            try {
+                for (Throwable t : exceptions) {
+                    suppressed.add(t != null ? t : new NullPointerException("One of the exceptions is null"));
+                }
+            } catch (Throwable e) {
+                suppressed.add(e);
+            }
+        }
+    }
+    
     public CompositeException(Throwable... exceptions) {
         if (exceptions == null) {
             suppressed.add(new NullPointerException("exceptions is null"));

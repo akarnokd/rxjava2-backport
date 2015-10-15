@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import io.reactivex.NbpObservable.NbpSubscriber;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.util.NbpQueueDrain;
+import io.reactivex.internal.util.*;
 
 /**
  * Abstract base class for subscribers that hold another subscriber, a queue
@@ -76,7 +76,7 @@ public abstract class NbpQueueDrainSubscriber<T, U, V> extends QueueDrainSubscri
                 return;
             }
         }
-        drainLoop(q, s, delayError, dispose);
+        QueueDrainHelper.drainLoop(q, s, delayError, dispose, this);
     }
 
     /**
@@ -103,7 +103,7 @@ public abstract class NbpQueueDrainSubscriber<T, U, V> extends QueueDrainSubscri
                 return;
             }
         }
-        drainLoop(q, s, delayError, disposable);
+        QueueDrainHelper.drainLoop(q, s, delayError, disposable, this);
     }
 
     @Override
@@ -118,7 +118,7 @@ public abstract class NbpQueueDrainSubscriber<T, U, V> extends QueueDrainSubscri
     
     public void drain(boolean delayError, Disposable dispose) {
         if (enter()) {
-            drainLoop(queue, actual, delayError, dispose);
+            QueueDrainHelper.drainLoop(queue, actual, delayError, dispose, this);
         }
     }
 }

@@ -503,12 +503,8 @@ public class Observable<T> implements Publisher<T> {
     @SchedulerSupport(SchedulerKind.NONE)
     public static <T> Observable<T> generate(final Consumer<Subscriber<T>> generator) {
         Objects.requireNonNull(generator, "generator is null");
-        return generate(new Supplier<Object>() {
-            @Override
-            public Object get() {
-                return null;
-            }
-        }, new BiFunction<Object, Subscriber<T>, Object>() {
+        return generate(Functions.nullSupplier(), 
+        new BiFunction<Object, Subscriber<T>, Object>() {
             @Override
             public Object apply(Object s, Subscriber<T> o) {
                 generator.accept(o);
@@ -2565,12 +2561,7 @@ public class Observable<T> implements Publisher<T> {
     @BackpressureSupport(BackpressureKind.FULL)
     @SchedulerSupport(SchedulerKind.NONE)
     public final Observable<T> retry() {
-        return retry(Long.MAX_VALUE, new Predicate<Throwable>() {
-            @Override
-            public boolean test(Throwable e) {
-                return true;
-            }
-        });
+        return retry(Long.MAX_VALUE, Functions.alwaysTrue());
     }
     
     @BackpressureSupport(BackpressureKind.FULL)
@@ -2584,12 +2575,7 @@ public class Observable<T> implements Publisher<T> {
     @BackpressureSupport(BackpressureKind.FULL)
     @SchedulerSupport(SchedulerKind.NONE)
     public final Observable<T> retry(long times) {
-        return retry(times, new Predicate<Throwable>() {
-            @Override
-            public boolean test(Throwable e) {
-                return true;
-            }
-        });
+        return retry(times, Functions.alwaysTrue());
     }
     
     // Retries at most times or until the predicate returns false, whichever happens first

@@ -32,7 +32,10 @@ public final class NbpSubscriberResourceWrapper<T, R> extends AtomicReference<Ob
     static final AtomicReferenceFieldUpdater<NbpSubscriberResourceWrapper, Disposable> SUBSCRIPTION =
             AtomicReferenceFieldUpdater.newUpdater(NbpSubscriberResourceWrapper.class, Disposable.class, "subscription");
     
-    static final Disposable TERMINATED = () -> { };
+    static final Disposable TERMINATED = new Disposable() {
+        @Override
+        public void dispose() { }
+    };
     
     public NbpSubscriberResourceWrapper(NbpSubscriber<? super T> actual, Consumer<? super R> disposer) {
         this.actual = actual;

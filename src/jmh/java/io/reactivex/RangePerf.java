@@ -48,7 +48,7 @@ public class RangePerf {
     
     @Benchmark
     public Object rangeSync(Blackhole bh) {
-        LatchedObserver<Integer> lo = new LatchedObserver<>(bh);
+        LatchedObserver<Integer> lo = new LatchedObserver<Integer>(bh);
         
         range.subscribe(lo);
         
@@ -57,7 +57,7 @@ public class RangePerf {
 
     @Benchmark
     public void rangeAsync(Blackhole bh) throws Exception {
-        LatchedObserver<Integer> lo = new LatchedObserver<>(bh);
+        LatchedObserver<Integer> lo = new LatchedObserver<Integer>(bh);
         
         rangeAsync.subscribe(lo);
         
@@ -70,7 +70,7 @@ public class RangePerf {
 
     @Benchmark
     public void rangePipeline(Blackhole bh) throws Exception {
-        LatchedObserver<Integer> lo = new LatchedObserver<>(bh);
+        LatchedObserver<Integer> lo = new LatchedObserver<Integer>(bh);
         
         rangeAsyncPipeline.subscribe(lo);
         

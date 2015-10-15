@@ -65,8 +65,8 @@ public final class NbpUnicastSubject<T> extends NbpSubject<T, T> {
      * @return an UnicastSubject instance
      */
     public static <T> NbpUnicastSubject<T> create(int capacityHint, Runnable onCancelled) {
-        State<T> state = new State<>(capacityHint, onCancelled);
-        return new NbpUnicastSubject<>(state);
+        State<T> state = new State<T>(capacityHint, onCancelled);
+        return new NbpUnicastSubject<T>(state);
     }
 
     /** The subject state. */
@@ -138,7 +138,7 @@ public final class NbpUnicastSubject<T> extends NbpSubject<T, T> {
          */
         public State(int capacityHint, Runnable onCancelled) {
             this.onCancelled = onCancelled;
-            queue = new SpscLinkedArrayQueue<>(capacityHint);
+            queue = new SpscLinkedArrayQueue<T>(capacityHint);
         }
         
         @Override

@@ -18,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
+import org.reactivestreams.Publisher;
+
+import io.reactivex.functions.Function;
 
 @BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 5)
@@ -43,57 +46,42 @@ public class RxVsStreamPerf {
     public void setup() {
         range = Observable.range(1, times);
         
-        rangeFlatMap = range.flatMap(v -> Observable.range(v, 2));
+        rangeFlatMap = range.flatMap(new Function<Integer, Publisher<Integer>>() {
+            @Override
+            public Publisher<Integer> apply(Integer v) {
+                return Observable.range(v, 2);
+            }
+        });
         
         rangeNbp = NbpObservable.range(1, times);
 
-        rangeNbpFlatMap = rangeNbp.flatMap(v -> NbpObservable.range(v, 2));
+        rangeNbpFlatMap = rangeNbp.flatMap(new Function<Integer, NbpObservable<Integer>>() {
+            @Override
+            public NbpObservable<Integer> apply(Integer v) {
+                return NbpObservable.range(v, 2);
+            }
+        });
         
         values = range.toList().toBlocking().first();
     }
     
     @Benchmark
     public void range(Blackhole bh) {
-        range.subscribe(new LatchedObserver<>(bh));
+        range.subscribe(new LatchedObserver<Integer>(bh));
     }
 
     @Benchmark
     public void rangeNbp(Blackhole bh) {
-        rangeNbp.subscribe(new LatchedNbpObserver<>(bh));
+        rangeNbp.subscribe(new LatchedNbpObserver<Integer>(bh));
     }
 
     @Benchmark
     public void rangeFlatMap(Blackhole bh) {
-        rangeFlatMap.subscribe(new LatchedObserver<>(bh));
+        rangeFlatMap.subscribe(new LatchedObserver<Integer>(bh));
     }
 
     @Benchmark
     public void rangeNbpFlatMap(Blackhole bh) {
-        rangeNbpFlatMap.subscribe(new LatchedNbpObserver<>(bh));
-    }
-    
-    @Benchmark
-    public void stream(Blackhole bh) {
-        values.stream().forEach(bh::consume);
-    }
-
-    @Benchmark
-    public void streamFlatMap(Blackhole bh) {
-        values.stream()
-        .flatMap(v -> Arrays.asList(v, v + 1).stream())
-        .forEach(bh::consume);
-    }
-    
-    @Benchmark
-    public void streamParallel(Blackhole bh) {
-        values.stream().parallel().forEach(bh::consume);
-    }
-
-    @Benchmark
-    public void streamParallelFlatMap(Blackhole bh) {
-        values.stream()
-        .flatMap(v -> Arrays.asList(v, v + 1).stream())
-        .parallel()
-        .forEach(bh::consume);
+        rangeNbpFlatMap.subscribe(new LatchedNbpObserver<Integer>(bh));
     }
 }

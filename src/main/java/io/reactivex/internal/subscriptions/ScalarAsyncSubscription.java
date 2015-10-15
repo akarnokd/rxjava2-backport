@@ -13,11 +13,11 @@
 
 package io.reactivex.internal.subscriptions;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.reactivestreams.*;
 
+import io.reactivex.internal.functions.Objects;
 import io.reactivex.plugins.RxJavaPlugins;
 
 /**
@@ -66,7 +66,7 @@ public final class ScalarAsyncSubscription<T> extends AtomicInteger implements S
     }
     
     public void setValue(T v) {
-        Objects.requireNonNull(v);
+        Objects.requireNonNull(v, "v is null");
         
         for (;;) {
             int state = get();

@@ -43,7 +43,7 @@ public final class NbpOnSubscribeGenerate<T, S> implements NbpOnSubscribe<T> {
             return;
         }
         
-        GeneratorDisposable<T, S> gd = new GeneratorDisposable<>(s, generator, disposeState, state);
+        GeneratorDisposable<T, S> gd = new GeneratorDisposable<T, S>(s, generator, disposeState, state);
         s.onSubscribe(gd);
         gd.run();
     }

@@ -40,8 +40,8 @@ public enum NbpBlockingOperatorNext {
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {
-                NbpNextObserver<T> nextObserver = new NbpNextObserver<>();
-                return new NextIterator<>(items, nextObserver);
+                NbpNextObserver<T> nextObserver = new NbpNextObserver<T>();
+                return new NextIterator<T>(items, nextObserver);
             }
         };
 
@@ -140,7 +140,7 @@ public enum NbpBlockingOperatorNext {
     }
 
     private static class NbpNextObserver<T> extends NbpDisposableSubscriber<Try<Optional<T>>> {
-        private final BlockingQueue<Try<Optional<T>>> buf = new ArrayBlockingQueue<>(1);
+        private final BlockingQueue<Try<Optional<T>>> buf = new ArrayBlockingQueue<Try<Optional<T>>>(1);
         @SuppressWarnings("unused")
         volatile int waiting;
         @SuppressWarnings("rawtypes")

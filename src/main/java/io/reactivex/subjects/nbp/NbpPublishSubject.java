@@ -22,8 +22,8 @@ import io.reactivex.plugins.RxJavaPlugins;
 
 public final class NbpPublishSubject<T> extends NbpSubject<T, T> {
     public static <T> NbpPublishSubject<T> create() {
-        State<T> state = new State<>();
-        return new NbpPublishSubject<>(state);
+        State<T> state = new State<T>();
+        return new NbpPublishSubject<T>(state);
     }
     
     final State<T> state;
@@ -189,14 +189,19 @@ public final class NbpPublishSubject<T> extends NbpSubject<T, T> {
         }
         
         @Override
-        public void accept(NbpSubscriber<? super T> t) {
+        public void accept(final NbpSubscriber<? super T> t) {
             Object v = get();
             if (v != null) {
                 t.onSubscribe(EmptyDisposable.INSTANCE);
                 emit(t, v);
                 return;
             }
-            BooleanDisposable bd = new BooleanDisposable(() -> remove(t));
+            BooleanDisposable bd = new BooleanDisposable(new Runnable() {
+                @Override
+                public void run() {
+                    remove(t);
+                }
+            });
             t.onSubscribe(bd);
             if (add(t)) {
                 if (bd.isDisposed()) {

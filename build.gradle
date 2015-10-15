@@ -22,7 +22,7 @@ targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
 
 group = "com.github.akarnokd" 
-ext.githubProjectName = 'rxjava-completable'
+ext.githubProjectName = 'rxjava2-backport'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

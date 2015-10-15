@@ -41,7 +41,7 @@ public enum NbpBlockingOperatorLatest {
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {
-                NbpLatestObserverIterator<T> lio = new NbpLatestObserverIterator<>();
+                NbpLatestObserverIterator<T> lio = new NbpLatestObserverIterator<T>();
                 
                 @SuppressWarnings("unchecked")
                 NbpObservable<Try<Optional<T>>> materialized = ((NbpObservable<T>)source).materialize();

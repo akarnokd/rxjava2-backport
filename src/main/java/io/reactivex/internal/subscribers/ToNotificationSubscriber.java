@@ -13,12 +13,10 @@
 
 package io.reactivex.internal.subscribers;
 
-import java.util.Optional;
-import io.reactivex.functions.*;
-
 import org.reactivestreams.*;
 
 import io.reactivex.*;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 
 public final class ToNotificationSubscriber<T> implements Subscriber<T> {
@@ -45,13 +43,13 @@ public final class ToNotificationSubscriber<T> implements Subscriber<T> {
             s.cancel();
             onError(new NullPointerException());
         } else {
-            consumer.accept(Try.ofValue(Optional.of(t)));
+            consumer.accept(Try.ofValue(Optional.<Object>of(t)));
         }
     }
     
     @Override
     public void onError(Throwable t) {
-        consumer.accept(Try.ofError(t));
+        consumer.accept(Try.<Optional<Object>>ofError(t));
     }
     
     @Override

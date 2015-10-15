@@ -41,7 +41,7 @@ public enum NbpBlockingOperatorMostRecent {
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {
-                NbpMostRecentObserver<T> mostRecentObserver = new NbpMostRecentObserver<>(initialValue);
+                NbpMostRecentObserver<T> mostRecentObserver = new NbpMostRecentObserver<T>(initialValue);
 
                 /**
                  * Subscribe instead of unsafeSubscribe since this is the final subscribe in the chain

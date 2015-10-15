@@ -53,7 +53,10 @@ public final class NbpOnSubscribeIntervalSource implements NbpOnSubscribe<Long> 
         
         volatile boolean cancelled;
         
-        static final Disposable DISPOSED = () -> { };
+        static final Disposable DISPOSED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         volatile Disposable resource;
         static final AtomicReferenceFieldUpdater<IntervalSubscriber, Disposable> RESOURCE =

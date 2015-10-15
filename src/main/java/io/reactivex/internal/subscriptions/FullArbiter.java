@@ -57,7 +57,7 @@ public final class FullArbiter<T> extends FullArbiterPad2 implements Subscriptio
     public FullArbiter(Subscriber<? super T> actual, Disposable resource, int capacity) {
         this.actual = actual;
         this.resource = resource;
-        this.queue = new SpscLinkedArrayQueue<>(capacity);
+        this.queue = new SpscLinkedArrayQueue<Object>(capacity);
         this.s = INITIAL;
     }
 
@@ -189,7 +189,7 @@ public final class FullArbiter<T> extends FullArbiterPad2 implements Subscriptio
                 } else {
                     long r = requested;
                     if (r != 0) {
-                        a.onNext(NotificationLite.getValue(v));
+                        a.onNext(NotificationLite.<T>getValue(v));
                         requested = r - 1;
                     }
                 }

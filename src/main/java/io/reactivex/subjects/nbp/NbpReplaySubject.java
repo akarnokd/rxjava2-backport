@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.*;
 
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Objects;
 import io.reactivex.internal.util.NotificationLite;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -41,7 +42,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         if (capacityHint <= 0) {
             throw new IllegalArgumentException("capacityHint > 0 required but it was " + capacityHint);
         }
-        ReplayBuffer<T> buffer = new UnboundedReplayBuffer<>(capacityHint);
+        ReplayBuffer<T> buffer = new UnboundedReplayBuffer<T>(capacityHint);
         return createWithBuffer(buffer);
     }
 
@@ -49,12 +50,12 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         if (size <= 0) {
             throw new IllegalArgumentException("size > 0 required but it was " + size);
         }
-        SizeBoundReplayBuffer<T> buffer = new SizeBoundReplayBuffer<>(size);
+        SizeBoundReplayBuffer<T> buffer = new SizeBoundReplayBuffer<T>(size);
         return createWithBuffer(buffer);
     }
 
     /* test */ static <T> NbpReplaySubject<T> createUnbounded() {
-        SizeBoundReplayBuffer<T> buffer = new SizeBoundReplayBuffer<>(Integer.MAX_VALUE);
+        SizeBoundReplayBuffer<T> buffer = new SizeBoundReplayBuffer<T>(Integer.MAX_VALUE);
         return createWithBuffer(buffer);
     }
 
@@ -67,18 +68,18 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
     }
 
     public static <T> NbpReplaySubject<T> createWithTimeAndSize(long maxAge, TimeUnit unit, Scheduler scheduler, int size) {
-        Objects.requireNonNull(unit);
-        Objects.requireNonNull(scheduler);
+        Objects.requireNonNull(unit, "unit is null");
+        Objects.requireNonNull(scheduler, "scheduler is null");
         if (size <= 0) {
             throw new IllegalArgumentException("size > 0 required but it was " + size);
         }
-        SizeAndTimeBoundReplayBuffer<T> buffer = new SizeAndTimeBoundReplayBuffer<>(size, maxAge, unit, scheduler);
+        SizeAndTimeBoundReplayBuffer<T> buffer = new SizeAndTimeBoundReplayBuffer<T>(size, maxAge, unit, scheduler);
         return createWithBuffer(buffer);
     }
     
     static <T> NbpReplaySubject<T> createWithBuffer(ReplayBuffer<T> buffer) {
-        State<T> state = new State<>(buffer);
-        return new NbpReplaySubject<>(state);
+        State<T> state = new State<T>(buffer);
+        return new NbpReplaySubject<T>(state);
     }
 
 
@@ -191,7 +192,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         
         @Override
         public void accept(NbpSubscriber<? super T> s) {
-            ReplayDisposable<T> rs = new ReplayDisposable<>(s, this);
+            ReplayDisposable<T> rs = new ReplayDisposable<T>(s, this);
             s.onSubscribe(rs);
             
             if (!rs.cancelled) {
@@ -370,7 +371,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         volatile int size;
         
         public UnboundedReplayBuffer(int capacityHint) {
-            this.buffer = new ArrayList<>(capacityHint);
+            this.buffer = new ArrayList<Object>(capacityHint);
         }
         
         @Override
@@ -562,7 +563,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         
         public SizeBoundReplayBuffer(int maxSize) {
             this.maxSize = maxSize;
-            Node<Object> h = new Node<>(null);
+            Node<Object> h = new Node<Object>(null);
             this.tail = h;
             this.head = h;
         }
@@ -578,7 +579,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         @Override
         public void add(T value) {
             Object o = value;
-            Node<Object> n = new Node<>(o);
+            Node<Object> n = new Node<Object>(o);
             Node<Object> t = tail;
 
             tail = n;
@@ -596,7 +597,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         @Override
         public void addFinal(Object notificationLite) {
             Object o = notificationLite;
-            Node<Object> n = new Node<>(o);
+            Node<Object> n = new Node<Object>(o);
             Node<Object> t = tail;
 
             tail = n;
@@ -770,7 +771,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
             this.maxAge = maxAge;
             this.unit = unit;
             this.scheduler = scheduler;
-            TimedNode<Object> h = new TimedNode<>(null, 0L);
+            TimedNode<Object> h = new TimedNode<Object>(null, 0L);
             this.tail = h;
             this.head = h;
         }
@@ -826,7 +827,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         @Override
         public void add(T value) {
             Object o = value;
-            TimedNode<Object> n = new TimedNode<>(o, scheduler.now(unit));
+            TimedNode<Object> n = new TimedNode<Object>(o, scheduler.now(unit));
             TimedNode<Object> t = tail;
 
             tail = n;
@@ -844,7 +845,7 @@ public final class NbpReplaySubject<T> extends NbpSubject<T, T> {
         @Override
         public void addFinal(Object notificationLite) {
             Object o = notificationLite;
-            TimedNode<Object> n = new TimedNode<>(o, Long.MAX_VALUE);
+            TimedNode<Object> n = new TimedNode<Object>(o, Long.MAX_VALUE);
             TimedNode<Object> t = tail;
 
             tail = n;

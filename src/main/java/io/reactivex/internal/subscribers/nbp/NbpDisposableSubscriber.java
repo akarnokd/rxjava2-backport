@@ -30,7 +30,10 @@ public abstract class NbpDisposableSubscriber<T> implements NbpSubscriber<T>, Di
     static final AtomicReferenceFieldUpdater<NbpDisposableSubscriber, Disposable> S =
             AtomicReferenceFieldUpdater.newUpdater(NbpDisposableSubscriber.class, Disposable.class, "s");
     
-    static final Disposable CANCELLED = () -> { };
+    static final Disposable CANCELLED = new Disposable() {
+        @Override
+        public void dispose() { }
+    };
     
     @Override
     public final void onSubscribe(Disposable s) {

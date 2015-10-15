@@ -71,8 +71,8 @@ public final class NbpLambdaSubscriber<T> extends AtomicReference<Disposable> im
         try {
             onError.accept(t);
         } catch (Throwable e) {
-            e.addSuppressed(t);
             RxJavaPlugins.onError(e);
+            RxJavaPlugins.onError(t);
         }
     }
     

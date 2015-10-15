@@ -23,7 +23,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
  */
 public final class NbpObservableScalarSource<T> extends NbpObservable<T> {
     private final T value;
-    public NbpObservableScalarSource(T value) {
+    public NbpObservableScalarSource(final T value) {
         super(new NbpOnSubscribe<T>() {
             @Override
             public void accept(NbpSubscriber<? super T> s) {
@@ -39,27 +39,30 @@ public final class NbpObservableScalarSource<T> extends NbpObservable<T> {
         return value;
     }
     
-    public <U> NbpOnSubscribe<U> scalarFlatMap(Function<? super T, ? extends NbpObservable<? extends U>> mapper) {
-        return s -> {
-            NbpObservable<? extends U> other;
-            try {
-                other = mapper.apply(value);
-            } catch (Throwable e) {
-                EmptyDisposable.error(e, s);
-                return;
-            }
-            if (other == null) {
-                EmptyDisposable.error(new NullPointerException("The publisher returned by the function is null"), s);
-                return;
-            }
-            if (other instanceof NbpObservableScalarSource) {
-                @SuppressWarnings("unchecked")
-                NbpObservableScalarSource<U> o = (NbpObservableScalarSource<U>)other;
-                s.onSubscribe(EmptyDisposable.INSTANCE);
-                s.onNext(o.value);
-                s.onComplete();
-            } else {
-                other.subscribe(s);
+    public <U> NbpOnSubscribe<U> scalarFlatMap(final Function<? super T, ? extends NbpObservable<? extends U>> mapper) {
+        return new NbpOnSubscribe<U>() {
+            @Override
+            public void accept(NbpSubscriber<? super U> s) {
+                NbpObservable<? extends U> other;
+                try {
+                    other = mapper.apply(value);
+                } catch (Throwable e) {
+                    EmptyDisposable.error(e, s);
+                    return;
+                }
+                if (other == null) {
+                    EmptyDisposable.error(new NullPointerException("The publisher returned by the function is null"), s);
+                    return;
+                }
+                if (other instanceof NbpObservableScalarSource) {
+                    @SuppressWarnings("unchecked")
+                    NbpObservableScalarSource<U> o = (NbpObservableScalarSource<U>)other;
+                    s.onSubscribe(EmptyDisposable.INSTANCE);
+                    s.onNext(o.value);
+                    s.onComplete();
+                } else {
+                    other.subscribe(s);
+                }
             }
         };
     }

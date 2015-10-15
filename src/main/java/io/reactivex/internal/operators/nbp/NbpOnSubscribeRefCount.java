@@ -15,10 +15,10 @@ package io.reactivex.internal.operators.nbp;
 
 import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.ReentrantLock;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable.*;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.disposables.SetCompositeResource;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 import io.reactivex.observables.nbp.NbpConnectableObservable;
@@ -85,7 +85,7 @@ public final class NbpOnSubscribeRefCount<T> implements NbpOnSubscribe<T> {
             try {
                 if (baseSubscription == currentBase) {
                     baseSubscription.dispose();
-                    baseSubscription = new SetCompositeResource<>(Disposables.consumeAndDispose());
+                    baseSubscription = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
                     subscriptionCount.set(0);
                 }
             } finally {
@@ -95,7 +95,7 @@ public final class NbpOnSubscribeRefCount<T> implements NbpOnSubscribe<T> {
     }
 
     final NbpConnectableObservable<? extends T> source;
-    volatile SetCompositeResource<Disposable> baseSubscription = new SetCompositeResource<>(Disposables.consumeAndDispose());
+    volatile SetCompositeResource<Disposable> baseSubscription = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
     final AtomicInteger subscriptionCount = new AtomicInteger(0);
 
     /**
@@ -149,15 +149,18 @@ public final class NbpOnSubscribeRefCount<T> implements NbpOnSubscribe<T> {
 
     private Consumer<Disposable> onSubscribe(final NbpSubscriber<? super T> subscriber,
             final AtomicBoolean writeLocked) {
-        return  subscription -> {
-            try {
-                baseSubscription.add(subscription);
-                // ready to subscribe to source so do it
-                doSubscribe(subscriber, baseSubscription);
-            } finally {
-                // release the write lock
-                lock.unlock();
-                writeLocked.set(false);
+        return  new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable subscription) {
+                try {
+                    baseSubscription.add(subscription);
+                    // ready to subscribe to source so do it
+                    doSubscribe(subscriber, baseSubscription);
+                } finally {
+                    // release the write lock
+                    lock.unlock();
+                    writeLocked.set(false);
+                }
             }
         };
     }
@@ -172,19 +175,22 @@ public final class NbpOnSubscribeRefCount<T> implements NbpOnSubscribe<T> {
     }
 
     private Disposable disconnect(final SetCompositeResource<Disposable> current) {
-        return () -> {
-            lock.lock();
-            try {
-                if (baseSubscription == current) {
-                    if (subscriptionCount.decrementAndGet() == 0) {
-                        baseSubscription.dispose();
-                        // need a new baseSubscription because once
-                        // unsubscribed stays that way
-                        baseSubscription = new SetCompositeResource<>(Disposables.consumeAndDispose());
+        return new Disposable() {
+            @Override
+            public void dispose() {
+                lock.lock();
+                try {
+                    if (baseSubscription == current) {
+                        if (subscriptionCount.decrementAndGet() == 0) {
+                            baseSubscription.dispose();
+                            // need a new baseSubscription because once
+                            // unsubscribed stays that way
+                            baseSubscription = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
+                        }
                     }
+                } finally {
+                    lock.unlock();
                 }
-            } finally {
-                lock.unlock();
             }
         };
     }

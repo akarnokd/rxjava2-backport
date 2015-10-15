@@ -16,7 +16,7 @@ package io.reactivex.internal.operators.nbp;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.NbpObservable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.SerialResource;
 import io.reactivex.internal.util.*;
 
@@ -49,9 +49,9 @@ public final class NbpCachedObservable<T> extends NbpObservable<T> {
         if (capacityHint < 1) {
             throw new IllegalArgumentException("capacityHint > 0 required");
         }
-        CacheState<T> state = new CacheState<>(source, capacityHint);
-        CachedSubscribe<T> onSubscribe = new CachedSubscribe<>(state);
-        return new NbpCachedObservable<>(onSubscribe, state);
+        CacheState<T> state = new CacheState<T>(source, capacityHint);
+        CachedSubscribe<T> onSubscribe = new CachedSubscribe<T>(state);
+        return new NbpCachedObservable<T>(onSubscribe, state);
     }
     
     /**
@@ -116,7 +116,7 @@ public final class NbpCachedObservable<T> extends NbpObservable<T> {
             super(capacityHint);
             this.source = source;
             this.producers = EMPTY;
-            this.connection = new SerialResource<>(Disposables.consumeAndDispose());
+            this.connection = new SerialResource<Disposable>(Disposables.consumeAndDispose());
         }
         /**
          * Adds a ReplayProducer to the producers array atomically.
@@ -230,7 +230,7 @@ public final class NbpCachedObservable<T> extends NbpObservable<T> {
         @Override
         public void accept(NbpSubscriber<? super T> t) {
             // we can connect first because we replay everything anyway
-            ReplaySubscription<T> rp = new ReplaySubscription<>(t, state);
+            ReplaySubscription<T> rp = new ReplaySubscription<T>(t, state);
             state.addProducer(rp);
             
             t.onSubscribe(rp);

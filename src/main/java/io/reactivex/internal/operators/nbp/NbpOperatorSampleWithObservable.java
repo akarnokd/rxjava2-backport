@@ -30,8 +30,8 @@ public final class NbpOperatorSampleWithObservable<T> implements NbpOperator<T, 
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        NbpSerializedSubscriber<T> serial = new NbpSerializedSubscriber<>(t);
-        return new SamplePublisherSubscriber<>(serial, other);
+        NbpSerializedSubscriber<T> serial = new NbpSerializedSubscriber<T>(t);
+        return new SamplePublisherSubscriber<T>(serial, other);
     }
     
     static final class SamplePublisherSubscriber<T> extends AtomicReference<T> 
@@ -47,7 +47,10 @@ public final class NbpOperatorSampleWithObservable<T> implements NbpOperator<T, 
         static final AtomicReferenceFieldUpdater<SamplePublisherSubscriber, Disposable> OTHER =
                 AtomicReferenceFieldUpdater.newUpdater(SamplePublisherSubscriber.class, Disposable.class, "other");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         Disposable s;
         
@@ -65,7 +68,7 @@ public final class NbpOperatorSampleWithObservable<T> implements NbpOperator<T, 
             this.s = s;
             actual.onSubscribe(this);
             if (other == null) {
-                sampler.subscribe(new SamplerSubscriber<>(this));
+                sampler.subscribe(new SamplerSubscriber<T>(this));
             }
             
         }

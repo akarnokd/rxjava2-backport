@@ -26,7 +26,10 @@ public final class DisposableSubscription extends AtomicReference<Disposable> im
     /** */
     private static final long serialVersionUID = -2358839743797425727L;
     /** The disposed state indicator. */
-    static final Disposable DISPOSED = () -> { };
+    static final Disposable DISPOSED = new Disposable() {
+        @Override
+        public void dispose() { }
+    };
     
     /**
      * Constructs an empty DisposableSubscription.
