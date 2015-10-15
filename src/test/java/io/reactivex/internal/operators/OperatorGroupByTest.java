@@ -98,7 +98,7 @@ public class OperatorGroupByTest {
 
         final AtomicInteger groupCounter = new AtomicInteger();
         final AtomicInteger eventCounter = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
 
         grouped.flatMap(new Function<GroupedObservable<Integer, String>, Observable<String>>() {
 
@@ -141,7 +141,7 @@ public class OperatorGroupByTest {
 
     private static <K, V> Map<K, Collection<V>> toMap(Observable<GroupedObservable<K, V>> observable) {
 
-        final ConcurrentHashMap<K, Collection<V>> result = new ConcurrentHashMap<>();
+        final ConcurrentHashMap<K, Collection<V>> result = new ConcurrentHashMap<T>();
 
         observable.toBlocking().forEach(new Consumer<GroupedObservable<K, V>>() {
 
@@ -583,7 +583,7 @@ public class OperatorGroupByTest {
     @Test
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsAndThenComplete() throws InterruptedException {
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -662,7 +662,7 @@ public class OperatorGroupByTest {
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsWhichThenSubscribesOnAndDelaysAndThenCompletes() throws InterruptedException {
         System.err.println("----------------------------------------------------------------------------------------------");
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -754,7 +754,7 @@ public class OperatorGroupByTest {
     @Test
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsWhichThenObservesOnAndDelaysAndThenCompletes() throws InterruptedException {
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -831,7 +831,7 @@ public class OperatorGroupByTest {
 
     @Test
     public void testGroupsWithNestedSubscribeOn() throws InterruptedException {
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -888,7 +888,7 @@ public class OperatorGroupByTest {
 
     @Test
     public void testGroupsWithNestedObserveOn() throws InterruptedException {
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -1015,7 +1015,7 @@ public class OperatorGroupByTest {
     @Test
     public void testGroupByBackpressure() throws InterruptedException {
 
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
 
         Observable.range(1, 4000)
                 .groupBy(IS_EVEN2)
@@ -1134,7 +1134,7 @@ public class OperatorGroupByTest {
             });
         });
 
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         System.out.println("ts .get " + ts.values());
@@ -1150,7 +1150,7 @@ public class OperatorGroupByTest {
 
         Observable<Integer> m = source.groupBy(fail(0), dbl).flatMap(FLATTEN_INTEGER);
 
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         assertEquals(1, ts.errorCount());
@@ -1162,7 +1162,7 @@ public class OperatorGroupByTest {
         Observable<Integer> source = Observable.just(0, 1, 2, 3, 4, 5, 6);
 
         Observable<Integer> m = source.groupBy(identity, fail(0)).flatMap(FLATTEN_INTEGER);
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         assertEquals(1, ts.errorCount());
@@ -1176,7 +1176,7 @@ public class OperatorGroupByTest {
 
         Observable<Integer> m = source.groupBy(identity, dbl).flatMap(FLATTEN_INTEGER);
 
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1190,7 +1190,7 @@ public class OperatorGroupByTest {
     public void testExceptionIfSubscribeToChildMoreThanOnce() {
         Observable<Integer> source = Observable.just(0);
 
-        final AtomicReference<GroupedObservable<Integer, Integer>> inner = new AtomicReference<>();
+        final AtomicReference<GroupedObservable<Integer, Integer>> inner = new AtomicReference<T>();
 
         Observable<GroupedObservable<Integer, Integer>> m = source.groupBy(identity, dbl);
 
@@ -1220,7 +1220,7 @@ public class OperatorGroupByTest {
 
         Observable<Integer> m = source.groupBy(identity, dbl).flatMap(FLATTEN_INTEGER);
 
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         assertEquals(1, ts.errorCount());
@@ -1229,7 +1229,7 @@ public class OperatorGroupByTest {
 
     @Test
     public void testgroupByBackpressure() throws InterruptedException {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
 
         Observable.range(1, 4000).groupBy(IS_EVEN2).flatMap(new Function<GroupedObservable<Boolean, Integer>, Observable<String>>() {
 
@@ -1286,7 +1286,7 @@ public class OperatorGroupByTest {
     @Test
     public void testgroupByBackpressure2() throws InterruptedException {
 
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
 
         Observable.range(1, 4000)
             .doOnNext(v -> System.out.println("testgroupByBackpressure2 >> " + v))
@@ -1329,7 +1329,7 @@ public class OperatorGroupByTest {
     @Test
     public void testGroupByWithNullKey() {
         final String[] key = new String[]{"uninitialized"};
-        final List<String> values = new ArrayList<>();
+        final List<String> values = new ArrayList<T>();
         Observable.just("a", "b", "c").groupBy(new Function<String, String>() {
 
             @Override
@@ -1365,7 +1365,7 @@ public class OperatorGroupByTest {
                     }
                 }
         );
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         o.groupBy(new Function<Integer, Integer>() {
 
@@ -1383,11 +1383,11 @@ public class OperatorGroupByTest {
     @Test
     public void testGroupByShouldPropagateError() {
         final Throwable e = new RuntimeException("Oops");
-        final TestSubscriber<Integer> inner1 = new TestSubscriber<>();
-        final TestSubscriber<Integer> inner2 = new TestSubscriber<>();
+        final TestSubscriber<Integer> inner1 = new TestSubscriber<T>();
+        final TestSubscriber<Integer> inner2 = new TestSubscriber<T>();
 
         final TestSubscriber<GroupedObservable<Integer, Integer>> outer
-                = new TestSubscriber<>(new Observer<GroupedObservable<Integer, Integer>>() {
+                = new TestSubscriber<T>(new Observer<GroupedObservable<Integer, Integer>>() {
 
             @Override
             public void onComplete() {
@@ -1498,7 +1498,7 @@ public class OperatorGroupByTest {
      */
     @Test
     public void testBackpressureInnerDoesntOverflowOuter() {
-        TestSubscriber<GroupedObservable<Integer, Integer>> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<GroupedObservable<Integer, Integer>> ts = new TestSubscriber<T>((Long)null);
         
         Observable.fromArray(1, 2)
                 .groupBy(v -> v)
@@ -1514,8 +1514,8 @@ public class OperatorGroupByTest {
     
     @Test
     public void testOneGroupInnerRequestsTwiceBuffer() {
-        TestSubscriber<Object> ts1 = new TestSubscriber<>((Long)null);
-        TestSubscriber<Object> ts2 = new TestSubscriber<>((Long)null);
+        TestSubscriber<Object> ts1 = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Object> ts2 = new TestSubscriber<T>((Long)null);
         
         Observable.range(1, Observable.bufferSize() * 2)
         .groupBy(v -> 1)

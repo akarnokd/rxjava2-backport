@@ -86,14 +86,14 @@ public class NbpOnSubscribeRangeTest {
 
     @Test
     public void testNoBackpressure() {
-        ArrayList<Integer> list = new ArrayList<>(Observable.bufferSize() * 2);
+        ArrayList<Integer> list = new ArrayList<T>(Observable.bufferSize() * 2);
         for (int i = 1; i <= Observable.bufferSize() * 2 + 1; i++) {
             list.add(i);
         }
 
         NbpObservable<Integer> o = NbpObservable.range(1, list.size());
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         o.subscribe(ts);
         
@@ -130,7 +130,7 @@ public class NbpOnSubscribeRangeTest {
     
     @Test(timeout = 1000)
     public void testNearMaxValueWithoutBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(Integer.MAX_VALUE - 1, 2).subscribe(ts);
         
         ts.assertComplete();

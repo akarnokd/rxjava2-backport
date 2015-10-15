@@ -50,9 +50,9 @@ public class NbpOperatorTimestampTest {
 
         InOrder inOrder = inOrder(NbpObserver);
 
-        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<>(1, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<>(2, 100, TimeUnit.MILLISECONDS));
-        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<>(3, 200, TimeUnit.MILLISECONDS));
+        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<T>(1, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<T>(2, 100, TimeUnit.MILLISECONDS));
+        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<T>(3, 200, TimeUnit.MILLISECONDS));
 
         verify(NbpObserver, never()).onError(any(Throwable.class));
         verify(NbpObserver, never()).onComplete();
@@ -74,9 +74,9 @@ public class NbpOperatorTimestampTest {
 
         InOrder inOrder = inOrder(NbpObserver);
 
-        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<>(1, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<>(2, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<>(3, 200, TimeUnit.MILLISECONDS));
+        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<T>(1, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<T>(2, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(NbpObserver, times(1)).onNext(new Timed<T>(3, 200, TimeUnit.MILLISECONDS));
 
         verify(NbpObserver, never()).onError(any(Throwable.class));
         verify(NbpObserver, never()).onComplete();

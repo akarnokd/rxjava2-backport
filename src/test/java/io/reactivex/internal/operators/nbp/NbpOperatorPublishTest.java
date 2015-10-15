@@ -116,7 +116,7 @@ public class NbpOperatorPublishTest {
 
         });
 
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.merge(fast, slow).subscribe(ts);
         is.connect();
         ts.awaitTerminalEvent();
@@ -136,7 +136,7 @@ public class NbpOperatorPublishTest {
             }
 
         });
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         xs.publish(new Function<NbpObservable<Integer>, NbpObservable<Integer>>() {
 
             @Override
@@ -163,7 +163,7 @@ public class NbpOperatorPublishTest {
     @Test
     public void testTakeUntilWithPublishedStream() {
         NbpObservable<Integer> xs = NbpObservable.range(0, Observable.bufferSize() * 2);
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpConnectableObservable<Integer> xsp = xs.publish();
         xsp.takeUntil(xsp.skipWhile(new Predicate<Integer>() {
 
@@ -199,7 +199,7 @@ public class NbpOperatorPublishTest {
         final AtomicBoolean child1Unsubscribed = new AtomicBoolean();
         final AtomicBoolean child2Unsubscribed = new AtomicBoolean();
 
-        final NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<>();
+        final NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<T>();
 
         final NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<Integer>() {
             @Override
@@ -247,7 +247,7 @@ public class NbpOperatorPublishTest {
         co.connect();
         // Emit 0
         scheduler.advanceTimeBy(15, TimeUnit.MILLISECONDS);
-        NbpTestSubscriber<Long> NbpSubscriber = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Long> NbpSubscriber = new NbpTestSubscriber<T>();
         co.subscribe(NbpSubscriber);
         // Emit 1 and 2
         scheduler.advanceTimeBy(50, TimeUnit.MILLISECONDS);
@@ -260,7 +260,7 @@ public class NbpOperatorPublishTest {
     public void testSubscribeAfterDisconnectThenConnect() {
         NbpConnectableObservable<Integer> source = NbpObservable.just(1).publish();
 
-        NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<T>();
 
         source.subscribe(ts1);
 
@@ -270,7 +270,7 @@ public class NbpOperatorPublishTest {
         ts1.assertNoErrors();
         ts1.assertTerminated();
 
-        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<T>();
 
         source.subscribe(ts2);
 
@@ -288,7 +288,7 @@ public class NbpOperatorPublishTest {
     public void testNoSubscriberRetentionOnCompleted() {
         NbpOperatorPublish<Integer> source = (NbpOperatorPublish<Integer>)NbpObservable.just(1).publish();
 
-        NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<T>();
 
         source.unsafeSubscribe(ts1);
 
@@ -369,9 +369,9 @@ public class NbpOperatorPublishTest {
         NbpObservable<Integer> obs = co.observeOn(Schedulers.computation());
         for (int i = 0; i < 1000; i++) {
             for (int j = 1; j < 6; j++) {
-                List<NbpTestSubscriber<Integer>> tss = new ArrayList<>();
+                List<NbpTestSubscriber<Integer>> tss = new ArrayList<T>();
                 for (int k = 1; k < j; k++) {
-                    NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+                    NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
                     tss.add(ts);
                     obs.subscribe(ts);
                 }

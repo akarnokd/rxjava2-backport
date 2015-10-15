@@ -36,7 +36,7 @@ public final class NbpOperatorMapNotification<T, R> implements NbpOperator<NbpOb
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super NbpObservable<? extends R>> t) {
-        return new MapNotificationSubscriber<>(t, onNextMapper, onErrorMapper, onCompleteSupplier);
+        return new MapNotificationSubscriber<T, R>(t, onNextMapper, onErrorMapper, onCompleteSupplier);
     }
     
     static final class MapNotificationSubscriber<T, R>

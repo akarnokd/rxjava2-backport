@@ -25,7 +25,7 @@ public class NbpObservableWindowTests {
 
     @Test
     public void testWindow() {
-        final ArrayList<List<Integer>> lists = new ArrayList<>();
+        final ArrayList<List<Integer>> lists = new ArrayList<T>();
 
         NbpObservable.concat(
             NbpObservable.just(1, 2, 3, 4, 5, 6)

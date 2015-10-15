@@ -33,7 +33,7 @@ public final class NbpOperatorMap<T, U> implements NbpOperator<U, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super U> t) {
-        return new MapperSubscriber<>(t, function);
+        return new MapperSubscriber<T, U>(t, function);
     }
     
     static final class MapperSubscriber<T, U> implements NbpSubscriber<T> {

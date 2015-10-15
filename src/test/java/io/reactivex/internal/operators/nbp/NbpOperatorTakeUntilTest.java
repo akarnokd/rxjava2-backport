@@ -188,7 +188,7 @@ public class NbpOperatorTakeUntilTest {
         NbpPublishSubject<Integer> source = NbpPublishSubject.create();
         NbpPublishSubject<Integer> until = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.takeUntil(until).unsafeSubscribe(ts);
 
@@ -213,7 +213,7 @@ public class NbpOperatorTakeUntilTest {
         NbpPublishSubject<Integer> source = NbpPublishSubject.create();
         NbpPublishSubject<Integer> until = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.takeUntil(until).unsafeSubscribe(ts);
 
@@ -236,7 +236,7 @@ public class NbpOperatorTakeUntilTest {
         NbpPublishSubject<Integer> source = NbpPublishSubject.create();
         NbpPublishSubject<Integer> until = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.takeUntil(until).take(1).unsafeSubscribe(ts);
 

@@ -235,7 +235,7 @@ public class OperatorRetryWithPredicateTest {
                 .create(so)
                 .retry(retry5);
 
-        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<>(observer);
+        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<T>(observer);
 
         o.subscribe(async);
 
@@ -262,7 +262,7 @@ public class OperatorRetryWithPredicateTest {
                 .timeout(80, TimeUnit.MILLISECONDS)
                 .retry(retry5);
 
-        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<>(observer);
+        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<T>(observer);
 
         o.subscribe(async);
 
@@ -278,7 +278,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue2826() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         final RuntimeException e = new RuntimeException("You shall not pass");
         final AtomicInteger c = new AtomicInteger();
         Observable.just(1).map(new Function<Integer, Integer>() {
@@ -311,7 +311,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue3008RetryWithPredicate() {
-        final List<Long> list = new CopyOnWriteArrayList<>();
+        final List<Long> list = new CopyOnWriteArrayList<T>();
         final AtomicBoolean isFirst = new AtomicBoolean(true);
         Observable.<Long> just(1L, 2L, 3L).map(new Function<Long, Long>(){
             @Override
@@ -339,7 +339,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue3008RetryInfinite() {
-        final List<Long> list = new CopyOnWriteArrayList<>();
+        final List<Long> list = new CopyOnWriteArrayList<T>();
         final AtomicBoolean isFirst = new AtomicBoolean(true);
         Observable.<Long> just(1L, 2L, 3L).map(new Function<Long, Long>(){
             @Override
@@ -363,7 +363,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testBackpressure() {
-        final List<Long> requests = new ArrayList<>();
+        final List<Long> requests = new ArrayList<T>();
         
         Observable<Integer> source = Observable
                 .just(1)
@@ -375,7 +375,7 @@ public class OperatorRetryWithPredicateTest {
                     }
                 });
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>(3L);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(3L);
         source
         .retry(new BiPredicate<Integer, Throwable>() {
             @Override

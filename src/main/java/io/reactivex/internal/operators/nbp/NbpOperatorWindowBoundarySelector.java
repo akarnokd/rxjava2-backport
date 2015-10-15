@@ -15,11 +15,11 @@ package io.reactivex.internal.operators.nbp;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable;
 import io.reactivex.NbpObservable.*;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.disposables.SetCompositeResource;
 import io.reactivex.internal.queue.MpscLinkedQueue;
 import io.reactivex.internal.subscribers.nbp.*;
@@ -43,8 +43,8 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
 
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super NbpObservable<T>> t) {
-        return new WindowBoundaryMainSubscriber<>(
-                new NbpSerializedSubscriber<>(t), 
+        return new WindowBoundaryMainSubscriber<T, B, V>(
+                new NbpSerializedSubscriber<NbpObservable<T>>(t), 
                 open, close, bufferSize);
     }
     
@@ -63,7 +63,10 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
         static final AtomicReferenceFieldUpdater<WindowBoundaryMainSubscriber, Disposable> BOUNDARY =
                 AtomicReferenceFieldUpdater.newUpdater(WindowBoundaryMainSubscriber.class, Disposable.class, "boundary");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         final List<NbpUnicastSubject<T>> ws;
         
@@ -74,12 +77,12 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
 
         public WindowBoundaryMainSubscriber(NbpSubscriber<? super NbpObservable<T>> actual,
                 NbpObservable<B> open, Function<? super B, ? extends NbpObservable<V>> close, int bufferSize) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<Object>());
             this.open = open;
             this.close = close;
             this.bufferSize = bufferSize;
-            this.resources = new SetCompositeResource<>(Disposables.consumeAndDispose());
-            this.ws = new ArrayList<>();
+            this.resources = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
+            this.ws = new ArrayList<NbpUnicastSubject<T>>();
             WINDOWS.lazySet(this, 1);
         }
         
@@ -97,7 +100,7 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
                 return;
             }
             
-            OperatorWindowBoundaryOpenSubscriber<T, B> os = new OperatorWindowBoundaryOpenSubscriber<>(this);
+            OperatorWindowBoundaryOpenSubscriber<T, B> os = new OperatorWindowBoundaryOpenSubscriber<T, B>(this);
             
             if (BOUNDARY.compareAndSet(this, null, os)) {
                 WINDOWS.getAndIncrement(this);
@@ -277,7 +280,7 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
                             continue;
                         }
                         
-                        OperatorWindowBoundaryCloseSubscriber<T, V> cl = new OperatorWindowBoundaryCloseSubscriber<>(this, w);
+                        OperatorWindowBoundaryCloseSubscriber<T, V> cl = new OperatorWindowBoundaryCloseSubscriber<T, V>(this, w);
                         
                         if (resources.add(cl)) {
                             WINDOWS.getAndIncrement(this);
@@ -289,7 +292,7 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
                     }
                     
                     for (NbpUnicastSubject<T> w : ws) {
-                        w.onNext(NotificationLite.getValue(o));
+                        w.onNext(NotificationLite.<T>getValue(o));
                     }
                 }
                 
@@ -305,7 +308,7 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
         }
         
         void open(B b) {
-            queue.offer(new WindowOperation<>(null, b));
+            queue.offer(new WindowOperation<Object, B>(null, b));
             if (enter()) {
                 drainLoop();
             }
@@ -313,7 +316,7 @@ public final class NbpOperatorWindowBoundarySelector<T, B, V> implements NbpOper
         
         void close(OperatorWindowBoundaryCloseSubscriber<T, V> w) {
             resources.delete(w);
-            queue.offer(new WindowOperation<>(w.w, null));
+            queue.offer(new WindowOperation<T, Object>(w.w, null));
             if (enter()) {
                 drainLoop();
             }

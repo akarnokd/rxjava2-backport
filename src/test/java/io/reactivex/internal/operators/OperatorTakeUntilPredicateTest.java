@@ -102,7 +102,7 @@ public class OperatorTakeUntilPredicateTest {
     }
     @Test
     public void backpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>(5L);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(5L);
         
         Observable.range(1, 1000).takeUntil(v -> false).subscribe(ts);
         
@@ -113,7 +113,7 @@ public class OperatorTakeUntilPredicateTest {
     
     @Test
     public void testErrorIncludesLastValueAsCause() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         final TestException e = new TestException("Forced failure");
         Observable.just("abc").takeUntil((Predicate<String>)(t -> {
                 throw e;

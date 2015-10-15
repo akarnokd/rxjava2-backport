@@ -28,7 +28,7 @@ public final class NbpOperatorTakeLast<T> implements NbpOperator<T, T> {
 
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new TakeLastSubscriber<>(t, count);
+        return new TakeLastSubscriber<T>(t, count);
     }
     
     static final class TakeLastSubscriber<T> extends ArrayDeque<T> implements NbpSubscriber<T>, Disposable {

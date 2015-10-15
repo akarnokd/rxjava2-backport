@@ -106,7 +106,7 @@ public class OperatorTakeLastTest {
 
     @Test
     public void testBackpressure1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(1, 100000).takeLast(1)
         .observeOn(Schedulers.newThread())
         .map(newSlowProcessor()).subscribe(ts);
@@ -117,7 +117,7 @@ public class OperatorTakeLastTest {
 
     @Test
     public void testBackpressure2() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(1, 100000).takeLast(Observable.bufferSize() * 4)
         .observeOn(Schedulers.newThread()).map(newSlowProcessor()).subscribe(ts);
         ts.awaitTerminalEvent();
@@ -288,7 +288,7 @@ public class OperatorTakeLastTest {
     
     @Test(timeout=10000)
     public void testRequestOverflow() {
-        final List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<T>();
         Observable.range(1, 100).takeLast(50).subscribe(new Observer<Integer>() {
 
             @Override

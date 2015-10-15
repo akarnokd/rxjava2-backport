@@ -42,7 +42,7 @@ public final class NbpOperatorTakeLastTimed<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new TakeLastTimedSubscriber<>(t, count, time, unit, scheduler, bufferSize, delayError);
+        return new TakeLastTimedSubscriber<T>(t, count, time, unit, scheduler, bufferSize, delayError);
     }
     
     static final class TakeLastTimedSubscriber<T> extends AtomicInteger implements NbpSubscriber<T>, Disposable {
@@ -69,7 +69,7 @@ public final class NbpOperatorTakeLastTimed<T> implements NbpOperator<T, T> {
             this.time = time;
             this.unit = unit;
             this.scheduler = scheduler;
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.queue = new SpscLinkedArrayQueue<Object>(bufferSize);
             this.delayError = delayError;
         }
         

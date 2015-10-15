@@ -233,7 +233,7 @@ public class NbpOperatorRetryWithPredicateTest {
                 .create(so)
                 .retry(retry5);
 
-        NbpOperatorRetryTest.AsyncObserver<Long> async = new NbpOperatorRetryTest.AsyncObserver<>(NbpObserver);
+        NbpOperatorRetryTest.AsyncObserver<Long> async = new NbpOperatorRetryTest.AsyncObserver<T>(NbpObserver);
 
         o.subscribe(async);
 
@@ -260,7 +260,7 @@ public class NbpOperatorRetryWithPredicateTest {
                 .timeout(80, TimeUnit.MILLISECONDS)
                 .retry(retry5);
 
-        NbpOperatorRetryTest.AsyncObserver<Long> async = new NbpOperatorRetryTest.AsyncObserver<>(NbpObserver);
+        NbpOperatorRetryTest.AsyncObserver<Long> async = new NbpOperatorRetryTest.AsyncObserver<T>(NbpObserver);
 
         o.subscribe(async);
 
@@ -276,7 +276,7 @@ public class NbpOperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue2826() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         final RuntimeException e = new RuntimeException("You shall not pass");
         final AtomicInteger c = new AtomicInteger();
         NbpObservable.just(1).map(new Function<Integer, Integer>() {
@@ -309,7 +309,7 @@ public class NbpOperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue3008RetryWithPredicate() {
-        final List<Long> list = new CopyOnWriteArrayList<>();
+        final List<Long> list = new CopyOnWriteArrayList<T>();
         final AtomicBoolean isFirst = new AtomicBoolean(true);
         NbpObservable.<Long> just(1L, 2L, 3L).map(new Function<Long, Long>(){
             @Override
@@ -337,7 +337,7 @@ public class NbpOperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue3008RetryInfinite() {
-        final List<Long> list = new CopyOnWriteArrayList<>();
+        final List<Long> list = new CopyOnWriteArrayList<T>();
         final AtomicBoolean isFirst = new AtomicBoolean(true);
         NbpObservable.<Long> just(1L, 2L, 3L).map(new Function<Long, Long>(){
             @Override

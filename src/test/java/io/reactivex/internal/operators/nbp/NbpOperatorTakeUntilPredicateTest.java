@@ -103,7 +103,7 @@ public class NbpOperatorTakeUntilPredicateTest {
     
     @Test
     public void testErrorIncludesLastValueAsCause() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         final TestException e = new TestException("Forced failure");
         NbpObservable.just("abc").takeUntil((Predicate<String>)(t -> {
                 throw e;

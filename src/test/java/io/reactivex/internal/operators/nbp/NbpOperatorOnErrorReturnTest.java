@@ -35,7 +35,7 @@ public class NbpOperatorOnErrorReturnTest {
     public void testResumeNext() {
         TestObservable f = new TestObservable("one");
         NbpObservable<String> w = NbpObservable.create(f);
-        final AtomicReference<Throwable> capturedException = new AtomicReference<>();
+        final AtomicReference<Throwable> capturedException = new AtomicReference<T>();
 
         NbpObservable<String> NbpObservable = w.onErrorReturn(new Function<Throwable, String>() {
 
@@ -71,7 +71,7 @@ public class NbpOperatorOnErrorReturnTest {
     public void testFunctionThrowsError() {
         TestObservable f = new TestObservable("one");
         NbpObservable<String> w = NbpObservable.create(f);
-        final AtomicReference<Throwable> capturedException = new AtomicReference<>();
+        final AtomicReference<Throwable> capturedException = new AtomicReference<T>();
 
         NbpObservable<String> NbpObservable = w.onErrorReturn(new Function<Throwable, String>() {
 
@@ -130,7 +130,7 @@ public class NbpOperatorOnErrorReturnTest {
 
         @SuppressWarnings("unchecked")
         NbpObserver<String> NbpObserver = mock(NbpObserver.class);
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
         NbpObservable.subscribe(ts);
         ts.awaitTerminalEvent();
 
@@ -144,7 +144,7 @@ public class NbpOperatorOnErrorReturnTest {
     
     @Test
     public void testBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(0, 100000)
                 .onErrorReturn(new Function<Throwable, Integer>() {
 

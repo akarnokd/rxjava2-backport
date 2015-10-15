@@ -30,7 +30,7 @@ public class OperatorOnBackpressureBufferTest {
 
     @Test
     public void testNoBackpressureSupport() {
-        TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         // this will be ignored
         ts.request(100);
         // we take 500 so it unsubscribes
@@ -44,7 +44,7 @@ public class OperatorOnBackpressureBufferTest {
     public void testFixBackpressureWithBuffer() throws InterruptedException {
         final CountDownLatch l1 = new CountDownLatch(100);
         final CountDownLatch l2 = new CountDownLatch(150);
-        TestSubscriber<Long> ts = new TestSubscriber<>(new Observer<Long>() {
+        TestSubscriber<Long> ts = new TestSubscriber<T>(new Observer<Long>() {
 
             @Override
             protected void onStart() {
@@ -101,7 +101,7 @@ public class OperatorOnBackpressureBufferTest {
     public void testFixBackpressureBoundedBuffer() throws InterruptedException {
         final CountDownLatch l1 = new CountDownLatch(100);
         final CountDownLatch backpressureCallback = new CountDownLatch(1);
-        TestSubscriber<Long> ts = new TestSubscriber<>(new Observer<Long>() {
+        TestSubscriber<Long> ts = new TestSubscriber<T>(new Observer<Long>() {
 
             @Override
             protected void onStart() {

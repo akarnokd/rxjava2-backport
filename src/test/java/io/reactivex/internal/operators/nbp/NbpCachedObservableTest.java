@@ -36,7 +36,7 @@ public class NbpCachedObservableTest {
         
         assertFalse("Source is connected!", source.isConnected());
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.subscribe(ts);
 
@@ -109,7 +109,7 @@ public class NbpCachedObservableTest {
     
     @Test
     public void testTake() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
 
         NbpCachedObservable<Integer> cached = NbpCachedObservable.from(NbpObservable.range(1, 100));
         cached.take(10).subscribe(ts);
@@ -125,7 +125,7 @@ public class NbpCachedObservableTest {
     public void testAsync() {
         NbpObservable<Integer> source = NbpObservable.range(1, 10000);
         for (int i = 0; i < 100; i++) {
-            NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<T>();
             
             NbpCachedObservable<Integer> cached = NbpCachedObservable.from(source);
             
@@ -136,7 +136,7 @@ public class NbpCachedObservableTest {
             ts1.assertComplete();
             assertEquals(10000, ts1.values().size());
             
-            NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<T>();
             cached.observeOn(Schedulers.computation()).subscribe(ts2);
             
             ts2.awaitTerminalEvent(2, TimeUnit.SECONDS);
@@ -154,14 +154,14 @@ public class NbpCachedObservableTest {
         
         NbpObservable<Long> output = cached.observeOn(Schedulers.computation());
         
-        List<NbpTestSubscriber<Long>> list = new ArrayList<>(100);
+        List<NbpTestSubscriber<Long>> list = new ArrayList<T>(100);
         for (int i = 0; i < 100; i++) {
-            NbpTestSubscriber<Long> ts = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Long> ts = new NbpTestSubscriber<T>();
             list.add(ts);
             output.skip(i * 10).take(10).subscribe(ts);
         }
 
-        List<Long> expected = new ArrayList<>();
+        List<Long> expected = new ArrayList<T>();
         for (int i = 0; i < 10; i++) {
             expected.add((long)(i - 10));
         }
@@ -195,7 +195,7 @@ public class NbpCachedObservableTest {
             }
         });
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         firehose.cache().observeOn(Schedulers.computation()).takeLast(100).subscribe(ts);
         
         ts.awaitTerminalEvent(3, TimeUnit.SECONDS);
@@ -212,14 +212,14 @@ public class NbpCachedObservableTest {
                 .cache();
         
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         source.subscribe(ts);
         
         ts.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         ts.assertNotComplete();
         ts.assertError(TestException.class);
         
-        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<T>();
         source.subscribe(ts2);
         
         ts2.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

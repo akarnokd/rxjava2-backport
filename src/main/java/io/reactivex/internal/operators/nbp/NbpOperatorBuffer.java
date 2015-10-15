@@ -37,13 +37,13 @@ public final class NbpOperatorBuffer<T, U extends Collection<? super T>> impleme
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super U> t) {
         if (skip == count) {
-            BufferExactSubscriber<T, U> bes = new BufferExactSubscriber<>(t, count, bufferSupplier);
+            BufferExactSubscriber<T, U> bes = new BufferExactSubscriber<T, U>(t, count, bufferSupplier);
             if (bes.createBuffer()) {
                 return bes;
             }
             return NbpEmptySubscriber.INSTANCE;
         }
-        return new BufferSkipSubscriber<>(t, count, skip, bufferSupplier);
+        return new BufferSkipSubscriber<T, U>(t, count, skip, bufferSupplier);
     }
     
     static final class BufferExactSubscriber<T, U extends Collection<? super T>> implements NbpSubscriber<T> {
@@ -155,7 +155,7 @@ public final class NbpOperatorBuffer<T, U extends Collection<? super T>> impleme
             this.count = count;
             this.skip = skip;
             this.bufferSupplier = bufferSupplier;
-            this.buffers = new ArrayDeque<>();
+            this.buffers = new ArrayDeque<U>();
         }
 
         @Override

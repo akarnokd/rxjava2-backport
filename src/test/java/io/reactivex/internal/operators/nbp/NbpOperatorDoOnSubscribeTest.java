@@ -56,7 +56,7 @@ public class NbpOperatorDoOnSubscribeTest {
         final AtomicInteger onSubscribed = new AtomicInteger();
         final AtomicInteger countBefore = new AtomicInteger();
         final AtomicInteger countAfter = new AtomicInteger();
-        final AtomicReference<NbpSubscriber<? super Integer>> sref = new AtomicReference<>();
+        final AtomicReference<NbpSubscriber<? super Integer>> sref = new AtomicReference<T>();
         NbpObservable<Integer> o = NbpObservable.create(new NbpOnSubscribe<Integer>() {
 
             @Override

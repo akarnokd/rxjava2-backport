@@ -224,7 +224,7 @@ public class NbpOperatorTakeWhileTest {
                 return t1 < 2;
             }
         });
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.unsafeSubscribe(ts);
         
@@ -236,7 +236,7 @@ public class NbpOperatorTakeWhileTest {
     
     @Test
     public void testErrorCauseIncludesLastValue() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.just("abc").takeWhile(new Predicate<String>() {
             @Override
             public boolean test(String t1) {

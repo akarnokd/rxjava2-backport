@@ -25,7 +25,7 @@ public class NbpObservableDoOnTest {
 
     @Test
     public void testDoOnEach() {
-        final AtomicReference<String> r = new AtomicReference<>();
+        final AtomicReference<String> r = new AtomicReference<T>();
         String output = NbpObservable.just("one").doOnNext(r::set).toBlocking().single();
 
         assertEquals("one", output);
@@ -34,7 +34,7 @@ public class NbpObservableDoOnTest {
 
     @Test
     public void testDoOnError() {
-        final AtomicReference<Throwable> r = new AtomicReference<>();
+        final AtomicReference<Throwable> r = new AtomicReference<T>();
         Throwable t = null;
         try {
             NbpObservable.<String> error(new RuntimeException("an error"))

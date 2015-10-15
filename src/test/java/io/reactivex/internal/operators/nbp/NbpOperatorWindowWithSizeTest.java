@@ -32,7 +32,7 @@ public class NbpOperatorWindowWithSizeTest {
 
     private static <T> List<List<T>> toLists(NbpObservable<NbpObservable<T>> observables) {
 
-        final List<List<T>> lists = new ArrayList<>();
+        final List<List<T>> lists = new ArrayList<T>();
         NbpObservable.concat(observables.map(new Function<NbpObservable<T>, NbpObservable<List<T>>>() {
             @Override
             public NbpObservable<List<T>> apply(NbpObservable<T> xs) {
@@ -103,7 +103,7 @@ public class NbpOperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeNonOverlapping() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         NbpObservable.merge(NbpObservable.range(1, 10000).doOnNext(new Consumer<Integer>() {
 
@@ -122,7 +122,7 @@ public class NbpOperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeNonOverlappingAsyncSource() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         NbpObservable.merge(NbpObservable.range(1, 100000)
                 .doOnNext(new Consumer<Integer>() {
@@ -146,7 +146,7 @@ public class NbpOperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeOverlapping() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         NbpObservable.merge(NbpObservable.range(1, 10000).doOnNext(new Consumer<Integer>() {
 
@@ -165,7 +165,7 @@ public class NbpOperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeOverlappingAsyncSource() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         NbpObservable.merge(NbpObservable.range(1, 100000)
                 .doOnNext(new Consumer<Integer>() {
@@ -188,7 +188,7 @@ public class NbpOperatorWindowWithSizeTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -222,7 +222,7 @@ public class NbpOperatorWindowWithSizeTest {
     
     @Test
     public void testTakeFlatMapCompletes() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         final int indicator = 999999999;
         

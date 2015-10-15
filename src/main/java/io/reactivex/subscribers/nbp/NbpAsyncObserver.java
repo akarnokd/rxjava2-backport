@@ -58,7 +58,7 @@ public abstract class NbpAsyncObserver<T> implements NbpSubscriber<T>, Disposabl
      * @param withResources true if resource support should be on.
      */
     public NbpAsyncObserver(boolean withResources) {
-        this.resources = withResources ? new ListCompositeResource<>(Disposables.consumeAndDispose()) : null;
+        this.resources = withResources ? new ListCompositeResource<T>(Disposables.consumeAndDispose()) : null;
     }
 
     /**

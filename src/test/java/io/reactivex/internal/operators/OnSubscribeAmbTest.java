@@ -160,7 +160,7 @@ public class OnSubscribeAmbTest {
 
     @Test
     public void testProducerRequestThroughAmb() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         ts.request(3);
         final AtomicLong requested1 = new AtomicLong();
         final AtomicLong requested2 = new AtomicLong();
@@ -211,7 +211,7 @@ public class OnSubscribeAmbTest {
 
     @Test
     public void testBackpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(0, Observable.bufferSize() * 2)
                 .ambWith(Observable.range(0, Observable.bufferSize() * 2))
                 .observeOn(Schedulers.computation()) // observeOn has a backpressured RxRingBuffer
@@ -235,7 +235,7 @@ public class OnSubscribeAmbTest {
         //this stream emits second
         Observable<Integer> o2 = Observable.just(1).doOnSubscribe(incrementer)
                 .delay(100, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.computation());
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.amb(o1, o2).subscribe(ts);
         ts.request(1);
         ts.awaitTerminalEvent(5, TimeUnit.SECONDS);
@@ -251,7 +251,7 @@ public class OnSubscribeAmbTest {
         //this stream emits second
         Observable<Integer> o2 = Observable.fromArray(4, 5, 6)
                 .delay(200, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.computation());
-        TestSubscriber<Integer> ts = new TestSubscriber<>(1L);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(1L);
         
         Observable.amb(o1, o2).subscribe(ts);
         // before first emission request 20 more
@@ -285,7 +285,7 @@ public class OnSubscribeAmbTest {
         PublishSubject<Integer> source2 = PublishSubject.create();
         PublishSubject<Integer> source3 = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         Observable.amb(source1, source2, source3).subscribe(ts);
         

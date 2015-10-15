@@ -127,7 +127,7 @@ public class NbpBehaviorSubjectTest {
         NbpSubscriber<Object> observerB = TestHelper.mockNbpSubscriber();
         NbpSubscriber<Object> observerC = TestHelper.mockNbpSubscriber();
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(observerA);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(observerA);
         
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -358,7 +358,7 @@ public class NbpBehaviorSubjectTest {
 //        NbpBehaviorSubject<String> ps = NbpBehaviorSubject.create();
 //
 //        ps.subscribe();
-//        TestNbpSubscriber<String> ts = new TestNbpSubscriber<>();
+//        TestNbpSubscriber<String> ts = new TestNbpSubscriber<T>();
 //        ps.subscribe(ts);
 //
 //        try {
@@ -423,7 +423,7 @@ public class NbpBehaviorSubjectTest {
                     }
                 });
                 
-                final AtomicReference<Object> o = new AtomicReference<>();
+                final AtomicReference<Object> o = new AtomicReference<T>();
                 
                 rs.subscribeOn(s).observeOn(Schedulers.io())
                 .subscribe(new NbpObserver<Object>() {

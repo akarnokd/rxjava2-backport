@@ -73,8 +73,8 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
      */
     public NbpTestSubscriber(NbpSubscriber<? super T> actual) {
         this.actual = actual;
-        this.values = new ArrayList<>();
-        this.errors = new ArrayList<>();
+        this.values = new ArrayList<T>();
+        this.errors = new ArrayList<T>();
         this.done = new CountDownLatch(1);
     }
     
@@ -646,13 +646,13 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<List<Object>> getEvents() {
-        List<List<Object>> result = new ArrayList<>();
+        List<List<Object>> result = new ArrayList<T>();
         
         result.add((List)values());
         
         result.add((List)errors());
         
-        List<Object> completeList = new ArrayList<>();
+        List<Object> completeList = new ArrayList<T>();
         for (long i = 0; i < completions; i++) {
             completeList.add(Notification.complete());
         }

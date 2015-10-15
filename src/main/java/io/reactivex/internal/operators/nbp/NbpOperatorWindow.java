@@ -36,9 +36,9 @@ public final class NbpOperatorWindow<T> implements NbpOperator<NbpObservable<T>,
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super NbpObservable<T>> t) {
         if (count == skip) {
-            return new WindowExactSubscriber<>(t, count, capacityHint);
+            return new WindowExactSubscriber<T>(t, count, capacityHint);
         }
-        return new WindowSkipSubscriber<>(t, count, skip, capacityHint);
+        return new WindowSkipSubscriber<T>(t, count, skip, capacityHint);
     }
     
     static final class WindowExactSubscriber<T>
@@ -157,7 +157,7 @@ public final class NbpOperatorWindow<T> implements NbpOperator<NbpObservable<T>,
             this.count = count;
             this.skip = skip;
             this.capacityHint = capacityHint;
-            this.windows = new ArrayDeque<>();
+            this.windows = new ArrayDeque<NbpUnicastSubject<T>>();
         }
         
         @Override

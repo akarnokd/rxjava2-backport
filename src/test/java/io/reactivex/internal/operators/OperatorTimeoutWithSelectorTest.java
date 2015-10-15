@@ -371,7 +371,7 @@ public class OperatorTimeoutWithSelectorTest {
 
         }).when(o).onComplete();
 
-        final TestSubscriber<Integer> ts = new TestSubscriber<>(o);
+        final TestSubscriber<Integer> ts = new TestSubscriber<T>(o);
 
         new Thread(new Runnable() {
 

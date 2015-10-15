@@ -94,7 +94,7 @@ public class NbpOperatorDematerializeTest {
 
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>(NbpObserver);
         dematerialize.subscribe(ts);
 
         System.out.println(ts.errors());

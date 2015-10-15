@@ -52,7 +52,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new TestException();
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         try {
             safe.onComplete();
             Assert.fail();
@@ -70,7 +70,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new OnErrorNotImplementedException(new TestException());
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         
         try {
             safe.onComplete();
@@ -95,7 +95,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new TestException();
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         
         safe.onComplete();
     }
@@ -113,8 +113,8 @@ public class SafeSubscriberWithPluginTest {
             }
         });
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         safe.onSubscribe(new SubscriptionCancelThrows());
         
         safe.onError(new TestException());
@@ -139,7 +139,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new OnErrorNotImplementedException(e);
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         safe.onSubscribe(new SubscriptionCancelThrows());
         
         safe.onError(new TestException());
@@ -164,7 +164,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new RuntimeException(e);
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         
         safe.onError(new TestException());
     }
@@ -187,7 +187,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new RuntimeException(e);
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         safe.onSubscribe(new SubscriptionCancelThrows());
         
         safe.onError(new TestException());
@@ -211,7 +211,7 @@ public class SafeSubscriberWithPluginTest {
                 throw new RuntimeException(e);
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         safe.onSubscribe(new SubscriptionCancelThrows());
         
         safe.onError(new TestException());
@@ -236,7 +236,7 @@ public class SafeSubscriberWithPluginTest {
             }
         };
         final RuntimeException ex = new RuntimeException();
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         safe.onSubscribe(new Subscription() {
             @Override
             public void cancel() {
@@ -279,7 +279,7 @@ public class SafeSubscriberWithPluginTest {
                 errors.incrementAndGet();
             }
         };
-        SafeSubscriber<Integer> safe = new SafeSubscriber<>(ts);
+        SafeSubscriber<Integer> safe = new SafeSubscriber<T>(ts);
         safe.onSubscribe(new SubscriptionCancelThrows());
         
         try {

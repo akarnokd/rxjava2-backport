@@ -14,11 +14,11 @@
 package io.reactivex.internal.operators.nbp;
 
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable;
 import io.reactivex.NbpObservable.*;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.subscribers.nbp.NbpDisposableSubscriber;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -33,7 +33,7 @@ public final class NbpOperatorDebounce<T, U> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new DebounceSubscriber<>(new NbpSerializedSubscriber<>(t), debounceSelector);
+        return new DebounceSubscriber<T, U>(new NbpSerializedSubscriber<T>(t), debounceSelector);
     }
     
     static final class DebounceSubscriber<T, U> 
@@ -50,7 +50,10 @@ public final class NbpOperatorDebounce<T, U> implements NbpOperator<T, T> {
         static final AtomicReferenceFieldUpdater<DebounceSubscriber, Disposable> DEBOUNCER =
                 AtomicReferenceFieldUpdater.newUpdater(DebounceSubscriber.class, Disposable.class, "debouncer");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
         volatile long index;
         
@@ -102,7 +105,7 @@ public final class NbpOperatorDebounce<T, U> implements NbpOperator<T, T> {
                 return;
             }
             
-            DebounceInnerSubscriber<T, U> dis = new DebounceInnerSubscriber<>(this, idx, t);
+            DebounceInnerSubscriber<T, U> dis = new DebounceInnerSubscriber<T, U>(this, idx, t);
             
             if (DEBOUNCER.compareAndSet(this, d, dis)) {
                 p.subscribe(dis);

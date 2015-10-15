@@ -18,6 +18,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import io.reactivex.*;
+import io.reactivex.Optional;
 import io.reactivex.internal.subscribers.nbp.NbpDisposableSubscriber;
 import io.reactivex.internal.util.Exceptions;
 

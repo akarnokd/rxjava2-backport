@@ -41,7 +41,7 @@ public class NbpOperatorToMultimapTest {
 
         NbpObservable<Map<Integer, Collection<String>>> mapped = source.toMultimap(lengthFunc);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(1, Arrays.asList("a", "b"));
         expected.put(2, Arrays.asList("cc", "dd"));
 
@@ -58,7 +58,7 @@ public class NbpOperatorToMultimapTest {
 
         NbpObservable<Map<Integer, Collection<String>>> mapped = source.toMultimap(lengthFunc, duplicate);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(1, Arrays.asList("aa", "bb"));
         expected.put(2, Arrays.asList("cccc", "dddd"));
 
@@ -94,7 +94,7 @@ public class NbpOperatorToMultimapTest {
                 lengthFunc, identity,
                 mapFactory, ArrayList::new);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(2, Arrays.asList("cc", "dd"));
         expected.put(3, Arrays.asList("eee", "fff"));
 
@@ -111,9 +111,9 @@ public class NbpOperatorToMultimapTest {
 
         Function<Integer, Collection<String>> collectionFactory = t1 -> {
             if (t1 == 2) {
-                return new ArrayList<>();
+                return new ArrayList<T>();
             } else {
-                return new HashSet<>();
+                return new HashSet<T>();
             }
         };
 
@@ -123,9 +123,9 @@ public class NbpOperatorToMultimapTest {
         NbpObservable<Map<Integer, Collection<String>>> mapped = source
                 .toMultimap(lengthFunc, identity, mapSupplier, collectionFactory);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(2, Arrays.asList("cc", "dd"));
-        expected.put(3, new HashSet<>(Arrays.asList("eee")));
+        expected.put(3, new HashSet<T>(Arrays.asList("eee")));
 
         mapped.subscribe(objectObserver);
 
@@ -150,7 +150,7 @@ public class NbpOperatorToMultimapTest {
 
         NbpObservable<Map<Integer, Collection<String>>> mapped = source.toMultimap(lengthFuncErr);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(1, Arrays.asList("a", "b"));
         expected.put(2, Arrays.asList("cc", "dd"));
 
@@ -177,7 +177,7 @@ public class NbpOperatorToMultimapTest {
 
         NbpObservable<Map<Integer, Collection<String>>> mapped = source.toMultimap(lengthFunc, duplicateErr);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(1, Arrays.asList("aa", "bb"));
         expected.put(2, Arrays.asList("cccc", "dddd"));
 
@@ -202,7 +202,7 @@ public class NbpOperatorToMultimapTest {
         NbpObservable<Map<Integer, Collection<String>>> mapped = source
                 .toMultimap(lengthFunc, v -> v, mapFactory);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(2, Arrays.asList("cc", "dd"));
         expected.put(3, Arrays.asList("eee", "fff"));
 
@@ -221,7 +221,7 @@ public class NbpOperatorToMultimapTest {
             if (t1 == 2) {
                 throw new RuntimeException("Forced failure");
             } else {
-                return new HashSet<>();
+                return new HashSet<T>();
             }
         };
 
@@ -231,7 +231,7 @@ public class NbpOperatorToMultimapTest {
         NbpObservable<Map<Integer, Collection<String>>> mapped = source.toMultimap(lengthFunc, 
                 identity, mapSupplier, collectionFactory);
 
-        Map<Integer, Collection<String>> expected = new HashMap<>();
+        Map<Integer, Collection<String>> expected = new HashMap<T>();
         expected.put(2, Arrays.asList("cc", "dd"));
         expected.put(3, Collections.singleton("eee"));
 

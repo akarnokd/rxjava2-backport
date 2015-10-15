@@ -242,7 +242,7 @@ public class NbpOnSubscribeUsingTest {
 
     @Test
     public void testUsingDisposesEagerlyBeforeCompletion() {
-        final List<String> events = new ArrayList<>();
+        final List<String> events = new ArrayList<T>();
         Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Runnable completion = createOnCompletedAction(events);
         final Runnable unsub =createUnsubAction(events);
@@ -264,7 +264,7 @@ public class NbpOnSubscribeUsingTest {
 
     @Test
     public void testUsingDoesNotDisposesEagerlyBeforeCompletion() {
-        final List<String> events = new ArrayList<>();
+        final List<String> events = new ArrayList<T>();
         Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Runnable completion = createOnCompletedAction(events);
         final Runnable unsub = createUnsubAction(events);
@@ -293,7 +293,7 @@ public class NbpOnSubscribeUsingTest {
     
     @Test
     public void testUsingDisposesEagerlyBeforeError() {
-        final List<String> events = new ArrayList<>();
+        final List<String> events = new ArrayList<T>();
         Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Consumer<Throwable> onError = createOnErrorAction(events);
         final Runnable unsub = createUnsubAction(events);
@@ -321,7 +321,7 @@ public class NbpOnSubscribeUsingTest {
     
     @Test
     public void testUsingDoesNotDisposesEagerlyBeforeError() {
-        final List<String> events = new ArrayList<>();
+        final List<String> events = new ArrayList<T>();
         final Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Consumer<Throwable> onError = createOnErrorAction(events);
         final Runnable unsub = createUnsubAction(events);

@@ -26,7 +26,7 @@ public final class NbpOperatorAny<T> implements NbpOperator<Boolean, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super Boolean> t) {
-        return new AnySubscriber<>(t, predicate);
+        return new AnySubscriber<T>(t, predicate);
     }
     
     static final class AnySubscriber<T> implements NbpSubscriber<T> {

@@ -36,7 +36,7 @@ public class OperatorWindowWithSizeTest {
 
     private static <T> List<List<T>> toLists(Observable<Observable<T>> observables) {
 
-        final List<List<T>> lists = new ArrayList<>();
+        final List<List<T>> lists = new ArrayList<T>();
         Observable.concat(observables.map(new Function<Observable<T>, Observable<List<T>>>() {
             @Override
             public Observable<List<T>> apply(Observable<T> xs) {
@@ -107,7 +107,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeNonOverlapping() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 10000).doOnNext(new Consumer<Integer>() {
 
@@ -126,7 +126,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeNonOverlappingAsyncSource() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 100000)
                 .doOnNext(new Consumer<Integer>() {
@@ -150,7 +150,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeOverlapping() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 10000).doOnNext(new Consumer<Integer>() {
 
@@ -169,7 +169,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeOverlappingAsyncSource() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 100000)
                 .doOnNext(new Consumer<Integer>() {
@@ -192,7 +192,7 @@ public class OperatorWindowWithSizeTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -203,7 +203,7 @@ public class OperatorWindowWithSizeTest {
     public void testBackpressureOuter() {
         Observable<Observable<Integer>> source = Observable.range(1, 10).window(3);
         
-        final List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<T>();
         
         final Subscriber<Integer> o = TestHelper.mockSubscriber();
         
@@ -271,7 +271,7 @@ public class OperatorWindowWithSizeTest {
     
     @Test
     public void testTakeFlatMapCompletes() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         final int indicator = 999999999;
         
@@ -292,7 +292,7 @@ public class OperatorWindowWithSizeTest {
     
     @Test
     public void testBackpressureOuterInexact() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>((Long)null);
         
         Observable.range(1, 5).window(2, 1)
         .map(new Function<Observable<Integer>, Observable<List<Integer>>>() {

@@ -449,7 +449,7 @@ public class OperatorSwitchTest {
         publishCompleted(o3, 55);
 
         
-        final TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        final TestSubscriber<String> testSubscriber = new TestSubscriber<T>();
         Observable.switchOnNext(o).subscribe(new Observer<String>() {
 
             private int requested = 0;
@@ -547,7 +547,7 @@ public class OperatorSwitchTest {
     
     @Test(timeout = 10000)
     public void testInitialRequestsAreAdditive() {
-        TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         Observable.switchOnNext(
                 Observable.interval(100, TimeUnit.MILLISECONDS)
                           .map(
@@ -566,7 +566,7 @@ public class OperatorSwitchTest {
     
     @Test(timeout = 10000)
     public void testInitialRequestsDontOverflow() {
-        TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         Observable.switchOnNext(
                 Observable.interval(100, TimeUnit.MILLISECONDS)
                         .map(new Function<Long, Observable<Long>>() {
@@ -584,7 +584,7 @@ public class OperatorSwitchTest {
     
     @Test(timeout = 10000)
     public void testSecondaryRequestsDontOverflow() throws InterruptedException {
-        TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         Observable.switchOnNext(
                 Observable.interval(100, TimeUnit.MILLISECONDS)
                         .map(new Function<Long, Observable<Long>>() {
@@ -606,9 +606,9 @@ public class OperatorSwitchTest {
     @Ignore("Request pattern changed and I can't decide if this is okay or not")
     public void testSecondaryRequestsAdditivelyAreMoreThanLongMaxValueInducesMaxValueRequestFromUpstream()
             throws InterruptedException {
-        final List<Long> requests = new CopyOnWriteArrayList<>();
+        final List<Long> requests = new CopyOnWriteArrayList<T>();
 
-        TestSubscriber<Long> ts = new TestSubscriber<>(1L);
+        TestSubscriber<Long> ts = new TestSubscriber<T>(1L);
         Observable.switchOnNext(
                 Observable.interval(100, TimeUnit.MILLISECONDS)
                         .map(new Function<Long, Observable<Long>>() {

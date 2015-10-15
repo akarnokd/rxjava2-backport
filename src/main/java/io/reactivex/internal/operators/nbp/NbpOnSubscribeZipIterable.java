@@ -66,7 +66,7 @@ public final class NbpOnSubscribeZipIterable<T, U, V> implements NbpOnSubscribe<
             return;
         }
         
-        source.subscribe(new ZipIterableSubscriber<>(t, it, zipper));
+        source.subscribe(new ZipIterableSubscriber<T, U, V>(t, it, zipper));
     }
     
     static final class ZipIterableSubscriber<T, U, V> implements NbpSubscriber<T> {

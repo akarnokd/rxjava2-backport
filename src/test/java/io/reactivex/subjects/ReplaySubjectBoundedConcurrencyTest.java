@@ -197,7 +197,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
         }
 
         // assert all threads got the same results
-        List<Long> sums = new ArrayList<>();
+        List<Long> sums = new ArrayList<T>();
         for (List<Long> values : listOfListsOfValues) {
             long v = 0;
             for (long l : values) {
@@ -230,7 +230,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
     public void testSubscribeCompletionRaceCondition() {
         for (int i = 0; i < 50; i++) {
             final ReplaySubject<String> subject = ReplaySubject.createUnbounded();
-            final AtomicReference<String> value1 = new AtomicReference<>();
+            final AtomicReference<String> value1 = new AtomicReference<T>();
 
             subject.subscribe(new Consumer<String>() {
 
@@ -292,7 +292,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
     public void testRaceForTerminalState() {
         final List<Integer> expected = Arrays.asList(1);
         for (int i = 0; i < 100000; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             Observable.just(1).subscribeOn(Schedulers.computation()).cache().subscribe(ts);
             ts.awaitTerminalEvent();
             ts.assertValueSequence(expected);
@@ -303,7 +303,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
     private static class SubjectObserverThread extends Thread {
 
         private final ReplaySubject<String> subject;
-        private final AtomicReference<String> value = new AtomicReference<>();
+        private final AtomicReference<String> value = new AtomicReference<T>();
 
         public SubjectObserverThread(ReplaySubject<String> subject) {
             this.subject = subject;
@@ -349,7 +349,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
                     }
                 });
                 
-                final AtomicReference<Object> o = new AtomicReference<>();
+                final AtomicReference<Object> o = new AtomicReference<T>();
                 
                 rs
 //                .doOnSubscribe(v -> System.out.println("!! " + j))

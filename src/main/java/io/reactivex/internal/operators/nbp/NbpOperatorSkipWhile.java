@@ -27,7 +27,7 @@ public final class NbpOperatorSkipWhile<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> s) {
-        return new SkipWhileSubscriber<>(s, predicate);
+        return new SkipWhileSubscriber<T>(s, predicate);
     }
     
     static final class SkipWhileSubscriber<T> implements NbpSubscriber<T> {

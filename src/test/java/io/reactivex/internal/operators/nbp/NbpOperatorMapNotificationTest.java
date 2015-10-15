@@ -23,7 +23,7 @@ import io.reactivex.subscribers.nbp.NbpTestSubscriber;
 public class NbpOperatorMapNotificationTest {
     @Test
     public void testJust() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1)
         .flatMap(
                 new Function<Integer, NbpObservable<Object>>() {

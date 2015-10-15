@@ -25,7 +25,7 @@ public final class NbpOperatorSwitchIfEmpty<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        SwitchIfEmptySubscriber<T> parent = new SwitchIfEmptySubscriber<>(t, other);
+        SwitchIfEmptySubscriber<T> parent = new SwitchIfEmptySubscriber<T>(t, other);
         t.onSubscribe(parent.arbiter);
         return parent;
     }

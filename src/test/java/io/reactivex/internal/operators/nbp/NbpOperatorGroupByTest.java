@@ -97,7 +97,7 @@ public class NbpOperatorGroupByTest {
 
         final AtomicInteger groupCounter = new AtomicInteger();
         final AtomicInteger eventCounter = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
 
         grouped.flatMap(new Function<NbpGroupedObservable<Integer, String>, NbpObservable<String>>() {
 
@@ -140,7 +140,7 @@ public class NbpOperatorGroupByTest {
 
     private static <K, V> Map<K, Collection<V>> toMap(NbpObservable<NbpGroupedObservable<K, V>> NbpObservable) {
 
-        final ConcurrentHashMap<K, Collection<V>> result = new ConcurrentHashMap<>();
+        final ConcurrentHashMap<K, Collection<V>> result = new ConcurrentHashMap<T>();
 
         NbpObservable.toBlocking().forEach(new Consumer<NbpGroupedObservable<K, V>>() {
 
@@ -582,7 +582,7 @@ public class NbpOperatorGroupByTest {
     @Test
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsAndThenComplete() throws InterruptedException {
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         NbpObservable.create(new NbpOnSubscribe<Integer>() {
 
             @Override
@@ -661,7 +661,7 @@ public class NbpOperatorGroupByTest {
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsWhichThenSubscribesOnAndDelaysAndThenCompletes() throws InterruptedException {
         System.err.println("----------------------------------------------------------------------------------------------");
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         NbpObservable.create(new NbpOnSubscribe<Integer>() {
 
             @Override
@@ -753,7 +753,7 @@ public class NbpOperatorGroupByTest {
     @Test
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsWhichThenObservesOnAndDelaysAndThenCompletes() throws InterruptedException {
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         NbpObservable.create(new NbpOnSubscribe<Integer>() {
 
             @Override
@@ -830,7 +830,7 @@ public class NbpOperatorGroupByTest {
 
     @Test
     public void testGroupsWithNestedSubscribeOn() throws InterruptedException {
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         NbpObservable.create(new NbpOnSubscribe<Integer>() {
 
             @Override
@@ -887,7 +887,7 @@ public class NbpOperatorGroupByTest {
 
     @Test
     public void testGroupsWithNestedObserveOn() throws InterruptedException {
-        final ArrayList<String> results = new ArrayList<>();
+        final ArrayList<String> results = new ArrayList<T>();
         NbpObservable.create(new NbpOnSubscribe<Integer>() {
 
             @Override
@@ -1014,7 +1014,7 @@ public class NbpOperatorGroupByTest {
     @Test
     public void testGroupByBackpressure() throws InterruptedException {
 
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 
         NbpObservable.range(1, 4000)
                 .groupBy(IS_EVEN2)
@@ -1133,7 +1133,7 @@ public class NbpOperatorGroupByTest {
             });
         });
 
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         System.out.println("ts .get " + ts.values());
@@ -1149,7 +1149,7 @@ public class NbpOperatorGroupByTest {
 
         NbpObservable<Integer> m = source.groupBy(fail(0), dbl).flatMap(FLATTEN_INTEGER);
 
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         assertEquals(1, ts.errorCount());
@@ -1161,7 +1161,7 @@ public class NbpOperatorGroupByTest {
         NbpObservable<Integer> source = NbpObservable.just(0, 1, 2, 3, 4, 5, 6);
 
         NbpObservable<Integer> m = source.groupBy(identity, fail(0)).flatMap(FLATTEN_INTEGER);
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         assertEquals(1, ts.errorCount());
@@ -1175,7 +1175,7 @@ public class NbpOperatorGroupByTest {
 
         NbpObservable<Integer> m = source.groupBy(identity, dbl).flatMap(FLATTEN_INTEGER);
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1189,7 +1189,7 @@ public class NbpOperatorGroupByTest {
     public void testExceptionIfSubscribeToChildMoreThanOnce() {
         NbpObservable<Integer> source = NbpObservable.just(0);
 
-        final AtomicReference<NbpGroupedObservable<Integer, Integer>> inner = new AtomicReference<>();
+        final AtomicReference<NbpGroupedObservable<Integer, Integer>> inner = new AtomicReference<T>();
 
         NbpObservable<NbpGroupedObservable<Integer, Integer>> m = source.groupBy(identity, dbl);
 
@@ -1219,7 +1219,7 @@ public class NbpOperatorGroupByTest {
 
         NbpObservable<Integer> m = source.groupBy(identity, dbl).flatMap(FLATTEN_INTEGER);
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         m.subscribe(ts);
         ts.awaitTerminalEvent();
         assertEquals(1, ts.errorCount());
@@ -1228,7 +1228,7 @@ public class NbpOperatorGroupByTest {
 
     @Test
     public void testgroupByBackpressure() throws InterruptedException {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 
         NbpObservable.range(1, 4000).groupBy(IS_EVEN2).flatMap(new Function<NbpGroupedObservable<Boolean, Integer>, NbpObservable<String>>() {
 
@@ -1285,7 +1285,7 @@ public class NbpOperatorGroupByTest {
     @Test
     public void testgroupByBackpressure2() throws InterruptedException {
 
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 
         NbpObservable.range(1, 4000).groupBy(IS_EVEN2).flatMap(new Function<NbpGroupedObservable<Boolean, Integer>, NbpObservable<String>>() {
 
@@ -1326,7 +1326,7 @@ public class NbpOperatorGroupByTest {
     @Test
     public void testGroupByWithNullKey() {
         final String[] key = new String[]{"uninitialized"};
-        final List<String> values = new ArrayList<>();
+        final List<String> values = new ArrayList<T>();
         NbpObservable.just("a", "b", "c").groupBy(new Function<String, String>() {
 
             @Override
@@ -1362,7 +1362,7 @@ public class NbpOperatorGroupByTest {
                     }
                 }
         );
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         o.groupBy(new Function<Integer, Integer>() {
 
@@ -1380,11 +1380,11 @@ public class NbpOperatorGroupByTest {
     @Test
     public void testGroupByShouldPropagateError() {
         final Throwable e = new RuntimeException("Oops");
-        final NbpTestSubscriber<Integer> inner1 = new NbpTestSubscriber<>();
-        final NbpTestSubscriber<Integer> inner2 = new NbpTestSubscriber<>();
+        final NbpTestSubscriber<Integer> inner1 = new NbpTestSubscriber<T>();
+        final NbpTestSubscriber<Integer> inner2 = new NbpTestSubscriber<T>();
 
         final NbpTestSubscriber<NbpGroupedObservable<Integer, Integer>> outer
-                = new NbpTestSubscriber<>(new NbpObserver<NbpGroupedObservable<Integer, Integer>>() {
+                = new NbpTestSubscriber<T>(new NbpObserver<NbpGroupedObservable<Integer, Integer>>() {
 
             @Override
             public void onComplete() {

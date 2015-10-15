@@ -194,7 +194,7 @@ public class OperatorAnyTest {
     
     @Test
     public void testBackpressureIfNoneRequestedNoneShouldBeDelivered() {
-        TestSubscriber<Boolean> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Boolean> ts = new TestSubscriber<T>((Long)null);
         
         Observable.just(1).any(t -> true)
         .subscribe(ts);
@@ -206,7 +206,7 @@ public class OperatorAnyTest {
     
     @Test
     public void testBackpressureIfOneRequestedOneShouldBeDelivered() {
-        TestSubscriber<Boolean> ts = new TestSubscriber<>(1L);
+        TestSubscriber<Boolean> ts = new TestSubscriber<T>(1L);
         Observable.just(1).any(v -> true).subscribe(ts);
         
         ts.assertTerminated();
@@ -217,7 +217,7 @@ public class OperatorAnyTest {
     
     @Test
     public void testPredicateThrowsExceptionAndValueInCauseMessage() {
-        TestSubscriber<Boolean> ts = new TestSubscriber<>();
+        TestSubscriber<Boolean> ts = new TestSubscriber<T>();
         final IllegalArgumentException ex = new IllegalArgumentException();
         
         Observable.just("Boo!").any(v -> {

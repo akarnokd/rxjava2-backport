@@ -13,6 +13,7 @@
 
 package io.reactivex.exceptions;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -95,4 +96,47 @@ public final class CompositeException extends RuntimeException {
         return suppressed.isEmpty() && getCause() == null;
     }
     
+    @Override
+    public void printStackTrace(PrintStream s) {
+        Set<Throwable> memory = new HashSet<Throwable>();
+        super.printStackTrace(s);
+        LinkedList<Throwable> q = new LinkedList<Throwable>();
+        q.addAll(suppressed);
+        
+        while (!q.isEmpty()) {
+            Throwable e = q.poll();
+            if (memory.add(e)) {
+                if (e instanceof CompositeException) {
+                    s.print("Suppressed: ");
+                    s.println(e.getMessage());
+                    CompositeException ce = (CompositeException) e;
+                    q.addAll(0, ce.suppressed);
+                } else {
+                    e.printStackTrace(s);
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        Set<Throwable> memory = new HashSet<Throwable>();
+        super.printStackTrace(s);
+        LinkedList<Throwable> q = new LinkedList<Throwable>();
+        q.addAll(suppressed);
+        
+        while (!q.isEmpty()) {
+            Throwable e = q.poll();
+            if (memory.add(e)) {
+                if (e instanceof CompositeException) {
+                    s.print("Suppressed: ");
+                    s.println(e.getMessage());
+                    CompositeException ce = (CompositeException) e;
+                    q.addAll(0, ce.suppressed);
+                } else {
+                    e.printStackTrace(s);
+                }
+            }
+        }
+    }
 }

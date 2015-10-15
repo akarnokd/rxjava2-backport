@@ -284,7 +284,7 @@ public class NbpOperatorTakeTest {
     @Test(timeout = 2000)
     public void testTakeObserveOn() {
         NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(o);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(o);
         
         INFINITE_OBSERVABLE
         .observeOn(Schedulers.newThread()).take(1).subscribe(ts);
@@ -299,7 +299,7 @@ public class NbpOperatorTakeTest {
     
     @Test
     public void testInterrupt() throws InterruptedException {
-        final AtomicReference<Object> exception = new AtomicReference<>();
+        final AtomicReference<Object> exception = new AtomicReference<T>();
         final CountDownLatch latch = new CountDownLatch(1);
         NbpObservable.just(1).subscribeOn(Schedulers.computation()).take(1)
         .subscribe(new Consumer<Integer>() {
@@ -344,7 +344,7 @@ public class NbpOperatorTakeTest {
     public void testReentrantTake() {
         NbpPublishSubject<Integer> source = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.take(1).doOnNext(v -> source.onNext(2)).subscribe(ts);
         

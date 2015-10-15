@@ -55,7 +55,7 @@ public class NbpOperatorIgnoreElementsTest {
     
     @Test
     public void testCompletedOk() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(1, 10).ignoreElements().subscribe(ts);
         ts.assertNoErrors();
         ts.assertNoValues();
@@ -66,7 +66,7 @@ public class NbpOperatorIgnoreElementsTest {
     
     @Test
     public void testErrorReceived() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         TestException ex = new TestException("boo");
         NbpObservable.error(ex).ignoreElements().subscribe(ts);
         ts.assertNoValues();

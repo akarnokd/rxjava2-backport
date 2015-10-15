@@ -56,11 +56,11 @@ public class OperatorDoOnUnsubscribeTest {
                         lowerCount.incrementAndGet();
                 });
 
-        List<Disposable> subscriptions = new ArrayList<>();
-        List<TestSubscriber<Long>> subscribers = new ArrayList<>();
+        List<Disposable> subscriptions = new ArrayList<T>();
+        List<TestSubscriber<Long>> subscribers = new ArrayList<T>();
 
         for (int i = 0; i < subCount; ++i) {
-            TestSubscriber<Long> subscriber = new TestSubscriber<>();
+            TestSubscriber<Long> subscriber = new TestSubscriber<T>();
             subscriptions.add(subscriber);
             longs.subscribe(subscriber);
             subscribers.add(subscriber);
@@ -110,11 +110,11 @@ public class OperatorDoOnUnsubscribeTest {
                 .publish()
                 .refCount();
 
-        List<Disposable> subscriptions = new ArrayList<>();
-        List<TestSubscriber<Long>> subscribers = new ArrayList<>();
+        List<Disposable> subscriptions = new ArrayList<T>();
+        List<TestSubscriber<Long>> subscribers = new ArrayList<T>();
 
         for (int i = 0; i < subCount; ++i) {
-            TestSubscriber<Long> subscriber = new TestSubscriber<>();
+            TestSubscriber<Long> subscriber = new TestSubscriber<T>();
             longs.subscribe(subscriber);
             subscriptions.add(subscriber);
             subscribers.add(subscriber);

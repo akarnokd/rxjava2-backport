@@ -40,7 +40,7 @@ public final class NbpEventStream {
     }
 
     public static Event randomEvent(String type, int numInstances) {
-        Map<String, Object> values = new LinkedHashMap<>();
+        Map<String, Object> values = new LinkedHashMap<T>();
         values.put("count200", randomIntFrom0to(4000));
         values.put("count4xx", randomIntFrom0to(300));
         values.put("count5xx", randomIntFrom0to(500));

@@ -16,10 +16,10 @@ package io.reactivex.internal.operators.nbp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import io.reactivex.*;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
+import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 import io.reactivex.internal.util.NotificationLite;
@@ -35,7 +35,12 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
     final Supplier<? extends ReplayBuffer<T>> bufferFactory;
 
     @SuppressWarnings("rawtypes")
-    static final Supplier DEFAULT_UNBOUNDED_FACTORY = () -> new UnboundedReplayBuffer<>(16);
+    static final Supplier DEFAULT_UNBOUNDED_FACTORY = new Supplier() {
+        @Override
+        public Object get() {
+            return new UnboundedReplayBuffer<Object>(16);
+        }
+    };
     
     /**
      * Given a connectable observable factory, it multicasts over the generated
@@ -47,22 +52,30 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
     public static <T, U, R> NbpObservable<R> multicastSelector(
             final Supplier<? extends NbpConnectableObservable<U>> connectableFactory,
             final Function<? super NbpObservable<U>, ? extends NbpObservable<R>> selector) {
-        return NbpObservable.create(child -> {
-            NbpConnectableObservable<U> co;
-            NbpObservable<R> observable;
-            try {
-                co = connectableFactory.get();
-                observable = selector.apply(co);
-            } catch (Throwable e) {
-                EmptyDisposable.error(e, child);
-                return;
+        return NbpObservable.create(new NbpOnSubscribe<R>() {
+            @Override
+            public void accept(NbpSubscriber<? super R> child) {
+                NbpConnectableObservable<U> co;
+                NbpObservable<R> observable;
+                try {
+                    co = connectableFactory.get();
+                    observable = selector.apply(co);
+                } catch (Throwable e) {
+                    EmptyDisposable.error(e, child);
+                    return;
+                }
+                
+                final NbpSubscriberResourceWrapper<R, Disposable> srw = new NbpSubscriberResourceWrapper<R, Disposable>(child, Disposables.consumeAndDispose());
+                
+                observable.subscribe(srw);
+                
+                co.connect(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable r) {
+                        srw.setResource(r);
+                    }
+                });
             }
-            
-            NbpSubscriberResourceWrapper<R, Disposable> srw = new NbpSubscriberResourceWrapper<>(child, Disposables.consumeAndDispose());
-            
-            observable.subscribe(srw);
-            
-            co.connect(srw::setResource);
         });
     }
     
@@ -75,7 +88,12 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
      */
     public static <T> NbpConnectableObservable<T> observeOn(final NbpConnectableObservable<T> co, final Scheduler scheduler) {
         final NbpObservable<T> observable = co.observeOn(scheduler);
-        return new NbpConnectableObservable<T>(s -> observable.subscribe(s)) {
+        return new NbpConnectableObservable<T>(new NbpOnSubscribe<T>() {
+            @Override
+            public void accept(NbpSubscriber<? super T> s) {
+                observable.subscribe(s);
+            }
+        }) {
             @Override
             public void connect(Consumer<? super Disposable> connection) {
                 co.connect(connection);
@@ -104,7 +122,12 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
         if (bufferSize == Integer.MAX_VALUE) {
             return createFrom(source);
         }
-        return create(source, () -> new SizeBoundReplayBuffer<>(bufferSize));
+        return create(source, new Supplier<ReplayBuffer<T>>() {
+            @Override
+            public ReplayBuffer<T> get() {
+                return new SizeBoundReplayBuffer<T>(bufferSize);
+            }
+        });
     }
 
     /**
@@ -130,8 +153,13 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
      * @return
      */
     public static <T> NbpConnectableObservable<T> create(NbpObservable<? extends T> source, 
-            long maxAge, TimeUnit unit, final Scheduler scheduler, final int bufferSize) {
-        return create(source, () -> new SizeAndTimeBoundReplayBuffer<>(bufferSize, maxAge, unit, scheduler));
+            final long maxAge, final TimeUnit unit, final Scheduler scheduler, final int bufferSize) {
+        return create(source, new Supplier<ReplayBuffer<T>>() {
+            @Override
+            public ReplayBuffer<T> get() {
+                return new SizeAndTimeBoundReplayBuffer<T>(bufferSize, maxAge, unit, scheduler);
+            }
+        });
     }
 
     /**
@@ -143,7 +171,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
     static <T> NbpConnectableObservable<T> create(NbpObservable<? extends T> source, 
             final Supplier<? extends ReplayBuffer<T>> bufferFactory) {
         // the current connection to source needs to be shared between the operator and its onSubscribe call
-        final AtomicReference<ReplaySubscriber<T>> curr = new AtomicReference<>();
+        final AtomicReference<ReplaySubscriber<T>> curr = new AtomicReference<ReplaySubscriber<T>>();
         NbpOnSubscribe<T> onSubscribe = new NbpOnSubscribe<T>() {
             @Override
             public void accept(NbpSubscriber<? super T> child) {
@@ -155,7 +183,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
                     // if there isn't one
                     if (r == null) {
                         // create a new subscriber to source
-                        ReplaySubscriber<T> u = new ReplaySubscriber<>(curr, bufferFactory.get());
+                        ReplaySubscriber<T> u = new ReplaySubscriber<T>(curr, bufferFactory.get());
                         // let's try setting it as the current subscriber-to-source
                         if (!curr.compareAndSet(r, u)) {
                             // didn't work, maybe someone else did it or the current subscriber 
@@ -167,7 +195,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
                     }
                     
                     // create the backpressure-managing producer for this child
-                    InnerSubscription<T> inner = new InnerSubscription<>(r, child);
+                    InnerSubscription<T> inner = new InnerSubscription<T>(r, child);
                     // we try to add it to the array of producers
                     // if it fails, no worries because we will still have its buffer
                     // so it is going to replay it for us
@@ -185,7 +213,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
                 }
             }
         };
-        return new NbpOperatorReplay<>(onSubscribe, source, curr, bufferFactory);
+        return new NbpOperatorReplay<T>(onSubscribe, source, curr, bufferFactory);
     }
     private NbpOperatorReplay(NbpOnSubscribe<T> onSubscribe, NbpObservable<? extends T> source, 
             final AtomicReference<ReplaySubscriber<T>> current,
@@ -207,7 +235,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
             // if there is none yet or the current has unsubscribed
             if (ps == null || ps.isDisposed()) {
                 // create a new subscriber-to-source
-                ReplaySubscriber<T> u = new ReplaySubscriber<>(current, bufferFactory.get());
+                ReplaySubscriber<T> u = new ReplaySubscriber<T>(current, bufferFactory.get());
                 // try setting it as the current subscriber-to-source
                 if (!current.compareAndSet(ps, u)) {
                     // did not work, perhaps a new subscriber arrived 
@@ -276,7 +304,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
                 ReplayBuffer<T> buffer) {
             this.buffer = buffer;
             
-            this.producers = new AtomicReference<>(EMPTY);
+            this.producers = new AtomicReference<InnerSubscription[]>(EMPTY);
             this.shouldConnect = new AtomicBoolean();
         }
         
@@ -800,7 +828,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
                     if (NotificationLite.isComplete(v) || NotificationLite.isError(v)) {
                         break;
                     }
-                    output.add(NotificationLite.getValue(v));
+                    output.add(NotificationLite.<T>getValue(v));
                     n = next;
                 } else {
                     break;
@@ -861,7 +889,7 @@ public final class NbpOperatorReplay<T> extends NbpConnectableObservable<T> {
         
         @Override
         Object enterTransform(Object value) {
-            return new Timed<>(value, scheduler.now(unit), unit);
+            return new Timed<Object>(value, scheduler.now(unit), unit);
         }
         
         @Override

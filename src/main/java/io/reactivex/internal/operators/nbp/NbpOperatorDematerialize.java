@@ -29,7 +29,7 @@ public enum NbpOperatorDematerialize implements NbpOperator<Object, Try<Optional
     
     @Override
     public NbpSubscriber<? super Try<Optional<Object>>> apply(NbpSubscriber<? super Object> t) {
-        return new DematerializeSubscriber<Try<Optional<Object>>>(t);
+        return new DematerializeSubscriber<Object>(t);
     }
     
     static final class DematerializeSubscriber<T> implements NbpSubscriber<Try<Optional<T>>> {

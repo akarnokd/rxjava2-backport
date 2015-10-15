@@ -21,6 +21,7 @@ import org.reactivestreams.Publisher;
 
 import io.reactivex.*;
 import io.reactivex.Observable;
+import io.reactivex.Optional;
 import io.reactivex.internal.subscribers.DisposableSubscriber;
 import io.reactivex.internal.util.Exceptions;
 

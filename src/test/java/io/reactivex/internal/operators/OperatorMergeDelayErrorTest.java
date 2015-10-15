@@ -254,7 +254,7 @@ public class OperatorMergeDelayErrorTest {
     public void testMergeList() {
         final Observable<String> o1 = Observable.create(new TestSynchronousObservable());
         final Observable<String> o2 = Observable.create(new TestSynchronousObservable());
-        List<Observable<String>> listOfObservables = new ArrayList<>();
+        List<Observable<String>> listOfObservables = new ArrayList<T>();
         listOfObservables.add(o1);
         listOfObservables.add(o2);
 
@@ -490,7 +490,7 @@ public class OperatorMergeDelayErrorTest {
 
     @Test
     public void testErrorInParentObservable() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.mergeDelayError(
                 Observable.just(Observable.just(1), Observable.just(2))
                         .startWith(Observable.<Integer> error(new RuntimeException()))
@@ -519,7 +519,7 @@ public class OperatorMergeDelayErrorTest {
     
             Subscriber<String> stringObserver = TestHelper.mockSubscriber();
             
-            TestSubscriber<String> ts = new TestSubscriber<>(stringObserver);
+            TestSubscriber<String> ts = new TestSubscriber<T>(stringObserver);
             Observable<String> m = Observable.mergeDelayError(parentObservable);
             m.subscribe(ts);
             System.out.println("testErrorInParentObservableDelayed | " + i);
@@ -557,7 +557,7 @@ public class OperatorMergeDelayErrorTest {
     }
     @Test
     public void testDelayErrorMaxConcurrent() {
-        final List<Long> requests = new ArrayList<>();
+        final List<Long> requests = new ArrayList<T>();
         Observable<Integer> source = Observable.mergeDelayError(Observable.just(
                 Observable.just(1).asObservable(), 
                 Observable.<Integer>error(new TestException()))
@@ -568,7 +568,7 @@ public class OperatorMergeDelayErrorTest {
                     }
                 }), 1);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.subscribe(ts);
         

@@ -27,7 +27,7 @@ public final class NbpOperatorTakeWhile<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new TakeWhileSubscriber<>(t, predicate);
+        return new TakeWhileSubscriber<T>(t, predicate);
     }
     
     static final class TakeWhileSubscriber<T> implements NbpSubscriber<T> {

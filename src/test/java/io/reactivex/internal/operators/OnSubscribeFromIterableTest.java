@@ -114,13 +114,13 @@ public class OnSubscribeFromIterableTest {
 
     @Test
     public void testBackpressureViaRequest() {
-        ArrayList<Integer> list = new ArrayList<>(Observable.bufferSize());
+        ArrayList<Integer> list = new ArrayList<T>(Observable.bufferSize());
         for (int i = 1; i <= Observable.bufferSize() + 1; i++) {
             list.add(i);
         }
         Observable<Integer> o = Observable.fromIterable(list);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         ts.assertNoValues();
         ts.request(1);
@@ -140,7 +140,7 @@ public class OnSubscribeFromIterableTest {
     public void testNoBackpressure() {
         Observable<Integer> o = Observable.fromIterable(Arrays.asList(1, 2, 3, 4, 5));
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         ts.assertNoValues();
         ts.request(Long.MAX_VALUE); // infinite
@@ -156,7 +156,7 @@ public class OnSubscribeFromIterableTest {
         Observable<Integer> o = Observable.fromIterable(Arrays.asList(1, 2, 3));
         
         for (int i = 0; i < 10; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             
             o.subscribe(ts);
             

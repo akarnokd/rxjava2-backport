@@ -111,7 +111,7 @@ public class OperatorMergeTest {
     public void testMergeList() {
         final Observable<String> o1 = Observable.create(new TestSynchronousObservable());
         final Observable<String> o2 = Observable.create(new TestSynchronousObservable());
-        List<Observable<String>> listOfObservables = new ArrayList<>();
+        List<Observable<String>> listOfObservables = new ArrayList<T>();
         listOfObservables.add(o1);
         listOfObservables.add(o2);
 
@@ -197,7 +197,7 @@ public class OperatorMergeTest {
         final TestASynchronousObservable o2 = new TestASynchronousObservable();
 
         Observable<String> m = Observable.merge(Observable.create(o1), Observable.create(o2));
-        TestSubscriber<String> ts = new TestSubscriber<>(stringObserver);
+        TestSubscriber<String> ts = new TestSubscriber<T>(stringObserver);
         m.subscribe(ts);
 
         ts.awaitTerminalEvent();
@@ -343,7 +343,7 @@ public class OperatorMergeTest {
     @Test
     @Ignore("Subscribe should not throw")
     public void testThrownErrorHandling() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable<String> o1 = Observable.create(new Publisher<String>() {
 
             @Override
@@ -429,7 +429,7 @@ public class OperatorMergeTest {
         AtomicBoolean os2 = new AtomicBoolean(false);
         Observable<Long> o2 = createObservableOf5IntervalsOf1SecondIncrementsWithSubscriptionHook(scheduler2, os2);
 
-        TestSubscriber<Long> ts = new TestSubscriber<>();
+        TestSubscriber<Long> ts = new TestSubscriber<T>();
         Observable.merge(o1, o2).subscribe(ts);
 
         // we haven't incremented time so nothing should be received yet
@@ -471,7 +471,7 @@ public class OperatorMergeTest {
             AtomicBoolean os2 = new AtomicBoolean(false);
             Observable<Long> o2 = createObservableOf5IntervalsOf1SecondIncrementsWithSubscriptionHook(scheduler2, os2);
 
-            TestSubscriber<Long> ts = new TestSubscriber<>();
+            TestSubscriber<Long> ts = new TestSubscriber<T>();
             Observable.merge(o1, o2).subscribe(ts);
 
             // we haven't incremented time so nothing should be received yet
@@ -549,7 +549,7 @@ public class OperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             Observable<Integer> merge = Observable.merge(o.onBackpressureBuffer(), o.onBackpressureBuffer(), o.onBackpressureBuffer());
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent(3, TimeUnit.SECONDS);
@@ -602,7 +602,7 @@ public class OperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             Observable<Integer> merge = Observable.merge(o, o, o);
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent();
@@ -649,7 +649,7 @@ public class OperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             Observable<Integer> merge = Observable.merge(o.onBackpressureBuffer(), o.onBackpressureBuffer(), o.onBackpressureBuffer());
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent();
@@ -871,7 +871,7 @@ public class OperatorMergeTest {
     @Ignore("Null values not permitted")
     public void mergeWithNullValues() {
         System.out.println("mergeWithNullValues");
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.merge(Observable.just(null, "one"), Observable.just("two", null)).subscribe(ts);
         ts.assertTerminated();
         ts.assertNoErrors();
@@ -882,7 +882,7 @@ public class OperatorMergeTest {
     @Ignore("Null values are no longer permitted")
     public void mergeWithTerminalEventAfterUnsubscribe() {
         System.out.println("mergeWithTerminalEventAfterUnsubscribe");
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable<String> bad = Observable.create(new Publisher<String>() {
 
             @Override
@@ -902,7 +902,7 @@ public class OperatorMergeTest {
     @Test
     @Ignore("Null values are not permitted")
     public void mergingNullObservable() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.merge(Observable.just("one"), null).subscribe(ts);
         ts.assertNoErrors();
         ts.assertValue("one");
@@ -910,7 +910,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1AsyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNAsyncStreamsOfN(1, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -919,7 +919,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1AsyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNAsyncStreamsOfN(1, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -928,7 +928,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge10AsyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNAsyncStreamsOfN(10, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -937,7 +937,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1000AsyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNAsyncStreamsOfN(1000, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -946,7 +946,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge2000AsyncStreamOf100() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNAsyncStreamsOfN(2000, 100).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -955,7 +955,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge100AsyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNAsyncStreamsOfN(100, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -977,7 +977,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1SyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNSyncStreamsOfN(1, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -986,7 +986,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1SyncStreamOf1000000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNSyncStreamsOfN(1, 1000000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -995,7 +995,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1000SyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNSyncStreamsOfN(1000, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1004,7 +1004,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge10000SyncStreamOf10() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNSyncStreamsOfN(10000, 10).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1013,7 +1013,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1000000SyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         mergeNSyncStreamsOfN(1000000, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1060,7 +1060,7 @@ public class OperatorMergeTest {
 
     @Test
     public void mergeManyAsyncSingle() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable<Observable<Integer>> os = Observable.range(1, 10000)
         .map(new Function<Integer, Observable<Integer>>() {
 
@@ -1095,7 +1095,7 @@ public class OperatorMergeTest {
     @Test
     public void shouldCompleteAfterApplyingBackpressure_NormalPath() {
         Observable<Integer> source = Observable.mergeDelayError(Observable.just(Observable.range(1, 2)));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>((Long)null);
         source.subscribe(subscriber);
         subscriber.request(3); // 1, 2, <complete> - with request(2) we get the 1 and 2 but not the <complete>
         subscriber.assertValues(1, 2);
@@ -1105,7 +1105,7 @@ public class OperatorMergeTest {
     @Test
     public void shouldCompleteAfterApplyingBackpressure_FastPath() {
         Observable<Integer> source = Observable.mergeDelayError(Observable.just(Observable.just(1)));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>((Long)null);
         source.subscribe(subscriber);
         subscriber.request(2); // 1, <complete> - should work as per .._NormalPath above
         subscriber.assertValue(1);
@@ -1116,7 +1116,7 @@ public class OperatorMergeTest {
     public void shouldNotCompleteIfThereArePendingScalarSynchronousEmissionsWhenTheLastInnerSubscriberCompletes() {
         TestScheduler scheduler = Schedulers.test();
         Observable<Long> source = Observable.mergeDelayError(Observable.just(1L), Observable.timer(1, TimeUnit.SECONDS, scheduler).skip(1));
-        TestSubscriber<Long> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> subscriber = new TestSubscriber<T>((Long)null);
         source.subscribe(subscriber);
         scheduler.advanceTimeBy(1, TimeUnit.SECONDS);
         subscriber.assertNoValues();
@@ -1133,7 +1133,7 @@ public class OperatorMergeTest {
     public void delayedErrorsShouldBeEmittedWhenCompleteAfterApplyingBackpressure_NormalPath() {
         Throwable exception = new Throwable();
         Observable<Integer> source = Observable.mergeDelayError(Observable.range(1, 2), Observable.<Integer>error(exception));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>((Long)null);
         source.subscribe(subscriber);
         subscriber.request(3); // 1, 2, <error>
         subscriber.assertValues(1, 2);
@@ -1145,7 +1145,7 @@ public class OperatorMergeTest {
     public void delayedErrorsShouldBeEmittedWhenCompleteAfterApplyingBackpressure_FastPath() {
         Throwable exception = new Throwable();
         Observable<Integer> source = Observable.mergeDelayError(Observable.just(1), Observable.<Integer>error(exception));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>((Long)null);
         source.subscribe(subscriber);
         subscriber.request(2); // 1, <error>
         subscriber.assertValue(1);
@@ -1156,7 +1156,7 @@ public class OperatorMergeTest {
     @Test
     public void shouldNotCompleteWhileThereAreStillScalarSynchronousEmissionsInTheQueue() {
         Observable<Integer> source = Observable.merge(Observable.just(1), Observable.just(2));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>(1L);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>(1L);
         source.subscribe(subscriber);
         subscriber.assertValue(1);
         subscriber.request(1);
@@ -1167,7 +1167,7 @@ public class OperatorMergeTest {
     public void shouldNotReceivedDelayedErrorWhileThereAreStillScalarSynchronousEmissionsInTheQueue() {
         Throwable exception = new Throwable();
         Observable<Integer> source = Observable.mergeDelayError(Observable.just(1), Observable.just(2), Observable.<Integer>error(exception));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>((Long)null);
         subscriber.request(1);
         source.subscribe(subscriber);
         subscriber.assertValue(1);
@@ -1181,7 +1181,7 @@ public class OperatorMergeTest {
     public void shouldNotReceivedDelayedErrorWhileThereAreStillNormalEmissionsInTheQueue() {
         Throwable exception = new Throwable();
         Observable<Integer> source = Observable.mergeDelayError(Observable.range(1, 2), Observable.range(3, 2), Observable.<Integer>error(exception));
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>((Long)null);
         subscriber.request(3);
         source.subscribe(subscriber);
         subscriber.assertValues(1, 2, 3);
@@ -1196,7 +1196,7 @@ public class OperatorMergeTest {
         //for (int i = 0; i < 5000; i++) {
             //System.out.println(i + ".......................................................................");
             final CountDownLatch latch = new CountDownLatch(1);
-            final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<>();
+            final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<T>();
 
             Observable.range(1, 2)
                     // produce many integers per second
@@ -1312,7 +1312,7 @@ public class OperatorMergeTest {
     ;
     
     void runMerge(Function<Integer, Observable<Integer>> func, TestSubscriber<Integer> ts) {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<T>();
         for (int i = 0; i < 1000; i++) {
             list.add(i);
         }

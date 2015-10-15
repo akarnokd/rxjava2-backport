@@ -44,8 +44,8 @@ public class OperatorWindowWithTimeTest {
 
     @Test
     public void testTimedAndCount() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
@@ -78,8 +78,8 @@ public class OperatorWindowWithTimeTest {
 
     @Test
     public void testTimed() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
@@ -107,7 +107,7 @@ public class OperatorWindowWithTimeTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -139,7 +139,7 @@ public class OperatorWindowWithTimeTest {
                 stringObservable.subscribe(new Observer<T>() {
                     @Override
                     public void onComplete() {
-                        lists.add(new ArrayList<>(list));
+                        lists.add(new ArrayList<T>(list));
                         list.clear();
                     }
 
@@ -161,8 +161,8 @@ public class OperatorWindowWithTimeTest {
         Observable<Observable<Integer>> source = Observable.range(1, 10)
                 .window(1, TimeUnit.MINUTES, scheduler, 3);
         
-        final List<Integer> list = new ArrayList<>();
-        final List<List<Integer>> lists = new ArrayList<>();
+        final List<Integer> list = new ArrayList<T>();
+        final List<List<Integer>> lists = new ArrayList<T>();
         
         source.subscribe(observeWindow(list, lists));
         
@@ -179,7 +179,7 @@ public class OperatorWindowWithTimeTest {
     
     @Test
     public void testTakeFlatMapCompletes() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         AtomicInteger wip = new AtomicInteger();
         

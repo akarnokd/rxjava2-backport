@@ -32,7 +32,7 @@ public class OperatorUnsubscribeOnTest {
         UIEventLoopScheduler UI_EVENT_LOOP = new UIEventLoopScheduler();
         try {
             final ThreadSubscription subscription = new ThreadSubscription();
-            final AtomicReference<Thread> subscribeThread = new AtomicReference<>();
+            final AtomicReference<Thread> subscribeThread = new AtomicReference<T>();
             Observable<Integer> w = Observable.create(new Publisher<Integer>() {
 
                 @Override
@@ -45,7 +45,7 @@ public class OperatorUnsubscribeOnTest {
                 }
             });
 
-            TestSubscriber<Integer> observer = new TestSubscriber<>();
+            TestSubscriber<Integer> observer = new TestSubscriber<T>();
             w.subscribeOn(UI_EVENT_LOOP).observeOn(Schedulers.computation()).unsubscribeOn(UI_EVENT_LOOP).subscribe(observer);
 
             observer.awaitTerminalEvent(1, TimeUnit.SECONDS);
@@ -76,7 +76,7 @@ public class OperatorUnsubscribeOnTest {
         UIEventLoopScheduler UI_EVENT_LOOP = new UIEventLoopScheduler();
         try {
             final ThreadSubscription subscription = new ThreadSubscription();
-            final AtomicReference<Thread> subscribeThread = new AtomicReference<>();
+            final AtomicReference<Thread> subscribeThread = new AtomicReference<T>();
             Observable<Integer> w = Observable.create(new Publisher<Integer>() {
 
                 @Override
@@ -89,7 +89,7 @@ public class OperatorUnsubscribeOnTest {
                 }
             });
 
-            TestSubscriber<Integer> observer = new TestSubscriber<>();
+            TestSubscriber<Integer> observer = new TestSubscriber<T>();
             w.subscribeOn(Schedulers.newThread()).observeOn(Schedulers.computation()).unsubscribeOn(UI_EVENT_LOOP).subscribe(observer);
 
             observer.awaitTerminalEvent(1, TimeUnit.SECONDS);

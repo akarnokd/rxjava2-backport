@@ -349,7 +349,7 @@ public class NbpOperatorZipTest {
         NbpPublishSubject<String> r2 = NbpPublishSubject.create();
         /* define a NbpSubscriber to receive aggregated events */
         NbpSubscriber<String> NbpObserver = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
 
         NbpObservable.zip(r1, r2, zipr2).subscribe(ts);
 
@@ -767,7 +767,7 @@ public class NbpOperatorZipTest {
                     }
                 });
 
-        final ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<T>();
         os.subscribe(new Consumer<String>() {
 
             @Override
@@ -794,7 +794,7 @@ public class NbpOperatorZipTest {
                     }
                 }).take(5);
 
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         os.subscribe(ts);
 
         ts.awaitTerminalEvent();
@@ -819,7 +819,7 @@ public class NbpOperatorZipTest {
                     }
                 });
 
-        final ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<T>();
         os.subscribe(new NbpObserver<String>() {
 
             @Override
@@ -865,7 +865,7 @@ public class NbpOperatorZipTest {
 
         });
 
-        final ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<T>();
         o.subscribe(new Consumer<String>() {
 
             @Override
@@ -914,7 +914,7 @@ public class NbpOperatorZipTest {
 
         });
 
-        final ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<T>();
         o.subscribe(new Consumer<String>() {
 
             @Override
@@ -943,7 +943,7 @@ public class NbpOperatorZipTest {
 
         });
 
-        final ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<T>();
         o.subscribe(new Consumer<String>() {
 
             @Override
@@ -970,7 +970,7 @@ public class NbpOperatorZipTest {
             }
         });
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         o.subscribe(ts);
         ts.awaitTerminalEvent(200, TimeUnit.MILLISECONDS);
         ts.assertNoValues();
@@ -1004,7 +1004,7 @@ public class NbpOperatorZipTest {
         NbpObservable<Integer> o1 = createInfiniteObservable(generatedA).take(Observable.bufferSize() * 2);
         NbpObservable<Integer> o2 = createInfiniteObservable(generatedB).take(Observable.bufferSize() * 2);
 
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.zip(o1, o2, new BiFunction<Integer, Integer, String>() {
 
             @Override
@@ -1119,7 +1119,7 @@ public class NbpOperatorZipTest {
                         return i1 + i2;
                     }
                 });
-        List<Integer> expected = new ArrayList<>();
+        List<Integer> expected = new ArrayList<T>();
         for (int i = 0; i < 1026; i++) {
             expected.add(i * 3);
         }

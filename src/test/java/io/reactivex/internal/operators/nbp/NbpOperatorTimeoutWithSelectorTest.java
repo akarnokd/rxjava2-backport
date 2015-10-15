@@ -372,7 +372,7 @@ public class NbpOperatorTimeoutWithSelectorTest {
 
         }).when(o).onComplete();
 
-        final NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>(o);
+        final NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>(o);
 
         new Thread(new Runnable() {
 

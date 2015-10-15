@@ -251,7 +251,7 @@ public class NbpOperatorMergeDelayErrorTest {
     public void testMergeList() {
         final NbpObservable<String> o1 = NbpObservable.create(new TestSynchronousObservable());
         final NbpObservable<String> o2 = NbpObservable.create(new TestSynchronousObservable());
-        List<NbpObservable<String>> listOfObservables = new ArrayList<>();
+        List<NbpObservable<String>> listOfObservables = new ArrayList<T>();
         listOfObservables.add(o1);
         listOfObservables.add(o2);
 
@@ -487,7 +487,7 @@ public class NbpOperatorMergeDelayErrorTest {
 
     @Test
     public void testErrorInParentObservable() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.mergeDelayError(
                 NbpObservable.just(NbpObservable.just(1), NbpObservable.just(2))
                         .startWith(NbpObservable.<Integer> error(new RuntimeException()))
@@ -516,7 +516,7 @@ public class NbpOperatorMergeDelayErrorTest {
     
             NbpSubscriber<String> stringObserver = TestHelper.mockNbpSubscriber();
             
-            NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(stringObserver);
+            NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(stringObserver);
             NbpObservable<String> m = NbpObservable.mergeDelayError(parentObservable);
             m.subscribe(ts);
             System.out.println("testErrorInParentObservableDelayed | " + i);

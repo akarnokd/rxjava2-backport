@@ -39,7 +39,7 @@ public final class NbpOperatorSkipLastTimed<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new SkipLastTimedSubscriber<>(t, time, unit, scheduler, bufferSize, delayError);
+        return new SkipLastTimedSubscriber<T>(t, time, unit, scheduler, bufferSize, delayError);
     }
     
     static final class SkipLastTimedSubscriber<T> extends AtomicInteger implements NbpSubscriber<T>, Disposable {
@@ -64,7 +64,7 @@ public final class NbpOperatorSkipLastTimed<T> implements NbpOperator<T, T> {
             this.time = time;
             this.unit = unit;
             this.scheduler = scheduler;
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.queue = new SpscLinkedArrayQueue<Object>(bufferSize);
             this.delayError = delayError;
         }
         

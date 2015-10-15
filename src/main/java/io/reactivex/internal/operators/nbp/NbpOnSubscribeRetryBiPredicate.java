@@ -14,11 +14,12 @@
 package io.reactivex.internal.operators.nbp;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable;
 import io.reactivex.NbpObservable.*;
 import io.reactivex.disposables.*;
+import io.reactivex.exceptions.CompositeException;
+import io.reactivex.functions.BiPredicate;
 
 public final class NbpOnSubscribeRetryBiPredicate<T> implements NbpOnSubscribe<T> {
     final NbpObservable<? extends T> source;
@@ -35,7 +36,7 @@ public final class NbpOnSubscribeRetryBiPredicate<T> implements NbpOnSubscribe<T
         SerialDisposable sa = new SerialDisposable();
         s.onSubscribe(sa);
         
-        RetryBiSubscriber<T> rs = new RetryBiSubscriber<>(s, predicate, sa, source);
+        RetryBiSubscriber<T> rs = new RetryBiSubscriber<T>(s, predicate, sa, source);
         rs.subscribeNext();
     }
     
@@ -71,8 +72,7 @@ public final class NbpOnSubscribeRetryBiPredicate<T> implements NbpOnSubscribe<T
             try {
                 b = predicate.test(++retries, t);
             } catch (Throwable e) {
-                e.addSuppressed(t);
-                actual.onError(e);
+                actual.onError(new CompositeException(e, t));
                 return;
             }
             if (!b) {

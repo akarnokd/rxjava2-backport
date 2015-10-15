@@ -37,8 +37,8 @@ public final class NbpOperatorDebounceTimed<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new DebounceTimedSubscriber<>(
-                new NbpSerializedSubscriber<>(t), 
+        return new DebounceTimedSubscriber<T>(
+                new NbpSerializedSubscriber<T>(t), 
                 timeout, unit, scheduler.createWorker());
     }
     
@@ -56,9 +56,15 @@ public final class NbpOperatorDebounceTimed<T> implements NbpOperator<T, T> {
         static final AtomicReferenceFieldUpdater<DebounceTimedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(DebounceTimedSubscriber.class, Disposable.class, "timer");
 
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
-        static final Disposable NEW_TIMER = () -> { };
+        static final Disposable NEW_TIMER = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         volatile long index;
         
@@ -104,7 +110,7 @@ public final class NbpOperatorDebounceTimed<T> implements NbpOperator<T, T> {
                 d.dispose();
             }
             
-            DebounceEmitter<T> de = new DebounceEmitter<>(t, idx, this);
+            DebounceEmitter<T> de = new DebounceEmitter<T>(t, idx, this);
             if (!TIMER.compareAndSet(this, d, de)) {
                 return;
             }
@@ -162,7 +168,10 @@ public final class NbpOperatorDebounceTimed<T> implements NbpOperator<T, T> {
         /** */
         private static final long serialVersionUID = 6812032969491025141L;
 
-        static final Disposable DISPOSED = () -> { };
+        static final Disposable DISPOSED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         final T value;
         final long idx;

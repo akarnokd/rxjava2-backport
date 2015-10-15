@@ -110,7 +110,7 @@ public class OperatorScanTest {
     
     @Test
     public void shouldNotEmitUntilAfterSubscription() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(1, 100).scan(0, new BiFunction<Integer, Integer, Integer>() {
 
             @Override
@@ -259,7 +259,7 @@ public class OperatorScanTest {
 
                     @Override
                     public List<Integer> get() {
-                        return new ArrayList<>();
+                        return new ArrayList<T>();
                     }
                     
                 }, new BiConsumer<List<Integer>, Integer>() {
@@ -285,7 +285,7 @@ public class OperatorScanTest {
             }
 
         }).take(1);
-        TestSubscriber<Integer> subscriber = new TestSubscriber<>();
+        TestSubscriber<Integer> subscriber = new TestSubscriber<T>();
         o.subscribe(subscriber);
         subscriber.assertValue(0);
         subscriber.assertTerminated();
@@ -294,7 +294,7 @@ public class OperatorScanTest {
 
     @Test
     public void testScanShouldNotRequestZero() {
-        final AtomicReference<Subscription> producer = new AtomicReference<>();
+        final AtomicReference<Subscription> producer = new AtomicReference<T>();
         Observable<Integer> o = Observable.create(new Publisher<Integer>() {
             @Override
             public void subscribe(final Subscriber<? super Integer> subscriber) {
@@ -343,7 +343,7 @@ public class OperatorScanTest {
     public void testInitialValueEmittedNoProducer() {
         PublishSubject<Integer> source = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.scan(0, new BiFunction<Integer, Integer, Integer>() {
             @Override
@@ -361,7 +361,7 @@ public class OperatorScanTest {
     public void testInitialValueEmittedWithProducer() {
         Observable<Integer> source = Observable.never();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.scan(0, new BiFunction<Integer, Integer, Integer>() {
             @Override

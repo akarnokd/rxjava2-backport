@@ -61,7 +61,7 @@ public class NbpOperatorRetryTest {
             }
             
         });
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(consumer);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(consumer);
         producer.retryWhen(new Function<NbpObservable<? extends Throwable>, NbpObservable<?>>() {
 
             @Override
@@ -114,7 +114,7 @@ public class NbpOperatorRetryTest {
         NbpSubscriber<String> NbpObserver = TestHelper.mockNbpSubscriber();
         int NUM_RETRIES = 20;
         NbpObservable<String> origin = NbpObservable.create(new FuncWithErrors(NUM_RETRIES));
-        origin.retry().unsafeSubscribe(new NbpTestSubscriber<>(NbpObserver));
+        origin.retry().unsafeSubscribe(new NbpTestSubscriber<T>(NbpObserver));
 
         InOrder inOrder = inOrder(NbpObserver);
         // should show 3 attempts
@@ -133,7 +133,7 @@ public class NbpOperatorRetryTest {
         NbpSubscriber<String> NbpObserver = TestHelper.mockNbpSubscriber();
         int NUM_RETRIES = 2;
         NbpObservable<String> origin = NbpObservable.create(new FuncWithErrors(NUM_RETRIES));
-        NbpTestSubscriber<String> NbpSubscriber = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<String> NbpSubscriber = new NbpTestSubscriber<T>(NbpObserver);
         origin.retryWhen(new Function<NbpObservable<? extends Throwable>, NbpObservable<Integer>>() {
             @Override
             public NbpObservable<Integer> apply(NbpObservable<? extends Throwable> t1) {
@@ -195,7 +195,7 @@ public class NbpOperatorRetryTest {
     public void testOnCompletedFromNotificationHandler() {
         NbpSubscriber<String> NbpObserver = TestHelper.mockNbpSubscriber();
         NbpObservable<String> origin = NbpObservable.create(new FuncWithErrors(1));
-        NbpTestSubscriber<String> NbpSubscriber = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<String> NbpSubscriber = new NbpTestSubscriber<T>(NbpObserver);
         origin.retryWhen(new Function<NbpObservable<? extends Throwable>, NbpObservable<?>>() {
             @Override
             public NbpObservable<?> apply(NbpObservable<? extends Throwable> t1) {
@@ -443,7 +443,7 @@ public class NbpOperatorRetryTest {
     public void testSourceObservableCallsUnsubscribe() throws InterruptedException {
         final AtomicInteger subsCount = new AtomicInteger(0);
 
-        final NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        final NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 
         NbpOnSubscribe<String> onSubscribe = new NbpOnSubscribe<String>() {
             @Override
@@ -474,7 +474,7 @@ public class NbpOperatorRetryTest {
     public void testSourceObservableRetry1() throws InterruptedException {
         final AtomicInteger subsCount = new AtomicInteger(0);
 
-        final NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        final NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 
         NbpOnSubscribe<String> onSubscribe = new NbpOnSubscribe<String>() {
             @Override
@@ -493,7 +493,7 @@ public class NbpOperatorRetryTest {
     public void testSourceObservableRetry0() throws InterruptedException {
         final AtomicInteger subsCount = new AtomicInteger(0);
 
-        final NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        final NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 
         NbpOnSubscribe<String> onSubscribe = new NbpOnSubscribe<String>() {
             @Override
@@ -602,7 +602,7 @@ public class NbpOperatorRetryTest {
         SlowObservable so = new SlowObservable(100, 0);
         NbpObservable<Long> o = NbpObservable.create(so).retry(5);
 
-        AsyncObserver<Long> async = new AsyncObserver<>(NbpObserver);
+        AsyncObserver<Long> async = new AsyncObserver<T>(NbpObserver);
 
         o.subscribe(async);
 
@@ -627,7 +627,7 @@ public class NbpOperatorRetryTest {
         SlowObservable so = new SlowObservable(100, 10);
         NbpObservable<Long> o = NbpObservable.create(so).timeout(80, TimeUnit.MILLISECONDS).retry(5);
 
-        AsyncObserver<Long> async = new AsyncObserver<>(NbpObserver);
+        AsyncObserver<Long> async = new AsyncObserver<T>(NbpObserver);
 
         o.subscribe(async);
 
@@ -649,7 +649,7 @@ public class NbpOperatorRetryTest {
             for (int i = 0; i < 400; i++) {
                 NbpSubscriber<String> NbpObserver = TestHelper.mockNbpSubscriber();
                 NbpObservable<String> origin = NbpObservable.create(new FuncWithErrors(NUM_RETRIES));
-                NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(NbpObserver);
+                NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
                 origin.retry().observeOn(Schedulers.computation()).unsafeSubscribe(ts);
                 ts.awaitTerminalEvent(5, TimeUnit.SECONDS);
                 
@@ -680,7 +680,7 @@ public class NbpOperatorRetryTest {
                 }
 
                 final AtomicInteger timeouts = new AtomicInteger();
-                final Map<Integer, List<String>> data = new ConcurrentHashMap<>();
+                final Map<Integer, List<String>> data = new ConcurrentHashMap<T>();
 
                 int m = 5000;
                 final CountDownLatch cdl = new CountDownLatch(m);
@@ -692,11 +692,11 @@ public class NbpOperatorRetryTest {
                             final AtomicInteger nexts = new AtomicInteger();
                             try {
                                 NbpObservable<String> origin = NbpObservable.create(new FuncWithErrors(NUM_RETRIES));
-                                NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+                                NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
                                 origin.retry()
                                 .observeOn(Schedulers.computation()).unsafeSubscribe(ts);
                                 ts.awaitTerminalEvent(2500, TimeUnit.MILLISECONDS);
-                                List<String> onNextEvents = new ArrayList<>(ts.values());
+                                List<String> onNextEvents = new ArrayList<T>(ts.values());
                                 if (onNextEvents.size() != NUM_RETRIES + 2) {
                                     for (Throwable t : ts.errors()) {
                                         onNextEvents.add(t.toString());
@@ -793,7 +793,7 @@ public class NbpOperatorRetryTest {
                 return t1.take(1);
             }
         })
-        .unsafeSubscribe(new NbpTestSubscriber<>(NbpObserver));
+        .unsafeSubscribe(new NbpTestSubscriber<T>(NbpObserver));
         
         InOrder inOrder = inOrder(NbpObserver);
         // should show 3 attempts
@@ -837,7 +837,7 @@ public class NbpOperatorRetryTest {
                 return t1.take(1);
             }
         })
-        .unsafeSubscribe(new NbpTestSubscriber<>(NbpObserver));
+        .unsafeSubscribe(new NbpTestSubscriber<T>(NbpObserver));
         
         InOrder inOrder = inOrder(NbpObserver);
         // should show 3 attempts

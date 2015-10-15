@@ -51,7 +51,7 @@ public class OperatorDoOnRequestTest {
 
     @Test
     public void testDoRequest() {
-        final List<Long> requests = new ArrayList<>();
+        final List<Long> requests = new ArrayList<T>();
         Observable.range(1, 5)
         //
                 .doOnRequest(new LongConsumer() {

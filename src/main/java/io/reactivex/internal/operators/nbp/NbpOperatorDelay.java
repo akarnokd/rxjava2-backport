@@ -44,12 +44,12 @@ public final class NbpOperatorDelay<T> implements NbpOperator<T, T> {
         if (delayError) {
             s = (NbpSubscriber<T>)t;
         } else {
-            s = new NbpSerializedSubscriber<>(t);
+            s = new NbpSerializedSubscriber<T>(t);
         }
         
         Scheduler.Worker w = scheduler.createWorker();
         
-        return new DelaySubscriber<>(s, delay, unit, w, delayError);
+        return new DelaySubscriber<T>(s, delay, unit, w, delayError);
     }
     
     static final class DelaySubscriber<T> implements NbpSubscriber<T>, Disposable {
@@ -80,18 +80,26 @@ public final class NbpOperatorDelay<T> implements NbpOperator<T, T> {
         }
         
         @Override
-        public void onNext(T t) {
-            w.schedule(() -> actual.onNext(t), delay, unit);
+        public void onNext(final T t) {
+            w.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    actual.onNext(t);
+                }
+            }, delay, unit);
         }
         
         @Override
-        public void onError(Throwable t) {
+        public void onError(final Throwable t) {
             if (delayError) {
-                w.schedule(() -> {
-                    try {
-                        actual.onError(t);
-                    } finally {
-                        w.dispose();
+                w.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            actual.onError(t);
+                        } finally {
+                            w.dispose();
+                        }
                     }
                 }, delay, unit);
             } else {
@@ -101,11 +109,14 @@ public final class NbpOperatorDelay<T> implements NbpOperator<T, T> {
         
         @Override
         public void onComplete() {
-            w.schedule(() -> {
-                try {
-                    actual.onComplete();
-                } finally {
-                    w.dispose();
+            w.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        actual.onComplete();
+                    } finally {
+                        w.dispose();
+                    }
                 }
             }, delay, unit);
         }

@@ -35,7 +35,7 @@ public class NbpOperatorOnErrorResumeNextViaFunctionTest {
 
     @Test
     public void testResumeNextWithSynchronousExecution() {
-        final AtomicReference<Throwable> receivedException = new AtomicReference<>();
+        final AtomicReference<Throwable> receivedException = new AtomicReference<T>();
         NbpObservable<String> w = NbpObservable.create(new NbpOnSubscribe<String>() {
 
             @Override
@@ -75,7 +75,7 @@ public class NbpOperatorOnErrorResumeNextViaFunctionTest {
 
     @Test
     public void testResumeNextWithAsyncExecution() {
-        final AtomicReference<Throwable> receivedException = new AtomicReference<>();
+        final AtomicReference<Throwable> receivedException = new AtomicReference<T>();
         Subscription s = mock(Subscription.class);
         TestObservable w = new TestObservable(s, "one");
         Function<Throwable, NbpObservable<String>> resume = new Function<Throwable, NbpObservable<String>>() {
@@ -151,7 +151,7 @@ public class NbpOperatorOnErrorResumeNextViaFunctionTest {
     @Test
     @Ignore("Failed operator may leave the child NbpSubscriber in an inconsistent state which prevents further error delivery.")
     public void testOnErrorResumeReceivesErrorFromPreviousNonProtectedOperator() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1).lift(new NbpOperator<String, Integer>() {
 
             @Override
@@ -184,7 +184,7 @@ public class NbpOperatorOnErrorResumeNextViaFunctionTest {
     @Test
     @Ignore("A crashing operator may leave the downstream in an inconsistent state and not suitable for event delivery")
     public void testOnErrorResumeReceivesErrorFromPreviousNonProtectedOperatorOnNext() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1).lift(new NbpOperator<String, Integer>() {
 
             @Override
@@ -261,7 +261,7 @@ public class NbpOperatorOnErrorResumeNextViaFunctionTest {
         @SuppressWarnings("unchecked")
         NbpObserver<String> NbpObserver = mock(NbpObserver.class);
         
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
         o.subscribe(ts);
         ts.awaitTerminalEvent();
 
@@ -313,7 +313,7 @@ public class NbpOperatorOnErrorResumeNextViaFunctionTest {
     
     @Test
     public void testBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(0, 100000)
                 .onErrorResumeNext(new Function<Throwable, NbpObservable<Integer>>() {
 

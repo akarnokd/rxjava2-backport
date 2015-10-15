@@ -194,7 +194,7 @@ public class NbpOperatorAnyTest {
     
     @Test
     public void testPredicateThrowsExceptionAndValueInCauseMessage() {
-        NbpTestSubscriber<Boolean> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Boolean> ts = new NbpTestSubscriber<T>();
         final IllegalArgumentException ex = new IllegalArgumentException();
         
         NbpObservable.just("Boo!").any(v -> {

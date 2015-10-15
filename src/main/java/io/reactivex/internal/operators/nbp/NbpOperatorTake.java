@@ -28,7 +28,7 @@ public final class NbpOperatorTake<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new TakeSubscriber<>(t, limit);
+        return new TakeSubscriber<T>(t, limit);
     }
     
     static final class TakeSubscriber<T> implements NbpSubscriber<T> {

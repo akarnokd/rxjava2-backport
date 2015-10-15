@@ -24,8 +24,8 @@ public class SerializedSubjectTest {
 
     @Test
     public void testBasic() {
-        SerializedSubject<String, String> subject = new SerializedSubject<>(PublishSubject.<String> create());
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        SerializedSubject<String, String> subject = new SerializedSubject<T>(PublishSubject.<String> create());
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         subject.subscribe(ts);
         subject.onNext("hello");
         subject.onComplete();

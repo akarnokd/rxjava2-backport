@@ -156,7 +156,7 @@ public class NbpOnSubscribeAmbTest {
         //this stream emits second
         NbpObservable<Integer> o2 = NbpObservable.just(1).doOnSubscribe(incrementer)
                 .delay(100, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.computation());
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.amb(o1, o2).subscribe(ts);
         ts.awaitTerminalEvent(5, TimeUnit.SECONDS);
         ts.assertNoErrors();
@@ -186,7 +186,7 @@ public class NbpOnSubscribeAmbTest {
         NbpPublishSubject<Integer> source2 = NbpPublishSubject.create();
         NbpPublishSubject<Integer> source3 = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         NbpObservable.amb(source1, source2, source3).subscribe(ts);
         

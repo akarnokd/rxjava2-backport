@@ -59,7 +59,7 @@ public class CovarianceTest {
     @Test
     public void testGroupByCompose() {
         Observable<Movie> movies = Observable.just(new HorrorMovie(), new ActionMovie(), new Movie());
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         movies
         .groupBy(Object::getClass)
         .doOnNext(g -> System.out.println(g.key()))
@@ -120,9 +120,9 @@ public class CovarianceTest {
         } else {
             // diff the two
             List<Movie> newList = listOfLists.get(1);
-            List<Movie> oldList = new ArrayList<>(listOfLists.get(0));
+            List<Movie> oldList = new ArrayList<T>(listOfLists.get(0));
 
-            Set<Movie> delta = new LinkedHashSet<>();
+            Set<Movie> delta = new LinkedHashSet<T>();
             delta.addAll(newList);
             // remove all that match in old
             delta.removeAll(oldList);

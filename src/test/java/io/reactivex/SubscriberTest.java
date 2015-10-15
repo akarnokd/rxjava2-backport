@@ -32,7 +32,7 @@ public class SubscriberTest {
      */
     @Test
     public void testRequestFromFinalSubscribeWithRequestValue() {
-        TestSubscriber<String> s = new TestSubscriber<>((Long)null);
+        TestSubscriber<String> s = new TestSubscriber<T>((Long)null);
         s.request(10);
         final AtomicLong r = new AtomicLong();
         s.onSubscribe(new Subscription() {
@@ -56,7 +56,7 @@ public class SubscriberTest {
      */
     @Test
     public void testRequestFromFinalSubscribeWithoutRequestValue() {
-        TestSubscriber<String> s = new TestSubscriber<>();
+        TestSubscriber<String> s = new TestSubscriber<T>();
         final AtomicLong r = new AtomicLong();
         s.onSubscribe(new Subscription() {
 
@@ -76,7 +76,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestFromChainedOperator() {
-        TestSubscriber<String> s = new TestSubscriber<>();
+        TestSubscriber<String> s = new TestSubscriber<T>();
         Operator<String, String> o = s1 -> new Subscriber<String>() {
 
             @Override
@@ -124,7 +124,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestFromDecoupledOperator() {
-        TestSubscriber<String> s = new TestSubscriber<>((Long)null);
+        TestSubscriber<String> s = new TestSubscriber<T>((Long)null);
         Operator<String, String> o = s1 -> new Subscriber<String>() {
 
             @Override
@@ -172,7 +172,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestFromDecoupledOperatorThatRequestsN() {
-        TestSubscriber<String> s = new TestSubscriber<>();
+        TestSubscriber<String> s = new TestSubscriber<T>();
         final AtomicLong innerR = new AtomicLong();
         Operator<String, String> o = child -> {
             // we want to decouple the chain so set our own Producer on the child instead of it coming from the parent
@@ -242,7 +242,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestToObservable() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.<Integer>create(s -> s.onSubscribe(new Subscription() {
@@ -262,7 +262,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestThroughMap() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.<Integer>create(s -> s.onSubscribe(new Subscription() {
@@ -282,7 +282,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestThroughTakeThatReducesRequest() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.<Integer>create(s -> s.onSubscribe(new Subscription() {
@@ -305,7 +305,7 @@ public class SubscriberTest {
 
     @Test
     public void testRequestThroughTakeWhereRequestIsSmallerThanTake() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.<Integer>create(s -> s.onSubscribe(new Subscription() {
@@ -429,7 +429,7 @@ public class SubscriberTest {
     @Test
     public void testNegativeRequestThrowsIllegalArgumentException() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> exception = new AtomicReference<>();
+        final AtomicReference<Throwable> exception = new AtomicReference<T>();
         Observable.just(1,2,3,4).subscribe(new Observer<Integer>() {
 
             @Override
@@ -460,7 +460,7 @@ public class SubscriberTest {
     
     @Test
     public void testOnStartRequestsAreAdditive() {
-        final List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<T>();
         Observable.just(1,2,3,4,5).subscribe(new Observer<Integer>() {
             @Override
             public void onStart() {
@@ -487,7 +487,7 @@ public class SubscriberTest {
     
     @Test
     public void testOnStartRequestsAreAdditiveAndOverflowBecomesMaxValue() {
-        final List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<T>();
         Observable.just(1,2,3,4,5).subscribe(new Observer<Integer>() {
             @Override
             public void onStart() {

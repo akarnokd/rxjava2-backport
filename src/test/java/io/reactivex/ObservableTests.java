@@ -54,7 +54,7 @@ public class ObservableTests {
 
     @Test
     public void fromIterable() {
-        ArrayList<String> items = new ArrayList<>();
+        ArrayList<String> items = new ArrayList<T>();
         items.add("one");
         items.add("two");
         items.add("three");
@@ -273,7 +273,7 @@ public class ObservableTests {
     public void testCustomObservableWithErrorInObserverAsynchronous() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         
         // FIXME custom built???
         Observable.just("1", "2", "three", "4")
@@ -321,7 +321,7 @@ public class ObservableTests {
     @Test
     public void testCustomObservableWithErrorInObserverSynchronous() {
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         
         // FIXME custom built???
         Observable.just("1", "2", "three", "4")
@@ -364,7 +364,7 @@ public class ObservableTests {
     @Test
     public void testCustomObservableWithErrorInObservableSynchronous() {
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         // FIXME custom built???
         Observable.just("1", "2").concatWith(Observable.error(() -> new NumberFormatException()))
         .subscribe(new Observer<String>() {
@@ -570,7 +570,7 @@ public class ObservableTests {
     @Ignore("Subscribers can't throw")
     public void testErrorThrownWithoutErrorHandlerAsynchronous() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> exception = new AtomicReference<>();
+        final AtomicReference<Throwable> exception = new AtomicReference<T>();
         Observable.create(observer -> {
             new Thread(() -> {
                 try {
@@ -591,7 +591,7 @@ public class ObservableTests {
     @Test
     public void testTakeWithErrorInObserver() {
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         Observable.just("1", "2", "three", "4").take(3)
         .safeSubscribe(new Observer<String>() {
 
@@ -642,9 +642,9 @@ public class ObservableTests {
 
     @Test
     public void testOfTypeWithPolymorphism() {
-        ArrayList<Integer> l1 = new ArrayList<>();
+        ArrayList<Integer> l1 = new ArrayList<T>();
         l1.add(1);
-        LinkedList<Integer> l2 = new LinkedList<>();
+        LinkedList<Integer> l2 = new LinkedList<T>();
         l2.add(2);
 
         @SuppressWarnings("rawtypes")
@@ -830,21 +830,21 @@ public class ObservableTests {
     
     @Test
     public void testMergeWith() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.just(1).mergeWith(Observable.just(2)).subscribe(ts);
         ts.assertValues(1, 2);
     }
     
     @Test
     public void testConcatWith() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.just(1).concatWith(Observable.just(2)).subscribe(ts);
         ts.assertValues(1, 2);
     }
     
     @Test
     public void testAmbWith() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.just(1).ambWith(Observable.just(2)).subscribe(ts);
         ts.assertValue(1);
     }
@@ -877,7 +877,7 @@ public class ObservableTests {
     
     @Test
     public void testCompose() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.just(1, 2, 3).compose(t1 ->t1.map(String::valueOf))
         .subscribe(ts);
         ts.assertTerminated();
@@ -918,7 +918,7 @@ public class ObservableTests {
 // FIXME this test doesn't make sense 
 //    @Test // cf. https://github.com/ReactiveX/RxJava/issues/2599
 //    public void testSubscribingSubscriberAsObserverMaintainsSubscriptionChain() {
-//        TestSubscriber<Object> subscriber = new TestSubscriber<>();
+//        TestSubscriber<Object> subscriber = new TestSubscriber<T>();
 //        Subscription subscription = Observable.just("event").subscribe((Observer<Object>) subscriber);
 //        subscription.unsubscribe();
 //
@@ -946,7 +946,7 @@ public class ObservableTests {
     
     @Test
     public void testExtend() {
-        final TestSubscriber<Object> subscriber = new TestSubscriber<>();
+        final TestSubscriber<Object> subscriber = new TestSubscriber<T>();
         final Object value = new Object();
         Observable.just(value).to(onSubscribe -> {
                 onSubscribe.subscribe(subscriber);

@@ -27,7 +27,7 @@ public class NbpOperatorTakeLastOneTest {
 
     @Test
     public void testLastOfManyReturnsLast() {
-        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<T>();
         NbpObservable.range(1, 10).takeLast(1).subscribe(s);
         s.assertValue(10);
         s.assertNoErrors();
@@ -38,7 +38,7 @@ public class NbpOperatorTakeLastOneTest {
 
     @Test
     public void testLastOfEmptyReturnsEmpty() {
-        NbpTestSubscriber<Object> s = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> s = new NbpTestSubscriber<T>();
         NbpObservable.empty().takeLast(1).subscribe(s);
         s.assertNoValues();
         s.assertNoErrors();
@@ -49,7 +49,7 @@ public class NbpOperatorTakeLastOneTest {
 
     @Test
     public void testLastOfOneReturnsLast() {
-        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<T>();
         NbpObservable.just(1).takeLast(1).subscribe(s);
         s.assertValue(1);
         s.assertNoErrors();

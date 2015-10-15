@@ -27,7 +27,7 @@ public enum NbpOperatorTakeLastOne implements NbpOperator<Object, Object> {
     
     @Override
     public NbpSubscriber<? super Object> apply(NbpSubscriber<? super Object> s) {
-        return new TakeLastOneSubscriber<>(s);
+        return new TakeLastOneSubscriber<Object>(s);
     }
     
     static final class TakeLastOneSubscriber<T> implements NbpSubscriber<T>, Disposable {

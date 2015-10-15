@@ -34,7 +34,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
 
     @Test
     public void testResumeNextWithSynchronousExecution() {
-        final AtomicReference<Throwable> receivedException = new AtomicReference<>();
+        final AtomicReference<Throwable> receivedException = new AtomicReference<T>();
         Observable<String> w = Observable.create(new Publisher<String>() {
 
             @Override
@@ -74,7 +74,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
 
     @Test
     public void testResumeNextWithAsyncExecution() {
-        final AtomicReference<Throwable> receivedException = new AtomicReference<>();
+        final AtomicReference<Throwable> receivedException = new AtomicReference<T>();
         Subscription s = mock(Subscription.class);
         TestObservable w = new TestObservable(s, "one");
         Function<Throwable, Observable<String>> resume = new Function<Throwable, Observable<String>>() {
@@ -150,7 +150,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
     @Test
     @Ignore("Failed operator may leave the child subscriber in an inconsistent state which prevents further error delivery.")
     public void testOnErrorResumeReceivesErrorFromPreviousNonProtectedOperator() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.just(1).lift(new Operator<String, Integer>() {
 
             @Override
@@ -183,7 +183,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
     @Test
     @Ignore("A crashing operator may leave the downstream in an inconsistent state and not suitable for event delivery")
     public void testOnErrorResumeReceivesErrorFromPreviousNonProtectedOperatorOnNext() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.just(1).lift(new Operator<String, Integer>() {
 
             @Override
@@ -260,7 +260,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
         @SuppressWarnings("unchecked")
         Observer<String> observer = mock(Observer.class);
         
-        TestSubscriber<String> ts = new TestSubscriber<>(observer, Long.MAX_VALUE);
+        TestSubscriber<String> ts = new TestSubscriber<T>(observer, Long.MAX_VALUE);
         observable.subscribe(ts);
         ts.awaitTerminalEvent();
 
@@ -312,7 +312,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
     
     @Test
     public void testBackpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(0, 100000)
                 .onErrorResumeNext(new Function<Throwable, Observable<Integer>>() {
 

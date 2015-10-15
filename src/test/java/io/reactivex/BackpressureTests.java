@@ -81,7 +81,7 @@ public class BackpressureTests {
     public void testObserveOn() {
         int NUM = (int) (Observable.bufferSize() * 2.1);
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         incrementingIntegers(c).observeOn(Schedulers.computation()).take(NUM).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -94,7 +94,7 @@ public class BackpressureTests {
     public void testObserveOnWithSlowConsumer() {
         int NUM = (int) (Observable.bufferSize() * 0.2);
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         incrementingIntegers(c).observeOn(Schedulers.computation()).map(
             i -> {
                 try {
@@ -117,7 +117,7 @@ public class BackpressureTests {
         int NUM = (int) (Observable.bufferSize() * 4.1);
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable<Integer> merged = Observable.merge(incrementingIntegers(c1), incrementingIntegers(c2));
 
         merged.take(NUM).subscribe(ts);
@@ -138,7 +138,7 @@ public class BackpressureTests {
         int NUM = (int) (Observable.bufferSize() * 4.1);
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable<Integer> merged = Observable.merge(
                 incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                 incrementingIntegers(c2).subscribeOn(Schedulers.computation()));
@@ -167,7 +167,7 @@ public class BackpressureTests {
             AtomicInteger c1 = new AtomicInteger();
             AtomicInteger c2 = new AtomicInteger();
             
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             Observable<Integer> merged = Observable.merge(
                     incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                     incrementingIntegers(c2).subscribeOn(Schedulers.computation()));
@@ -191,7 +191,7 @@ public class BackpressureTests {
         int NUM = (int) (Observable.bufferSize() * 4.1);
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable<Integer> merged = Observable.merge(
                 incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                 incrementingIntegers(c2).subscribeOn(Schedulers.computation()));
@@ -213,7 +213,7 @@ public class BackpressureTests {
     public void testFlatMapSync() {
         int NUM = (int) (Observable.bufferSize() * 2.1);
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         incrementingIntegers(c)
         .flatMap(i -> incrementingIntegers(new AtomicInteger()).take(10))
@@ -232,7 +232,7 @@ public class BackpressureTests {
     public void testFlatMapAsync() {
         int NUM = (int) (Observable.bufferSize() * 2.1);
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         incrementingIntegers(c)
         .subscribeOn(Schedulers.computation())
@@ -257,7 +257,7 @@ public class BackpressureTests {
         int NUM = (int) (Observable.bufferSize() * 4.1);
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         Observable<Integer> zipped = Observable.zip(
                 incrementingIntegers(c1),
@@ -280,7 +280,7 @@ public class BackpressureTests {
         int NUM = (int) (Observable.bufferSize() * 2.1);
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable<Integer> zipped = Observable.zip(
                 incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                 incrementingIntegers(c2).subscribeOn(Schedulers.computation()),
@@ -302,8 +302,8 @@ public class BackpressureTests {
         for (int i = 0; i < 100; i++) {
             int NUM = (int) (Observable.bufferSize() * 2.1);
             AtomicInteger c = new AtomicInteger();
-            ConcurrentLinkedQueue<Thread> threads = new ConcurrentLinkedQueue<>();
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            ConcurrentLinkedQueue<Thread> threads = new ConcurrentLinkedQueue<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             // observeOn is there to make it async and need backpressure
             incrementingIntegers(c, threads).subscribeOn(Schedulers.computation()).observeOn(Schedulers.computation()).take(NUM).subscribe(ts);
             ts.awaitTerminalEvent();
@@ -332,7 +332,7 @@ public class BackpressureTests {
     public void testTakeFilterSkipChainAsync() {
         int NUM = (int) (Observable.bufferSize() * 2.1);
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         incrementingIntegers(c).observeOn(Schedulers.computation())
                 .skip(10000)
                 .filter(i -> i > 11000).take(NUM).subscribe(ts);
@@ -454,7 +454,7 @@ public class BackpressureTests {
     @Test(timeout = 2000)
     public void testFirehoseFailsAsExpected() {
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         firehose(c).observeOn(Schedulers.computation())
         .map(v -> {
@@ -495,7 +495,7 @@ public class BackpressureTests {
             }
             int NUM = (int) (Observable.bufferSize() * 1.1); // > 1 so that take doesn't prevent buffer overflow
             AtomicInteger c = new AtomicInteger();
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             firehose(c).onBackpressureDrop()
             .observeOn(Schedulers.computation())
             .map(SLOW_PASS_THRU).take(NUM).subscribe(ts);
@@ -520,7 +520,7 @@ public class BackpressureTests {
             final AtomicInteger dropCount = new AtomicInteger();
             final AtomicInteger passCount = new AtomicInteger();
             final int NUM = Observable.bufferSize() * 3; // > 1 so that take doesn't prevent buffer overflow
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             
             firehose(emitCount)
             .onBackpressureDrop(v -> dropCount.incrementAndGet())
@@ -550,7 +550,7 @@ public class BackpressureTests {
         for (int i = 0; i < 100; i++) {
             int NUM = (int) (Observable.bufferSize() * 1.1); // > 1 so that take doesn't prevent buffer overflow
             AtomicInteger c = new AtomicInteger();
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             firehose(c).onBackpressureDrop()
             .map(SLOW_PASS_THRU).take(NUM).subscribe(ts);
             ts.awaitTerminalEvent();
@@ -573,7 +573,7 @@ public class BackpressureTests {
             final AtomicInteger dropCount = new AtomicInteger();
             int NUM = (int) (Observable.bufferSize() * 1.1); // > 1 so that take doesn't prevent buffer overflow
             AtomicInteger c = new AtomicInteger();
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             firehose(c).onBackpressureDrop(j -> dropCount.incrementAndGet())
             .map(SLOW_PASS_THRU).take(NUM).subscribe(ts);
             ts.awaitTerminalEvent();
@@ -597,7 +597,7 @@ public class BackpressureTests {
     public void testOnBackpressureBuffer() {
         int NUM = (int) (Observable.bufferSize() * 1.1); // > 1 so that take doesn't prevent buffer overflow
         AtomicInteger c = new AtomicInteger();
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         firehose(c).takeWhile(t1 -> t1 < 100000)
         .onBackpressureBuffer()

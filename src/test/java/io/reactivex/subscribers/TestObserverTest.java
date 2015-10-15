@@ -36,7 +36,7 @@ public class TestObserverTest {
     @Test
     public void testAssert() {
         Observable<Integer> oi = Observable.fromIterable(Arrays.asList(1, 2));
-        TestSubscriber<Integer> o = new TestSubscriber<>();
+        TestSubscriber<Integer> o = new TestSubscriber<T>();
         oi.subscribe(o);
 
         o.assertValues(1, 2);
@@ -47,7 +47,7 @@ public class TestObserverTest {
     @Test
     public void testAssertNotMatchCount() {
         Observable<Integer> oi = Observable.fromIterable(Arrays.asList(1, 2));
-        TestSubscriber<Integer> o = new TestSubscriber<>();
+        TestSubscriber<Integer> o = new TestSubscriber<T>();
         oi.subscribe(o);
 
         thrown.expect(AssertionError.class);
@@ -62,7 +62,7 @@ public class TestObserverTest {
     @Test
     public void testAssertNotMatchValue() {
         Observable<Integer> oi = Observable.fromIterable(Arrays.asList(1, 2));
-        TestSubscriber<Integer> o = new TestSubscriber<>();
+        TestSubscriber<Integer> o = new TestSubscriber<T>();
         oi.subscribe(o);
 
         thrown.expect(AssertionError.class);
@@ -77,7 +77,7 @@ public class TestObserverTest {
     @Test
     public void testAssertTerminalEventNotReceived() {
         PublishSubject<Integer> p = PublishSubject.create();
-        TestSubscriber<Integer> o = new TestSubscriber<>();
+        TestSubscriber<Integer> o = new TestSubscriber<T>();
         p.subscribe(o);
 
         p.onNext(1);
@@ -98,7 +98,7 @@ public class TestObserverTest {
 
         Subscriber<Integer> mockObserver = TestHelper.mockSubscriber();
         
-        oi.subscribe(new TestSubscriber<>(mockObserver));
+        oi.subscribe(new TestSubscriber<T>(mockObserver));
 
         InOrder inOrder = inOrder(mockObserver);
         inOrder.verify(mockObserver, times(1)).onNext(1);
@@ -111,7 +111,7 @@ public class TestObserverTest {
     public void testWrappingMockWhenUnsubscribeInvolved() {
         Observable<Integer> oi = Observable.fromIterable(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9)).take(2);
         Subscriber<Integer> mockObserver = TestHelper.mockSubscriber();
-        oi.subscribe(new TestSubscriber<>(mockObserver));
+        oi.subscribe(new TestSubscriber<T>(mockObserver));
 
         InOrder inOrder = inOrder(mockObserver);
         inOrder.verify(mockObserver, times(1)).onNext(1);
@@ -122,12 +122,12 @@ public class TestObserverTest {
     
     @Test
     public void testErrorSwallowed() {
-        Observable.error(new RuntimeException()).subscribe(new TestSubscriber<>());
+        Observable.error(new RuntimeException()).subscribe(new TestSubscriber<T>());
     }
     
     @Test
     public void testGetEvents() {
-        TestSubscriber<Integer> to = new TestSubscriber<>();
+        TestSubscriber<Integer> to = new TestSubscriber<T>();
         to.onNext(1);
         to.onNext(2);
         
@@ -141,7 +141,7 @@ public class TestObserverTest {
                 Collections.singletonList(Notification.complete())), to.getEvents());
         
         TestException ex = new TestException();
-        TestSubscriber<Integer> to2 = new TestSubscriber<>();
+        TestSubscriber<Integer> to2 = new TestSubscriber<T>();
         to2.onNext(1);
         to2.onNext(2);
         
@@ -160,7 +160,7 @@ public class TestObserverTest {
 
     @Test
     public void testNullExpected() {
-        TestSubscriber<Integer> to = new TestSubscriber<>();
+        TestSubscriber<Integer> to = new TestSubscriber<T>();
         to.onNext(1);
 
         try {
@@ -174,7 +174,7 @@ public class TestObserverTest {
     
     @Test
     public void testNullActual() {
-        TestSubscriber<Integer> to = new TestSubscriber<>();
+        TestSubscriber<Integer> to = new TestSubscriber<T>();
         to.onNext(null);
 
         try {
@@ -188,7 +188,7 @@ public class TestObserverTest {
     
     @Test
     public void testTerminalErrorOnce() {
-        TestSubscriber<Integer> to = new TestSubscriber<>();
+        TestSubscriber<Integer> to = new TestSubscriber<T>();
         to.onError(new TestException());
         to.onError(new TestException());
         
@@ -202,7 +202,7 @@ public class TestObserverTest {
     }
     @Test
     public void testTerminalCompletedOnce() {
-        TestSubscriber<Integer> to = new TestSubscriber<>();
+        TestSubscriber<Integer> to = new TestSubscriber<T>();
         to.onComplete();
         to.onComplete();
         
@@ -217,7 +217,7 @@ public class TestObserverTest {
     
     @Test
     public void testTerminalOneKind() {
-        TestSubscriber<Integer> to = new TestSubscriber<>();
+        TestSubscriber<Integer> to = new TestSubscriber<T>();
         to.onError(new TestException());
         to.onComplete();
         

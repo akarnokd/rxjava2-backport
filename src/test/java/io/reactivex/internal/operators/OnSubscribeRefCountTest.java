@@ -137,8 +137,8 @@ public class OnSubscribeRefCountTest {
                 .publish().refCount();
 
         for (int i = 0; i < 10; i++) {
-            TestSubscriber<Long> ts1 = new TestSubscriber<>();
-            TestSubscriber<Long> ts2 = new TestSubscriber<>();
+            TestSubscriber<Long> ts1 = new TestSubscriber<T>();
+            TestSubscriber<Long> ts2 = new TestSubscriber<T>();
             r.subscribe(ts1);
             r.subscribe(ts2);
             try {
@@ -174,7 +174,7 @@ public class OnSubscribeRefCountTest {
                         unsubscribeLatch.countDown();
                 });
         
-        TestSubscriber<Long> s = new TestSubscriber<>();
+        TestSubscriber<Long> s = new TestSubscriber<T>();
         o.publish().refCount().subscribeOn(Schedulers.newThread()).subscribe(s);
         System.out.println("send unsubscribe");
         // wait until connected
@@ -213,7 +213,7 @@ public class OnSubscribeRefCountTest {
                         subUnsubCount.incrementAndGet();
                 });
 
-        TestSubscriber<Long> s = new TestSubscriber<>();
+        TestSubscriber<Long> s = new TestSubscriber<T>();
         
         o.publish().refCount().subscribeOn(Schedulers.computation()).subscribe(s);
         System.out.println("send unsubscribe");
@@ -303,7 +303,7 @@ public class OnSubscribeRefCountTest {
         Observable<Long> interval = Observable.interval(100, TimeUnit.MILLISECONDS, s).publish().refCount();
 
         // subscribe list1
-        final List<Long> list1 = new ArrayList<>();
+        final List<Long> list1 = new ArrayList<T>();
         Disposable s1 = interval.subscribe(t1 -> list1.add(t1));
 
         s.advanceTimeBy(200, TimeUnit.MILLISECONDS);
@@ -313,7 +313,7 @@ public class OnSubscribeRefCountTest {
         assertEquals(1L, list1.get(1).longValue());
 
         // subscribe list2
-        final List<Long> list2 = new ArrayList<>();
+        final List<Long> list2 = new ArrayList<T>();
         Disposable s2 = interval.subscribe(t1 -> list2.add(t1));
 
         s.advanceTimeBy(300, TimeUnit.MILLISECONDS);
@@ -353,7 +353,7 @@ public class OnSubscribeRefCountTest {
 
         // subscribing a new one should start over because the source should have been unsubscribed
         // subscribe list3
-        final List<Long> list3 = new ArrayList<>();
+        final List<Long> list3 = new ArrayList<T>();
         interval.subscribe(t1 -> list3.add(t1));
 
         s.advanceTimeBy(200, TimeUnit.MILLISECONDS);
@@ -414,8 +414,8 @@ public class OnSubscribeRefCountTest {
         Observable<Integer> combined = Observable.combineLatest(o1, o2, (t1, t2) -> t1 + t2)
                 .publish().refCount();
 
-        TestSubscriber<Integer> ts1 = new TestSubscriber<>();
-        TestSubscriber<Integer> ts2 = new TestSubscriber<>();
+        TestSubscriber<Integer> ts1 = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts2 = new TestSubscriber<T>();
 
         combined.subscribe(ts1);
         combined.subscribe(ts2);

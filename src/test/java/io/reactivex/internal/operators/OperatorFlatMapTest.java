@@ -328,13 +328,13 @@ public class OperatorFlatMapTest {
             }
         }, m);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.subscribe(ts);
         
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
-        Set<Integer> expected = new HashSet<>(Arrays.asList(
+        Set<Integer> expected = new HashSet<T>(Arrays.asList(
                 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100, 101
         ));
         Assert.assertEquals(expected.size(), ts.valueCount());
@@ -358,13 +358,13 @@ public class OperatorFlatMapTest {
             }
         }, m);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.subscribe(ts);
         
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
-        Set<Integer> expected = new HashSet<>(Arrays.asList(
+        Set<Integer> expected = new HashSet<T>(Arrays.asList(
                 1010, 1011, 2020, 2021, 3030, 3031, 4040, 4041, 5050, 5051, 
                 6060, 6061, 7070, 7071, 8080, 8081, 9090, 9091, 10100, 10101
         ));
@@ -404,7 +404,7 @@ public class OperatorFlatMapTest {
         Observable<Integer> source = Observable.fromIterable(Arrays.asList(10, 20, 30));
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
 
         source.flatMap(just(onNext), just(onError), just0(onCompleted), m).subscribe(ts);
         
@@ -429,7 +429,7 @@ public class OperatorFlatMapTest {
             if (i % 10 == 0) {
                 System.out.println("flatMapRangeAsyncLoop > " + i);
             }
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             Observable.range(0, 1000)
             .flatMap(new Function<Integer, Observable<Integer>>() {
                 @Override
@@ -466,7 +466,7 @@ public class OperatorFlatMapTest {
             if (i % 10 == 0) {
                 System.out.println("flatMapRangeAsyncLoop > " + i);
             }
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             Observable.range(0, 1000)
             .flatMap(new Function<Integer, Observable<Integer>>() {
                 final Random rnd = new Random();
@@ -490,7 +490,7 @@ public class OperatorFlatMapTest {
             ts.assertNoErrors();
             List<Integer> list = ts.values();
             if (list.size() < 1000) {
-                Set<Integer> set = new HashSet<>(list);
+                Set<Integer> set = new HashSet<T>(list);
                 for (int j = 0; j < 1000; j++) {
                     if (!set.contains(j)) {
                         System.out.println(j + " missing");
@@ -504,7 +504,7 @@ public class OperatorFlatMapTest {
     @Test
     public void flatMapIntPassthruAsync() {
         for (int i = 0;i < 1000; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
             
             Observable.range(1, 1000).flatMap(new Function<Integer, Observable<Integer>>() {
                 @Override
@@ -522,7 +522,7 @@ public class OperatorFlatMapTest {
     @Test
     public void flatMapTwoNestedSync() {
         for (final int n : new int[] { 1, 1000, 1000000 }) {
-            TestSubscriber<Integer> ts = new TestSubscriber<>();
+            TestSubscriber<Integer> ts = new TestSubscriber<T>();
     
             Observable.just(1, 2).flatMap(new Function<Integer, Observable<Integer>>() {
                 @Override

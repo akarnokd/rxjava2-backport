@@ -40,7 +40,7 @@ public final class NbpOperatorGroupBy<T, K, V> implements NbpOperator<NbpGrouped
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super NbpGroupedObservable<K, V>> t) {
-        return new GroupBySubscriber<>(t, keySelector, valueSelector, bufferSize, delayError);
+        return new GroupBySubscriber<T, K, V>(t, keySelector, valueSelector, bufferSize, delayError);
     }
     
     public static final class GroupBySubscriber<T, K, V> extends AtomicInteger implements NbpSubscriber<T>, Disposable {
@@ -69,7 +69,7 @@ public final class NbpOperatorGroupBy<T, K, V> implements NbpOperator<NbpGrouped
             this.valueSelector = valueSelector;
             this.bufferSize = bufferSize;
             this.delayError = delayError;
-            this.groups = new ConcurrentHashMap<>();
+            this.groups = new ConcurrentHashMap<Object, GroupedUnicast<K, V>>();
             this.lazySet(1);
         }
         
@@ -131,7 +131,7 @@ public final class NbpOperatorGroupBy<T, K, V> implements NbpOperator<NbpGrouped
         
         @Override
         public void onError(Throwable t) {
-            List<GroupedUnicast<K, V>> list = new ArrayList<>(groups.values());
+            List<GroupedUnicast<K, V>> list = new ArrayList<GroupedUnicast<K, V>>(groups.values());
             groups.clear();
             
             for (GroupedUnicast<K, V> e : list) {
@@ -143,7 +143,7 @@ public final class NbpOperatorGroupBy<T, K, V> implements NbpOperator<NbpGrouped
         
         @Override
         public void onComplete() {
-            List<GroupedUnicast<K, V>> list = new ArrayList<>(groups.values());
+            List<GroupedUnicast<K, V>> list = new ArrayList<GroupedUnicast<K, V>>(groups.values());
             groups.clear();
             
             for (GroupedUnicast<K, V> e : list) {
@@ -176,8 +176,8 @@ public final class NbpOperatorGroupBy<T, K, V> implements NbpOperator<NbpGrouped
     static final class GroupedUnicast<K, T> extends NbpGroupedObservable<K, T> {
         
         public static <T, K> GroupedUnicast<K, T> createWith(K key, int bufferSize, GroupBySubscriber<?, K, T> parent, boolean delayError) {
-            State<T, K> state = new State<>(bufferSize, parent, key, delayError);
-            return new GroupedUnicast<>(key, state);
+            State<T, K> state = new State<T, K>(bufferSize, parent, key, delayError);
+            return new GroupedUnicast<K, T>(key, state);
         }
         
         final State<T, K> state;
@@ -223,7 +223,7 @@ public final class NbpOperatorGroupBy<T, K, V> implements NbpOperator<NbpGrouped
                 AtomicReferenceFieldUpdater.newUpdater(State.class, NbpSubscriber.class, "actual");
         
         public State(int bufferSize, GroupBySubscriber<?, K, T> parent, K key, boolean delayError) {
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.queue = new SpscLinkedArrayQueue<T>(bufferSize);
             this.parent = parent;
             this.key = key;
             this.delayError = delayError;

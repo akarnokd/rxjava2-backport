@@ -37,7 +37,7 @@ public class NbpOnSubscribeToObservableFutureTest {
 
         NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(o);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(o);
         
         NbpObservable.fromFuture(future).subscribe(ts);
         
@@ -58,7 +58,7 @@ public class NbpOnSubscribeToObservableFutureTest {
 
         NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(o);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(o);
         
         NbpObservable.fromFuture(future).subscribe(ts);
         
@@ -79,7 +79,7 @@ public class NbpOnSubscribeToObservableFutureTest {
 
         NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(o);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(o);
         ts.dispose();
         
         NbpObservable.fromFuture(future).subscribe(ts);
@@ -125,7 +125,7 @@ public class NbpOnSubscribeToObservableFutureTest {
 
         NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(o);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(o);
         NbpObservable<Object> futureObservable = NbpObservable.fromFuture(future);
         
         futureObservable.subscribeOn(Schedulers.computation()).subscribe(ts);

@@ -187,7 +187,7 @@ public class OperatorTakeUntilTest {
         PublishSubject<Integer> source = PublishSubject.create();
         PublishSubject<Integer> until = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.takeUntil(until).unsafeSubscribe(ts);
 
@@ -212,7 +212,7 @@ public class OperatorTakeUntilTest {
         PublishSubject<Integer> source = PublishSubject.create();
         PublishSubject<Integer> until = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.takeUntil(until).unsafeSubscribe(ts);
 
@@ -235,7 +235,7 @@ public class OperatorTakeUntilTest {
         PublishSubject<Integer> source = PublishSubject.create();
         PublishSubject<Integer> until = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.takeUntil(until).take(1).unsafeSubscribe(ts);
 
@@ -255,7 +255,7 @@ public class OperatorTakeUntilTest {
     public void testBackpressure() {
         PublishSubject<Integer> until = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         Observable.range(1, 10).takeUntil(until).unsafeSubscribe(ts);
 

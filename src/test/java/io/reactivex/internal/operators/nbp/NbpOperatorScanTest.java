@@ -108,7 +108,7 @@ public class NbpOperatorScanTest {
     
     @Test
     public void shouldNotEmitUntilAfterSubscription() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(1, 100).scan(0, new BiFunction<Integer, Integer, Integer>() {
 
             @Override
@@ -175,7 +175,7 @@ public class NbpOperatorScanTest {
 
                     @Override
                     public List<Integer> get() {
-                        return new ArrayList<>();
+                        return new ArrayList<T>();
                     }
                     
                 }, new BiConsumer<List<Integer>, Integer>() {
@@ -201,7 +201,7 @@ public class NbpOperatorScanTest {
             }
 
         }).take(1);
-        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<T>();
         o.subscribe(NbpSubscriber);
         NbpSubscriber.assertValue(0);
         NbpSubscriber.assertTerminated();
@@ -212,7 +212,7 @@ public class NbpOperatorScanTest {
     public void testInitialValueEmittedNoProducer() {
         NbpPublishSubject<Integer> source = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         source.scan(0, new BiFunction<Integer, Integer, Integer>() {
             @Override

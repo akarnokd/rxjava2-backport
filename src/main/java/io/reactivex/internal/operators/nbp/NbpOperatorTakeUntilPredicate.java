@@ -30,7 +30,7 @@ public final class NbpOperatorTakeUntilPredicate<T> implements NbpOperator<T, T>
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> s) {
-        return new InnerSubscriber<>(s, predicate);
+        return new InnerSubscriber<T>(s, predicate);
     }
     
     static final class InnerSubscriber<T> implements NbpSubscriber<T> {

@@ -279,7 +279,7 @@ public class NbpOperatorDebounceTest {
     @Test
     public void debounceWithTimeBackpressure() throws InterruptedException {
         TestScheduler scheduler = new TestScheduler();
-        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<T>();
         NbpObservable.merge(
                 NbpObservable.just(1),
                 NbpObservable.just(2).delay(10, TimeUnit.MILLISECONDS, scheduler)

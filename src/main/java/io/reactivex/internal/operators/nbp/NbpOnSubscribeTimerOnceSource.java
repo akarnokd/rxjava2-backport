@@ -48,10 +48,16 @@ public final class NbpOnSubscribeTimerOnceSource implements NbpOnSubscribe<Long>
 
         final NbpSubscriber<? super Long> actual;
         
-        static final Disposable DISPOSED = () -> { };
+        static final Disposable DISPOSED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
         /** This state tells the setResource not to call dispose since the run is finishing anyway. */
-        static final Disposable DONE = () -> { };
+        static final Disposable DONE = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         volatile boolean cancelled;
         

@@ -31,14 +31,14 @@ public class SingleTest {
 
     @Test
     public void testHelloWorld() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single.just("Hello World!").subscribe(ts);
         ts.assertValueSequence(Arrays.asList("Hello World!"));
     }
 
     @Test
     public void testHelloWorld2() {
-        final AtomicReference<String> v = new AtomicReference<>();
+        final AtomicReference<String> v = new AtomicReference<T>();
         Single.just("Hello World!").subscribe(new SingleSubscriber<String>() {
 
             @Override
@@ -62,7 +62,7 @@ public class SingleTest {
 
     @Test
     public void testMap() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single.just("A")
                 .map(s -> s + "B")
                 .subscribe(ts);
@@ -71,7 +71,7 @@ public class SingleTest {
 
     @Test
     public void testZip() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single<String> a = Single.just("A");
         Single<String> b = Single.just("B");
 
@@ -82,7 +82,7 @@ public class SingleTest {
 
     @Test
     public void testZipWith() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
 
         Single.just("A").zipWith(Single.just("B"), (a1, b1) -> a1 + b1)
                 .subscribe(ts);
@@ -91,7 +91,7 @@ public class SingleTest {
 
     @Test
     public void testMerge() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single<String> a = Single.just("A");
         Single<String> b = Single.just("B");
 
@@ -101,7 +101,7 @@ public class SingleTest {
 
     @Test
     public void testMergeWith() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
 
         Single.just("A").mergeWith(Single.just("B")).subscribe(ts);
         ts.assertValueSequence(Arrays.asList("A", "B"));
@@ -109,7 +109,7 @@ public class SingleTest {
 
     @Test
     public void testCreateSuccess() {
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         Single.create(s -> {
             s.onSubscribe(EmptyDisposable.INSTANCE);
@@ -121,7 +121,7 @@ public class SingleTest {
 
     @Test
     public void testCreateError() {
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         Single.create(s -> {
             s.onSubscribe(EmptyDisposable.INSTANCE);
             s.onError(new RuntimeException("fail"));
@@ -133,7 +133,7 @@ public class SingleTest {
 
     @Test
     public void testAsync() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single.just("Hello")
                 .subscribeOn(Schedulers.io())
                 .map(v -> {
@@ -152,7 +152,7 @@ public class SingleTest {
 
     @Test
     public void testFlatMap() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single.just("Hello").flatMap(s -> Single.just(s + " World!").subscribeOn(Schedulers.computation())
         ).subscribe(ts);
         ts.awaitTerminalEvent();
@@ -161,7 +161,7 @@ public class SingleTest {
 
     @Test
     public void testTimeout() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single<String> s1 = Single.<String>create(s -> {
             s.onSubscribe(EmptyDisposable.INSTANCE);
             try {
@@ -180,7 +180,7 @@ public class SingleTest {
 
     @Test
     public void testTimeoutWithFallback() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Single<String> s1 = Single.<String>create(s -> {
             s.onSubscribe(EmptyDisposable.INSTANCE);
                 try {
@@ -200,7 +200,7 @@ public class SingleTest {
 
     @Test
     public void testUnsubscribe() throws InterruptedException {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         final AtomicBoolean unsubscribed = new AtomicBoolean();
         final AtomicBoolean interrupted = new AtomicBoolean();
         final CountDownLatch latch = new CountDownLatch(2);
@@ -368,7 +368,7 @@ public class SingleTest {
             t.onSuccess("hello");
         });
 
-        TestSubscriber<String> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<String> ts = new TestSubscriber<T>((Long)null);
 
         s.subscribe(ts);
 
@@ -382,7 +382,7 @@ public class SingleTest {
     @Test
     public void testToObservable() {
     	Observable<String> a = Single.just("a").toFlowable();
-    	TestSubscriber<String> ts = new TestSubscriber<>();
+    	TestSubscriber<String> ts = new TestSubscriber<T>();
     	a.subscribe(ts);
     	ts.assertValue("a");
     	ts.assertNoErrors();

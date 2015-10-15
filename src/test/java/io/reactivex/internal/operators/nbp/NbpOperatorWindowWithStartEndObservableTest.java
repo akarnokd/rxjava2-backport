@@ -41,8 +41,8 @@ public class NbpOperatorWindowWithStartEndObservableTest {
 
     @Test
     public void testObservableBasedOpenerAndCloser() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         NbpObservable<String> source = NbpObservable.create(new NbpOnSubscribe<String>() {
             @Override
@@ -92,8 +92,8 @@ public class NbpOperatorWindowWithStartEndObservableTest {
 
     @Test
     public void testObservableBasedCloser() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         NbpObservable<String> source = NbpObservable.create(new NbpOnSubscribe<String>() {
             @Override
@@ -141,7 +141,7 @@ public class NbpOperatorWindowWithStartEndObservableTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -173,7 +173,7 @@ public class NbpOperatorWindowWithStartEndObservableTest {
                 stringObservable.subscribe(new NbpObserver<String>() {
                     @Override
                     public void onComplete() {
-                        lists.add(new ArrayList<>(list));
+                        lists.add(new ArrayList<T>(list));
                         list.clear();
                     }
 
@@ -198,7 +198,7 @@ public class NbpOperatorWindowWithStartEndObservableTest {
         NbpPublishSubject<Integer> open = NbpPublishSubject.create();
         final NbpPublishSubject<Integer> close = NbpPublishSubject.create();
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         
         source.window(open, new Function<Integer, NbpObservable<Integer>>() {
             @Override
@@ -235,7 +235,7 @@ public class NbpOperatorWindowWithStartEndObservableTest {
         NbpPublishSubject<Integer> open = NbpPublishSubject.create();
         final NbpPublishSubject<Integer> close = NbpPublishSubject.create();
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         
         source.window(open, new Function<Integer, NbpObservable<Integer>>() {
             @Override

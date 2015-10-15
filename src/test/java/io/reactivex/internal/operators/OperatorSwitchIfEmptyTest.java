@@ -139,7 +139,7 @@ public class OperatorSwitchIfEmptyTest {
     @Test
     public void testSwitchRequestAlternativeObservableWithBackpressure() {
 
-        TestSubscriber<Integer> ts = new TestSubscriber<>(1L);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(1L);
         
         Observable.<Integer>empty().switchIfEmpty(Observable.just(1, 2, 3)).subscribe(ts);
         
@@ -152,7 +152,7 @@ public class OperatorSwitchIfEmptyTest {
     }
     @Test
     public void testBackpressureNoRequest() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         Observable.<Integer>empty().switchIfEmpty(Observable.just(1, 2, 3)).subscribe(ts);
         ts.assertNoValues();
         ts.assertNoErrors();
@@ -160,7 +160,7 @@ public class OperatorSwitchIfEmptyTest {
     
     @Test
     public void testBackpressureOnFirstObservable() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         Observable.just(1,2,3).switchIfEmpty(Observable.just(4, 5, 6)).subscribe(ts);
         ts.assertNotComplete();
         ts.assertNoErrors();
@@ -169,7 +169,7 @@ public class OperatorSwitchIfEmptyTest {
     
     @Test(timeout = 10000)
     public void testRequestsNotLost() throws InterruptedException {
-        final TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        final TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         Observable.create(new Publisher<Long>() {
 
             @Override

@@ -67,7 +67,7 @@ public class NbpReplaySubjectTest {
         NbpSubscriber<Object> observerB = TestHelper.mockNbpSubscriber();
         NbpSubscriber<Object> observerC = TestHelper.mockNbpSubscriber();
         NbpSubscriber<Object> observerD = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(observerA);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(observerA);
 
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -218,7 +218,7 @@ public class NbpReplaySubjectTest {
         NbpReplaySubject<String> subject = NbpReplaySubject.create();
 
         NbpSubscriber<String> observer = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(observer);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -249,7 +249,7 @@ public class NbpReplaySubjectTest {
     @Test(timeout = 2000)
     public void testNewSubscriberDoesntBlockExisting() throws InterruptedException {
 
-        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<>();
+        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<T>();
         NbpSubscriber<String> observer1 = new NbpObserver<String>() {
 
             @Override
@@ -270,7 +270,7 @@ public class NbpReplaySubjectTest {
 
         };
 
-        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<>();
+        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<T>();
         final CountDownLatch oneReceived = new CountDownLatch(1);
         final CountDownLatch makeSlow = new CountDownLatch(1);
         final CountDownLatch completed = new CountDownLatch(1);
@@ -535,7 +535,7 @@ public class NbpReplaySubjectTest {
 //        NbpReplaySubject<String> ps = NbpReplaySubject.create();
 //
 //        ps.subscribe();
-//        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+//        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
 //        ps.subscribe(ts);
 //
 //        try {

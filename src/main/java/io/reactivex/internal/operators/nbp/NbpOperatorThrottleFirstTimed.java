@@ -37,8 +37,8 @@ public final class NbpOperatorThrottleFirstTimed<T> implements NbpOperator<T, T>
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new DebounceTimedSubscriber<>(
-                new NbpSerializedSubscriber<>(t), 
+        return new DebounceTimedSubscriber<T>(
+                new NbpSerializedSubscriber<T>(t), 
                 timeout, unit, scheduler.createWorker());
     }
     
@@ -56,9 +56,15 @@ public final class NbpOperatorThrottleFirstTimed<T> implements NbpOperator<T, T>
         static final AtomicReferenceFieldUpdater<DebounceTimedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(DebounceTimedSubscriber.class, Disposable.class, "timer");
 
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
-        static final Disposable NEW_TIMER = () -> { };
+        static final Disposable NEW_TIMER = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
         volatile boolean gate;
         

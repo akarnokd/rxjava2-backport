@@ -15,15 +15,16 @@ package io.reactivex.internal.operators.nbp;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable;
 import io.reactivex.NbpObservable.*;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
+import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.SetCompositeResource;
 import io.reactivex.internal.queue.MpscLinkedQueue;
 import io.reactivex.internal.subscribers.nbp.*;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
+import io.reactivex.internal.util.QueueDrainHelper;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.subscribers.nbp.NbpSerializedSubscriber;
 
@@ -41,8 +42,8 @@ public final class NbpOperatorBufferBoundary<T, U extends Collection<? super T>,
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super U> t) {
-        return new BufferBoundarySubscriber<>(
-                new NbpSerializedSubscriber<>(t),
+        return new BufferBoundarySubscriber<T, U, Open, Close>(
+                new NbpSerializedSubscriber<U>(t),
                 bufferOpen, bufferClose, bufferSupplier
                 );
     }
@@ -67,12 +68,12 @@ public final class NbpOperatorBufferBoundary<T, U extends Collection<? super T>,
                 NbpObservable<? extends Open> bufferOpen,
                 Function<? super Open, ? extends NbpObservable<? extends Close>> bufferClose,
                 Supplier<U> bufferSupplier) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<U>());
             this.bufferOpen = bufferOpen;
             this.bufferClose = bufferClose;
             this.bufferSupplier = bufferSupplier;
-            this.buffers = new LinkedList<>();
-            this.resources = new SetCompositeResource<>(Disposables.consumeAndDispose());
+            this.buffers = new LinkedList<U>();
+            this.resources = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
         }
         @Override
         public void onSubscribe(Disposable s) {
@@ -81,7 +82,7 @@ public final class NbpOperatorBufferBoundary<T, U extends Collection<? super T>,
             }
             this.s = s;
             
-            BufferOpenSubscriber<T, U, Open, Close> bos = new BufferOpenSubscriber<>(this);
+            BufferOpenSubscriber<T, U, Open, Close> bos = new BufferOpenSubscriber<T, U, Open, Close>(this);
             resources.add(bos);
 
             actual.onSubscribe(this);
@@ -119,7 +120,7 @@ public final class NbpOperatorBufferBoundary<T, U extends Collection<? super T>,
         void complete() {
             List<U> list;
             synchronized (this) {
-                list = new ArrayList<>(buffers);
+                list = new ArrayList<U>(buffers);
                 buffers.clear();
             }
             
@@ -129,7 +130,7 @@ public final class NbpOperatorBufferBoundary<T, U extends Collection<? super T>,
             }
             done = true;
             if (enter()) {
-                drainLoop(q, actual, false, this);
+                QueueDrainHelper.drainLoop(q, actual, false, this, this);
             }
         }
         
@@ -190,7 +191,7 @@ public final class NbpOperatorBufferBoundary<T, U extends Collection<? super T>,
                 buffers.add(b);
             }
             
-            BufferCloseSubscriber<T, U, Open, Close> bcs = new BufferCloseSubscriber<>(b, this);
+            BufferCloseSubscriber<T, U, Open, Close> bcs = new BufferCloseSubscriber<T, U, Open, Close>(b, this);
             resources.add(bcs);
             
             WINDOWS.getAndIncrement(this);

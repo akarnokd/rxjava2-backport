@@ -46,7 +46,7 @@ public final class NbpOperatorScanSeed<T, R> implements NbpOperator<R, T> {
             return NbpEmptySubscriber.INSTANCE;
         }
         
-        return new ScanSeedSubscriber<>(t, accumulator, r);
+        return new ScanSeedSubscriber<T, R>(t, accumulator, r);
     }
     
     static final class ScanSeedSubscriber<T, R> implements NbpSubscriber<T> {

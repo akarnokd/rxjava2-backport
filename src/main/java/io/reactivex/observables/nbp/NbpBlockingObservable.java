@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.*;
 import io.reactivex.NbpObservable.NbpSubscriber;
+import io.reactivex.Optional;
 import io.reactivex.disposables.*;
 import io.reactivex.functions.Consumer;
 import io.reactivex.internal.functions.Functions;

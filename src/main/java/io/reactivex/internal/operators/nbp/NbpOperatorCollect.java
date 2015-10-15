@@ -45,7 +45,7 @@ public final class NbpOperatorCollect<T, U> implements NbpOperator<U, T> {
             return NbpCancelledSubscriber.INSTANCE;
         }
         
-        return new CollectSubscriber<>(t, u, collector);
+        return new CollectSubscriber<T, U>(t, u, collector);
     }
     
     static final class CollectSubscriber<T, U> implements NbpSubscriber<T> {

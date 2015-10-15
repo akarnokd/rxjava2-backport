@@ -21,7 +21,7 @@ import io.reactivex.internal.subscriptions.SubscriptionHelper;
 
 public final class NbpOperatorSingle<T> implements NbpOperator<T, T> {
     
-    static final NbpOperatorSingle<Object> NO_DEFAULT = new NbpOperatorSingle<>(null);
+    static final NbpOperatorSingle<Object> NO_DEFAULT = new NbpOperatorSingle<Object>(null);
     
     @SuppressWarnings("unchecked")
     public static <T> NbpOperatorSingle<T> instanceNoDefault() {
@@ -34,7 +34,7 @@ public final class NbpOperatorSingle<T> implements NbpOperator<T, T> {
     }
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new SingleElementSubscriber<>(t, defaultValue);
+        return new SingleElementSubscriber<T>(t, defaultValue);
     }
     
     static final class SingleElementSubscriber<T> implements NbpSubscriber<T> {

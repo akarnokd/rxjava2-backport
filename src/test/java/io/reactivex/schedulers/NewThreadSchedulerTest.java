@@ -42,7 +42,7 @@ public class NewThreadSchedulerTest extends AbstractSchedulerConcurrencyTests {
 //        try {
 //            final CountDownLatch run = new CountDownLatch(1);
 //            final CountDownLatch done = new CountDownLatch(1);
-//            final AtomicReference<Throwable> exception = new AtomicReference<>();
+//            final AtomicReference<Throwable> exception = new AtomicReference<T>();
 //            final AtomicBoolean interruptFlag = new AtomicBoolean();
 //            
 //            ScheduledRunnable sa = (ScheduledRunnable)worker.schedule(new Runnable() {

@@ -60,7 +60,7 @@ public class NbpCovarianceTest {
     @Test
     public void testGroupByCompose() {
         NbpObservable<Movie> movies = NbpObservable.just(new HorrorMovie(), new ActionMovie(), new Movie());
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         movies
         .groupBy(Object::getClass)
         .doOnNext(g -> System.out.println(g.key()))
@@ -121,9 +121,9 @@ public class NbpCovarianceTest {
         } else {
             // diff the two
             List<Movie> newList = listOfLists.get(1);
-            List<Movie> oldList = new ArrayList<>(listOfLists.get(0));
+            List<Movie> oldList = new ArrayList<T>(listOfLists.get(0));
 
-            Set<Movie> delta = new LinkedHashSet<>();
+            Set<Movie> delta = new LinkedHashSet<T>();
             delta.addAll(newList);
             // remove all that match in old
             delta.removeAll(oldList);

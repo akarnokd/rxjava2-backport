@@ -416,8 +416,8 @@ public class OnSubscribeCombineLatestTest {
         };
         for (int i = 1; i <= n; i++) {
             System.out.println("test1ToNSources: " + i + " sources");
-            List<Observable<Integer>> sources = new ArrayList<>();
-            List<Object> values = new ArrayList<>();
+            List<Observable<Integer>> sources = new ArrayList<T>();
+            List<Object> values = new ArrayList<T>();
             for (int j = 0; j < i; j++) {
                 sources.add(Observable.just(j));
                 values.add(j);
@@ -447,8 +447,8 @@ public class OnSubscribeCombineLatestTest {
         };
         for (int i = 1; i <= n; i++) {
             System.out.println("test1ToNSourcesScheduled: " + i + " sources");
-            List<Observable<Integer>> sources = new ArrayList<>();
-            List<Object> values = new ArrayList<>();
+            List<Observable<Integer>> sources = new ArrayList<T>();
+            List<Object> values = new ArrayList<T>();
             for (int j = 0; j < i; j++) {
                 sources.add(Observable.just(j).subscribeOn(Schedulers.io()));
                 values.add(j);
@@ -718,7 +718,7 @@ public class OnSubscribeCombineLatestTest {
         BiFunction<String, Integer, String> combineLatestFunction = getConcatStringIntegerCombineLatestFunction();
 
         int NUM = Observable.bufferSize() * 4;
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.combineLatest(
                 Observable.just("one", "two"),
                 Observable.range(2, NUM), 
@@ -750,7 +750,7 @@ public class OnSubscribeCombineLatestTest {
                         }
                 }).take(SIZE);
 
-        TestSubscriber<Long> ts = new TestSubscriber<>();
+        TestSubscriber<Long> ts = new TestSubscriber<T>();
 
         Observable.combineLatest(timer, Observable.<Integer> never(), (t1, t2) -> t1).subscribe(ts);
 

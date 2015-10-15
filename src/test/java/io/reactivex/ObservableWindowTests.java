@@ -23,7 +23,7 @@ public class ObservableWindowTests {
 
     @Test
     public void testWindow() {
-        final ArrayList<List<Integer>> lists = new ArrayList<>();
+        final ArrayList<List<Integer>> lists = new ArrayList<T>();
 
         Observable.concat(
             Observable.just(1, 2, 3, 4, 5, 6)

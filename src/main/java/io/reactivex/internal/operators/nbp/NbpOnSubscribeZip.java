@@ -68,7 +68,7 @@ public final class NbpOnSubscribeZip<T, R> implements NbpOnSubscribe<R> {
             return;
         }
         
-        ZipCoordinator<T, R> zc = new ZipCoordinator<>(s, zipper, count, delayError);
+        ZipCoordinator<T, R> zc = new ZipCoordinator<T, R>(s, zipper, count, delayError);
         zc.subscribe(sources, bufferSize);
     }
     
@@ -98,7 +98,7 @@ public final class NbpOnSubscribeZip<T, R> implements NbpOnSubscribe<R> {
             ZipSubscriber<T, R>[] s = subscribers;
             int len = s.length;
             for (int i = 0; i < len; i++) {
-                s[i] = new ZipSubscriber<>(this, bufferSize);
+                s[i] = new ZipSubscriber<T, R>(this, bufferSize);
             }
             // this makes sure the contents of the subscribers array is visible
             this.lazySet(0);
@@ -246,11 +246,14 @@ public final class NbpOnSubscribeZip<T, R> implements NbpOnSubscribe<R> {
         static final AtomicReferenceFieldUpdater<ZipSubscriber, Disposable> S =
                 AtomicReferenceFieldUpdater.newUpdater(ZipSubscriber.class, Disposable.class, "s");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         public ZipSubscriber(ZipCoordinator<T, R> parent, int bufferSize) {
             this.parent = parent;
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.queue = new SpscLinkedArrayQueue<T>(bufferSize);
         }
         @Override
         public void onSubscribe(Disposable s) {

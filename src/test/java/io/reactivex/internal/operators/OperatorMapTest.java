@@ -296,7 +296,7 @@ public class OperatorMapTest {
 //    }
 
     private static Map<String, String> getMap(String prefix) {
-        Map<String, String> m = new HashMap<>();
+        Map<String, String> m = new HashMap<T>();
         m.put("firstName", prefix + "First");
         m.put("lastName", prefix + "Last");
         return m;

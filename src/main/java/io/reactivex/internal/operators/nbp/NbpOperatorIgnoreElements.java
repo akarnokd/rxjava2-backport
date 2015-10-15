@@ -25,7 +25,7 @@ public enum NbpOperatorIgnoreElements implements NbpOperator<Object, Object> {
     }
     
     @Override
-    public NbpSubscriber<? super Object> apply(NbpSubscriber<? super Object> t) {
+    public NbpSubscriber<? super Object> apply(final NbpSubscriber<? super Object> t) {
         return new NbpSubscriber<Object>() {
             @Override
             public void onSubscribe(Disposable s) {

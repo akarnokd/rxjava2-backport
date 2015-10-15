@@ -34,8 +34,8 @@ public final class NbpOperatorWithLatestFrom<T, U, R> implements NbpOperator<R, 
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super R> t) {
-        NbpSerializedSubscriber<R> serial = new NbpSerializedSubscriber<>(t);
-        WithLatestFromSubscriber<T, U, R> wlf = new WithLatestFromSubscriber<>(serial, combiner);
+        final NbpSerializedSubscriber<R> serial = new NbpSerializedSubscriber<R>(t);
+        final WithLatestFromSubscriber<T, U, R> wlf = new WithLatestFromSubscriber<T, U, R>(serial, combiner);
         
         other.subscribe(new NbpSubscriber<U>() {
             @Override
@@ -79,7 +79,10 @@ public final class NbpOperatorWithLatestFrom<T, U, R> implements NbpOperator<R, 
         static final AtomicReferenceFieldUpdater<WithLatestFromSubscriber, Disposable> OTHER =
                 AtomicReferenceFieldUpdater.newUpdater(WithLatestFromSubscriber.class, Disposable.class, "other");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         public WithLatestFromSubscriber(NbpSubscriber<? super R> actual, BiFunction<? super T, ? super U, ? extends R> combiner) {
             this.actual = actual;

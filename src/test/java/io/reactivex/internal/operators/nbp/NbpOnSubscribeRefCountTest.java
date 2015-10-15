@@ -136,8 +136,8 @@ public class NbpOnSubscribeRefCountTest {
                 .publish().refCount();
 
         for (int i = 0; i < 10; i++) {
-            NbpTestSubscriber<Long> ts1 = new NbpTestSubscriber<>();
-            NbpTestSubscriber<Long> ts2 = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Long> ts1 = new NbpTestSubscriber<T>();
+            NbpTestSubscriber<Long> ts2 = new NbpTestSubscriber<T>();
             r.subscribe(ts1);
             r.subscribe(ts2);
             try {
@@ -173,7 +173,7 @@ public class NbpOnSubscribeRefCountTest {
                         unsubscribeLatch.countDown();
                 });
         
-        NbpTestSubscriber<Long> s = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Long> s = new NbpTestSubscriber<T>();
         o.publish().refCount().subscribeOn(Schedulers.newThread()).subscribe(s);
         System.out.println("send unsubscribe");
         // wait until connected
@@ -212,7 +212,7 @@ public class NbpOnSubscribeRefCountTest {
                         subUnsubCount.incrementAndGet();
                 });
 
-        NbpTestSubscriber<Long> s = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Long> s = new NbpTestSubscriber<T>();
         
         o.publish().refCount().subscribeOn(Schedulers.computation()).subscribe(s);
         System.out.println("send unsubscribe");
@@ -283,7 +283,7 @@ public class NbpOnSubscribeRefCountTest {
         NbpObservable<Long> interval = NbpObservable.interval(100, TimeUnit.MILLISECONDS, s).publish().refCount();
 
         // subscribe list1
-        final List<Long> list1 = new ArrayList<>();
+        final List<Long> list1 = new ArrayList<T>();
         Disposable s1 = interval.subscribe(t1 -> list1.add(t1));
 
         s.advanceTimeBy(200, TimeUnit.MILLISECONDS);
@@ -293,7 +293,7 @@ public class NbpOnSubscribeRefCountTest {
         assertEquals(1L, list1.get(1).longValue());
 
         // subscribe list2
-        final List<Long> list2 = new ArrayList<>();
+        final List<Long> list2 = new ArrayList<T>();
         Disposable s2 = interval.subscribe(t1 -> list2.add(t1));
 
         s.advanceTimeBy(300, TimeUnit.MILLISECONDS);
@@ -333,7 +333,7 @@ public class NbpOnSubscribeRefCountTest {
 
         // subscribing a new one should start over because the source should have been unsubscribed
         // subscribe list3
-        final List<Long> list3 = new ArrayList<>();
+        final List<Long> list3 = new ArrayList<T>();
         interval.subscribe(t1 -> list3.add(t1));
 
         s.advanceTimeBy(200, TimeUnit.MILLISECONDS);
@@ -394,8 +394,8 @@ public class NbpOnSubscribeRefCountTest {
         NbpObservable<Integer> combined = NbpObservable.combineLatest(o1, o2, (t1, t2) -> t1 + t2)
                 .publish().refCount();
 
-        NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<>();
-        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts1 = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<T>();
 
         combined.subscribe(ts1);
         combined.subscribe(ts2);

@@ -23,7 +23,7 @@ import io.reactivex.subscribers.TestSubscriber;
 public class OperatorMapNotificationTest {
     @Test
     public void testJust() {
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         Observable.just(1)
         .flatMap(
                 new Function<Integer, Observable<Object>>() {

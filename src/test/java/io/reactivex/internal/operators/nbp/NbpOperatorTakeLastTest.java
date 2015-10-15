@@ -103,7 +103,7 @@ public class NbpOperatorTakeLastTest {
 
     @Test
     public void testBackpressure1() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(1, 100000).takeLast(1)
         .observeOn(Schedulers.newThread())
         .map(newSlowProcessor()).subscribe(ts);
@@ -114,7 +114,7 @@ public class NbpOperatorTakeLastTest {
 
     @Test
     public void testBackpressure2() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(1, 100000).takeLast(Observable.bufferSize() * 4)
         .observeOn(Schedulers.newThread()).map(newSlowProcessor()).subscribe(ts);
         ts.awaitTerminalEvent();

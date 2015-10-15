@@ -56,7 +56,7 @@ public class OperatorDoOnSubscribeTest {
         final AtomicInteger onSubscribed = new AtomicInteger();
         final AtomicInteger countBefore = new AtomicInteger();
         final AtomicInteger countAfter = new AtomicInteger();
-        final AtomicReference<Subscriber<? super Integer>> sref = new AtomicReference<>();
+        final AtomicReference<Subscriber<? super Integer>> sref = new AtomicReference<T>();
         Observable<Integer> o = Observable.create(new Publisher<Integer>() {
 
             @Override

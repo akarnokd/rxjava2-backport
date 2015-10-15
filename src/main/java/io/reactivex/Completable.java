@@ -1507,7 +1507,7 @@ public class Completable {
         Objects.requireNonNull(scheduler);
         return create(s -> {
             
-            ArrayCompositeResource<Disposable> ad = new ArrayCompositeResource<>(2, Disposables.consumeAndDispose());
+            ArrayCompositeResource<Disposable> ad = new ArrayCompositeResource<T>(2, Disposables.consumeAndDispose());
             Scheduler.Worker w = scheduler.createWorker();
             ad.set(0, w);
             

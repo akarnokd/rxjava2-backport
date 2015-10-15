@@ -95,7 +95,7 @@ public class NbpOperatorSkipLastTest {
     @Test
     public void testSkipLastWithBackpressure() {
         NbpObservable<Integer> o = NbpObservable.range(0, Observable.bufferSize() * 2).skipLast(Observable.bufferSize() + 10);
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         o.observeOn(Schedulers.computation()).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();

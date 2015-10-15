@@ -283,7 +283,7 @@ public class OperatorTakeTest {
     @Test(timeout = 2000)
     public void testTakeObserveOn() {
         Subscriber<Object> o = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
         
         INFINITE_OBSERVABLE.onBackpressureDrop()
         .observeOn(Schedulers.newThread()).take(1).subscribe(ts);
@@ -298,7 +298,7 @@ public class OperatorTakeTest {
     
     @Test
     public void testProducerRequestThroughTake() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
@@ -326,7 +326,7 @@ public class OperatorTakeTest {
     
     @Test
     public void testProducerRequestThroughTakeIsModified() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
@@ -354,7 +354,7 @@ public class OperatorTakeTest {
     
     @Test
     public void testInterrupt() throws InterruptedException {
-        final AtomicReference<Object> exception = new AtomicReference<>();
+        final AtomicReference<Object> exception = new AtomicReference<T>();
         final CountDownLatch latch = new CountDownLatch(1);
         Observable.just(1).subscribeOn(Schedulers.computation()).take(1)
         .subscribe(new Consumer<Integer>() {
@@ -380,7 +380,7 @@ public class OperatorTakeTest {
     @Test
     public void testDoesntRequestMoreThanNeededFromUpstream() throws InterruptedException {
         final AtomicLong requests = new AtomicLong();
-        TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         Observable.interval(100, TimeUnit.MILLISECONDS)
             //
             .doOnRequest(new LongConsumer() {
@@ -426,7 +426,7 @@ public class OperatorTakeTest {
     public void testReentrantTake() {
         PublishSubject<Integer> source = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         source.take(1).doOnNext(v -> source.onNext(2)).subscribe(ts);
         

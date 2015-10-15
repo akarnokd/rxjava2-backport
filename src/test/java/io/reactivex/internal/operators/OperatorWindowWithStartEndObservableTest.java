@@ -43,8 +43,8 @@ public class OperatorWindowWithStartEndObservableTest {
 
     @Test
     public void testObservableBasedOpenerAndCloser() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
@@ -94,8 +94,8 @@ public class OperatorWindowWithStartEndObservableTest {
 
     @Test
     public void testObservableBasedCloser() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
@@ -143,7 +143,7 @@ public class OperatorWindowWithStartEndObservableTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -175,7 +175,7 @@ public class OperatorWindowWithStartEndObservableTest {
                 stringObservable.subscribe(new Observer<String>() {
                     @Override
                     public void onComplete() {
-                        lists.add(new ArrayList<>(list));
+                        lists.add(new ArrayList<T>(list));
                         list.clear();
                     }
 
@@ -200,7 +200,7 @@ public class OperatorWindowWithStartEndObservableTest {
         PublishSubject<Integer> open = PublishSubject.create();
         final PublishSubject<Integer> close = PublishSubject.create();
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
         
         source.window(open, new Function<Integer, Observable<Integer>>() {
             @Override
@@ -237,7 +237,7 @@ public class OperatorWindowWithStartEndObservableTest {
         PublishSubject<Integer> open = PublishSubject.create();
         final PublishSubject<Integer> close = PublishSubject.create();
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
         
         source.window(open, new Function<Integer, Observable<Integer>>() {
             @Override

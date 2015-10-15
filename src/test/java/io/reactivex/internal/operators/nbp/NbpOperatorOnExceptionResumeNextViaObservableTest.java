@@ -188,7 +188,7 @@ public class NbpOperatorOnExceptionResumeNextViaObservableTest {
     
     @Test
     public void testBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(0, 100000)
                 .onExceptionResumeNext(NbpObservable.just(1))
                 .observeOn(Schedulers.computation())

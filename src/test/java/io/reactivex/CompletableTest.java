@@ -314,7 +314,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void concatObservablePrefetch() {
-        List<Long> requested = new ArrayList<>();
+        List<Long> requested = new ArrayList<T>();
         Observable<Completable> cs = Observable
                 .just(normal.completable)
                 .repeat(10)
@@ -491,7 +491,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void fromFutureNormal() {
-        CompletableFuture<Object> f = new CompletableFuture<>();
+        CompletableFuture<Object> f = new CompletableFuture<T>();
         
         Completable c = Completable.fromFuture(f);
         
@@ -502,7 +502,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000, expected = TestException.class)
     public void fromFutureThrows() {
-        CompletableFuture<Object> f = new CompletableFuture<>();
+        CompletableFuture<Object> f = new CompletableFuture<T>();
         
         Completable c = Completable.fromFuture(f);
         
@@ -761,7 +761,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void mergeObservableMaxConcurrent() {
-        List<Long> requested = new ArrayList<>();
+        List<Long> requested = new ArrayList<T>();
         Observable<Completable> cs = Observable
                 .just(normal.completable)
                 .repeat(10)
@@ -963,7 +963,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void mergeDelayErrorObservableMaxConcurrent() {
-        List<Long> requested = new ArrayList<>();
+        List<Long> requested = new ArrayList<T>();
         Observable<Completable> cs = Observable
                 .just(normal.completable)
                 .repeat(10)
@@ -1100,7 +1100,7 @@ public class CompletableTest {
         Completable c = Completable.using(() -> 1, v -> normal.completable, d -> dispose.set(d));
         
         AtomicBoolean disposedFirst = new AtomicBoolean();
-        AtomicReference<Throwable> error = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<T>();
         
         c.subscribe(new CompletableSubscriber() {
             @Override
@@ -1131,7 +1131,7 @@ public class CompletableTest {
         Completable c = Completable.using(() -> 1, v -> normal.completable, d -> dispose.set(d), false);
         
         AtomicBoolean disposedFirst = new AtomicBoolean();
-        AtomicReference<Throwable> error = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<T>();
         
         c.subscribe(new CompletableSubscriber() {
             @Override
@@ -1311,7 +1311,7 @@ public class CompletableTest {
         Completable c = normal.completable.delay(250, TimeUnit.MILLISECONDS);
         
         AtomicBoolean done = new AtomicBoolean();
-        AtomicReference<Throwable> error = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<T>();
         
         c.subscribe(new CompletableSubscriber() {
             @Override
@@ -1346,7 +1346,7 @@ public class CompletableTest {
         Completable c = error.completable.delay(250, TimeUnit.MILLISECONDS);
         
         AtomicBoolean done = new AtomicBoolean();
-        AtomicReference<Throwable> error = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<T>();
         
         c.subscribe(new CompletableSubscriber() {
             @Override
@@ -1380,7 +1380,7 @@ public class CompletableTest {
         Completable c = error.completable.delay(250, TimeUnit.MILLISECONDS, Schedulers.computation(), true);
         
         AtomicBoolean done = new AtomicBoolean();
-        AtomicReference<Throwable> error = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<T>();
         
         c.subscribe(new CompletableSubscriber() {
             @Override
@@ -1530,7 +1530,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void doOnErrorNoError() {
-        AtomicReference<Throwable> error = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<T>();
         
         Completable c = normal.completable.doOnError(error::set);
         
@@ -1541,7 +1541,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void doOnErrorHasError() {
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         
         Completable c = error.completable.doOnError(err::set);
         
@@ -1772,8 +1772,8 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void observeOnNormal() throws InterruptedException {
-        AtomicReference<String> name = new AtomicReference<>();
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<String> name = new AtomicReference<T>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         CountDownLatch cdl = new CountDownLatch(1);
         
         Completable c = normal.completable.observeOn(Schedulers.computation());
@@ -1805,8 +1805,8 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void observeOnError() throws InterruptedException {
-        AtomicReference<String> name = new AtomicReference<>();
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<String> name = new AtomicReference<T>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         CountDownLatch cdl = new CountDownLatch(1);
         
         Completable c = error.completable.observeOn(Schedulers.computation());
@@ -1907,7 +1907,7 @@ public class CompletableTest {
     
     @Test(timeout = 2000)
     public void repeatNormal() {
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         AtomicInteger calls = new AtomicInteger();
         
         Completable c = Completable.fromCallable(() -> {
@@ -2138,7 +2138,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void subscribeTwoCallbacksNormal() {
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         AtomicBoolean complete = new AtomicBoolean();
         normal.completable.subscribe(e -> err.set(e), () -> complete.set(true));
         
@@ -2148,7 +2148,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void subscribeTwoCallbacksError() {
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         AtomicBoolean complete = new AtomicBoolean();
         error.completable.subscribe(e -> err.set(e), () -> complete.set(true));
         
@@ -2168,7 +2168,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void subscribeTwoCallbacksCompleteThrows() {
-        AtomicReference<Throwable> err = new AtomicReference<>();
+        AtomicReference<Throwable> err = new AtomicReference<T>();
         normal.completable.subscribe(e -> err.set(e), () -> { throw new TestException(); });
         
         Assert.assertTrue(String.valueOf(err.get()), err.get() instanceof TestException);
@@ -2181,7 +2181,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void subscribeNbpSubscriberNormal() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         normal.completable.subscribe(ts);
         
@@ -2192,7 +2192,7 @@ public class CompletableTest {
 
     @Test(timeout = 1000)
     public void subscribeNbpSubscriberError() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         error.completable.subscribe(ts);
         
@@ -2241,7 +2241,7 @@ public class CompletableTest {
 
     @Test(timeout = 1000)
     public void subscribeSubscriberNormal() {
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         normal.completable.subscribe(ts);
         
@@ -2252,7 +2252,7 @@ public class CompletableTest {
 
     @Test(timeout = 1000)
     public void subscribeSubscriberError() {
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         error.completable.subscribe(ts);
         
@@ -2268,7 +2268,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void subscribeOnNormal() {
-        AtomicReference<String> name = new  AtomicReference<>();
+        AtomicReference<String> name = new  AtomicReference<T>();
         
         Completable c = Completable.create(s -> { 
             name.set(Thread.currentThread().getName());
@@ -2283,7 +2283,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void subscribeOnError() {
-        AtomicReference<String> name = new  AtomicReference<>();
+        AtomicReference<String> name = new  AtomicReference<T>();
         
         Completable c = Completable.create(s -> { 
             name.set(Thread.currentThread().getName());
@@ -2420,7 +2420,7 @@ public class CompletableTest {
     
     @Test(timeout = 1000)
     public void unsubscribeOnNormal() throws InterruptedException {
-        AtomicReference<String> name = new AtomicReference<>();
+        AtomicReference<String> name = new AtomicReference<T>();
         CountDownLatch cdl = new CountDownLatch(1);
         
         normal.completable.delay(1, TimeUnit.SECONDS)
@@ -2516,7 +2516,7 @@ public class CompletableTest {
         
         Completable c = Completable.amb(c1, c2);
         
-        AtomicReference<Throwable> complete = new AtomicReference<>();
+        AtomicReference<Throwable> complete = new AtomicReference<T>();
         
         c.subscribe(complete::set, () -> { });
         
@@ -2568,7 +2568,7 @@ public class CompletableTest {
         
         Completable c = Completable.amb(c1, c2);
         
-        AtomicReference<Throwable> complete = new AtomicReference<>();
+        AtomicReference<Throwable> complete = new AtomicReference<T>();
         
         c.subscribe(complete::set, () -> { });
         
@@ -2713,7 +2713,7 @@ public class CompletableTest {
         
         Completable c = c1.ambWith(c2);
         
-        AtomicReference<Throwable> complete = new AtomicReference<>();
+        AtomicReference<Throwable> complete = new AtomicReference<T>();
         
         c.subscribe(complete::set, () -> { });
         
@@ -2765,7 +2765,7 @@ public class CompletableTest {
         
         Completable c = c1.ambWith(c2);
         
-        AtomicReference<Throwable> complete = new AtomicReference<>();
+        AtomicReference<Throwable> complete = new AtomicReference<T>();
         
         c.subscribe(complete::set, () -> { });
         
@@ -2817,7 +2817,7 @@ public class CompletableTest {
                     return 1;
                 }));
         
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -2834,7 +2834,7 @@ public class CompletableTest {
         Observable<Object> c = normal.completable
                 .startWith(Observable.error(new TestException()));
         
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -2854,7 +2854,7 @@ public class CompletableTest {
                     return 1;
                 }));
         
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -2871,7 +2871,7 @@ public class CompletableTest {
         NbpObservable<Object> c = normal.completable
                 .startWith(NbpObservable.error(new TestException()));
         
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -2949,7 +2949,7 @@ public class CompletableTest {
                     return 1;
                 }));
         
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -2966,7 +2966,7 @@ public class CompletableTest {
         Observable<Object> c = normal.completable
                 .endWith(Observable.error(new TestException()));
         
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -2986,7 +2986,7 @@ public class CompletableTest {
                     return 1;
                 }));
         
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         c.subscribe(ts);
         
@@ -3003,7 +3003,7 @@ public class CompletableTest {
         NbpObservable<Object> c = normal.completable
                 .endWith(NbpObservable.error(new TestException()));
         
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
         
         c.subscribe(ts);
         

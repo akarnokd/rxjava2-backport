@@ -138,7 +138,7 @@ public class NbpOperatorSkipTest {
     
     @Test
     public void testRequestOverflowDoesNotOccur() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(1, 10).skip(5).subscribe(ts);
         ts.assertTerminated();
         ts.assertComplete();

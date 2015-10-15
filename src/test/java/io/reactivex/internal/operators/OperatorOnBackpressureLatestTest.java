@@ -27,7 +27,7 @@ import io.reactivex.subscribers.TestSubscriber;
 public class OperatorOnBackpressureLatestTest {
     @Test
     public void testSimple() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         Observable.range(1, 5).onBackpressureLatest().subscribe(ts);
         
@@ -37,7 +37,7 @@ public class OperatorOnBackpressureLatestTest {
     }
     @Test
     public void testSimpleError() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         
         Observable.range(1, 5).concatWith(Observable.<Integer>error(new TestException()))
         .onBackpressureLatest().subscribe(ts);
@@ -48,7 +48,7 @@ public class OperatorOnBackpressureLatestTest {
     }
     @Test
     public void testSimpleBackpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>(2L);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(2L);
         
         Observable.range(1, 5).onBackpressureLatest().subscribe(ts);
         
@@ -60,7 +60,7 @@ public class OperatorOnBackpressureLatestTest {
     @Test
     public void testSynchronousDrop() {
         PublishSubject<Integer> source = PublishSubject.create();
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         source.onBackpressureLatest().subscribe(ts);
 

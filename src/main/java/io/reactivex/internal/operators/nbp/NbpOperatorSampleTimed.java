@@ -36,8 +36,8 @@ public final class NbpOperatorSampleTimed<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        NbpSerializedSubscriber<T> serial = new NbpSerializedSubscriber<>(t);
-        return new SampleTimedSubscriber<>(serial, period, unit, scheduler);
+        NbpSerializedSubscriber<T> serial = new NbpSerializedSubscriber<T>(t);
+        return new SampleTimedSubscriber<T>(serial, period, unit, scheduler);
     }
     
     static final class SampleTimedSubscriber<T> extends AtomicReference<T> implements NbpSubscriber<T>, Disposable, Runnable {
@@ -54,7 +54,10 @@ public final class NbpOperatorSampleTimed<T> implements NbpOperator<T, T> {
         static final AtomicReferenceFieldUpdater<SampleTimedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(SampleTimedSubscriber.class, Disposable.class, "timer");
         
-        static final Disposable DISPOSED = () -> { };
+        static final Disposable DISPOSED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         Disposable s;
         

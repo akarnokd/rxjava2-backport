@@ -117,7 +117,7 @@ public class OperatorSingleTest {
     
     @Test
     public void testSingleDoesNotRequestMoreThanItNeedsIf1Then2Requested() {
-        final List<Long> requests = new ArrayList<>();
+        final List<Long> requests = new ArrayList<T>();
         Observable.just(1)
         //
                 .doOnRequest(new LongConsumer() {
@@ -157,7 +157,7 @@ public class OperatorSingleTest {
     
     @Test
     public void testSingleDoesNotRequestMoreThanItNeedsIf3Requested() {
-        final List<Long> requests = new ArrayList<>();
+        final List<Long> requests = new ArrayList<T>();
         Observable.just(1)
         //
                 .doOnRequest(new LongConsumer() {
@@ -196,7 +196,7 @@ public class OperatorSingleTest {
     
     @Test
     public void testSingleRequestsExactlyWhatItNeedsIf1Requested() {
-        final List<Long> requests = new ArrayList<>();
+        final List<Long> requests = new ArrayList<T>();
         Observable.just(1)
         //
                 .doOnRequest(new LongConsumer() {

@@ -16,16 +16,17 @@ package io.reactivex.internal.operators.nbp;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable.*;
 import io.reactivex.Scheduler;
 import io.reactivex.Scheduler.Worker;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Supplier;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.internal.queue.MpscLinkedQueue;
 import io.reactivex.internal.subscribers.nbp.NbpQueueDrainSubscriber;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
+import io.reactivex.internal.util.QueueDrainHelper;
 import io.reactivex.subscribers.nbp.NbpSerializedSubscriber;
 
 public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> implements NbpOperator<U, T> {
@@ -52,23 +53,23 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super U> t) {
         if (timespan == timeskip && maxSize == Integer.MAX_VALUE) {
-            return new BufferExactUnboundedSubscriber<>(
-                    new NbpSerializedSubscriber<>(t), 
+            return new BufferExactUnboundedSubscriber<T, U>(
+                    new NbpSerializedSubscriber<U>(t), 
                     bufferSupplier, timespan, unit, scheduler);
         }
         Scheduler.Worker w = scheduler.createWorker();
 
         if (timespan == timeskip) {
-            return new BufferExactBoundedSubscriber<>(
-                    new NbpSerializedSubscriber<>(t),
+            return new BufferExactBoundedSubscriber<T, U>(
+                    new NbpSerializedSubscriber<U>(t),
                     bufferSupplier,
                     timespan, unit, maxSize, restartTimerOnMaxSize, w
             );
         }
         // Can't use maxSize because what to do if a buffer is full but its
         // timespan hasn't been elapsed?
-        return new BufferSkipBoundedSubscriber<>(
-                new NbpSerializedSubscriber<>(t),
+        return new BufferSkipBoundedSubscriber<T, U>(
+                new NbpSerializedSubscriber<U>(t),
                 bufferSupplier, timespan, timeskip, unit, w);
     }
     
@@ -90,12 +91,15 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
         static final AtomicReferenceFieldUpdater<BufferExactUnboundedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(BufferExactUnboundedSubscriber.class, Disposable.class, "timer");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
         public BufferExactUnboundedSubscriber(
                 NbpSubscriber<? super U> actual, Supplier<U> bufferSupplier,
                 long timespan, TimeUnit unit, Scheduler scheduler) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<U>());
             this.bufferSupplier = bufferSupplier;
             this.timespan = timespan;
             this.unit = unit;
@@ -171,7 +175,7 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
             queue.offer(b);
             done = true;
             if (enter()) {
-                drainLoop(queue, actual, false, this);
+                QueueDrainHelper.drainLoop(queue, actual, false, this, this);
             }
         }
         
@@ -260,13 +264,13 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
         public BufferSkipBoundedSubscriber(NbpSubscriber<? super U> actual, 
                 Supplier<U> bufferSupplier, long timespan,
                 long timeskip, TimeUnit unit, Worker w) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<U>());
             this.bufferSupplier = bufferSupplier;
             this.timespan = timespan;
             this.timeskip = timeskip;
             this.unit = unit;
             this.w = w;
-            this.buffers = new LinkedList<>();
+            this.buffers = new LinkedList<U>();
         }
     
         @Override
@@ -276,7 +280,7 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
             }
             this.s = s;
             
-            U b;
+            final U b;
 
             try {
                 b = bufferSupplier.get();
@@ -300,19 +304,24 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
             
             w.schedulePeriodically(this, timeskip, timeskip, unit);
             
-            w.schedule(() -> {
-                synchronized (this) {
-                    buffers.remove(b);
+            w.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (BufferSkipBoundedSubscriber.this) {
+                        buffers.remove(b);
+                    }
+                    
+                    fastpathOrderedEmit(b, false, w);
                 }
-                
-                fastpathOrderedEmit(b, false, w);
             }, timespan, unit);
         }
         
         @Override
         public void onNext(T t) {
             synchronized (this) {
-                buffers.forEach(b -> b.add(t));
+                for (U b : buffers) {
+                    b.add(t);
+                }
             }
         }
         
@@ -328,14 +337,16 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
         public void onComplete() {
             List<U> bs;
             synchronized (this) {
-                bs = new ArrayList<>(buffers);
+                bs = new ArrayList<U>(buffers);
                 buffers.clear();
             }
             
-            bs.forEach(b -> queue.add(b));
+            for (U b : bs) {
+                queue.add(b);
+            }
             done = true;
             if (enter()) {
-                drainLoop(queue, actual, false, w);
+                QueueDrainHelper.drainLoop(queue, actual, false, w, this);
             }
         }
         
@@ -360,7 +371,7 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
             if (cancelled) {
                 return;
             }
-            U b;
+            final U b;
             
             try {
                 b = bufferSupplier.get();
@@ -382,12 +393,15 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
                 buffers.add(b);
             }
             
-            w.schedule(() -> {
-                synchronized (this) {
-                    buffers.remove(b);
+            w.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (BufferSkipBoundedSubscriber.this) {
+                        buffers.remove(b);
+                    }
+                    
+                    fastpathOrderedEmit(b, false, w);
                 }
-                
-                fastpathOrderedEmit(b, false, w);
             }, timespan, unit);
         }
         
@@ -421,7 +435,7 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
                 Supplier<U> bufferSupplier,
                 long timespan, TimeUnit unit, int maxSize,
                 boolean restartOnMaxSize, Worker w) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<U>());
             this.bufferSupplier = bufferSupplier;
             this.timespan = timespan;
             this.unit = unit;
@@ -539,7 +553,7 @@ public final class NbpOperatorBufferTimed<T, U extends Collection<? super T>> im
             queue.offer(b);
             done = true;
             if (enter()) {
-                drainLoop(queue, actual, false, this);
+                QueueDrainHelper.drainLoop(queue, actual, false, this, this);
             }
         }
         

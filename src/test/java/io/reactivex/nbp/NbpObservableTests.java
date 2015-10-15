@@ -55,7 +55,7 @@ public class NbpObservableTests {
 
     @Test
     public void fromIterable() {
-        ArrayList<String> items = new ArrayList<>();
+        ArrayList<String> items = new ArrayList<T>();
         items.add("one");
         items.add("two");
         items.add("three");
@@ -274,7 +274,7 @@ public class NbpObservableTests {
     public void testCustomNbpObservableWithErrorInObserverAsynchronous() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         
         // FIXME custom built???
         NbpObservable.just("1", "2", "three", "4")
@@ -322,7 +322,7 @@ public class NbpObservableTests {
     @Test
     public void testCustomNbpObservableWithErrorInObserverSynchronous() {
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         
         // FIXME custom built???
         NbpObservable.just("1", "2", "three", "4")
@@ -365,7 +365,7 @@ public class NbpObservableTests {
     @Test
     public void testCustomNbpObservableWithErrorInNbpObservableSynchronous() {
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         // FIXME custom built???
         NbpObservable.just("1", "2").concatWith(NbpObservable.error(() -> new NumberFormatException()))
         .subscribe(new NbpObserver<String>() {
@@ -571,7 +571,7 @@ public class NbpObservableTests {
     @Ignore("Subscribers can't throw")
     public void testErrorThrownWithoutErrorHandlerAsynchronous() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> exception = new AtomicReference<>();
+        final AtomicReference<Throwable> exception = new AtomicReference<T>();
         NbpObservable.create(observer -> {
             new Thread(() -> {
                 try {
@@ -592,7 +592,7 @@ public class NbpObservableTests {
     @Test
     public void testTakeWithErrorInObserver() {
         final AtomicInteger count = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         NbpObservable.just("1", "2", "three", "4").take(3)
         .safeSubscribe(new NbpObserver<String>() {
 
@@ -643,9 +643,9 @@ public class NbpObservableTests {
 
     @Test
     public void testOfTypeWithPolymorphism() {
-        ArrayList<Integer> l1 = new ArrayList<>();
+        ArrayList<Integer> l1 = new ArrayList<T>();
         l1.add(1);
-        LinkedList<Integer> l2 = new LinkedList<>();
+        LinkedList<Integer> l2 = new LinkedList<T>();
         l2.add(2);
 
         @SuppressWarnings("rawtypes")
@@ -831,21 +831,21 @@ public class NbpObservableTests {
     
     @Test
     public void testMergeWith() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1).mergeWith(NbpObservable.just(2)).subscribe(ts);
         ts.assertValues(1, 2);
     }
     
     @Test
     public void testConcatWith() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1).concatWith(NbpObservable.just(2)).subscribe(ts);
         ts.assertValues(1, 2);
     }
     
     @Test
     public void testAmbWith() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1).ambWith(NbpObservable.just(2)).subscribe(ts);
         ts.assertValue(1);
     }
@@ -878,7 +878,7 @@ public class NbpObservableTests {
     
     @Test
     public void testCompose() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1, 2, 3).compose(t1 ->t1.map(String::valueOf))
         .subscribe(ts);
         ts.assertTerminated();
@@ -919,7 +919,7 @@ public class NbpObservableTests {
 // FIXME this test doesn't make sense 
 //    @Test // cf. https://github.com/ReactiveX/RxJava/issues/2599
 //    public void testSubscribingSubscriberAsObserverMaintainsSubscriptionChain() {
-//        NbpTestSubscriber<Object> subscriber = new NbpTestSubscriber<>();
+//        NbpTestSubscriber<Object> subscriber = new NbpTestSubscriber<T>();
 //        Subscription subscription = NbpObservable.just("event").subscribe((Observer<Object>) subscriber);
 //        subscription.unsubscribe();
 //
@@ -947,7 +947,7 @@ public class NbpObservableTests {
     
     @Test
     public void testExtend() {
-        final NbpTestSubscriber<Object> subscriber = new NbpTestSubscriber<>();
+        final NbpTestSubscriber<Object> subscriber = new NbpTestSubscriber<T>();
         final Object value = new Object();
         NbpObservable.just(value).to(onSubscribe -> {
                 onSubscribe.subscribe(subscriber);

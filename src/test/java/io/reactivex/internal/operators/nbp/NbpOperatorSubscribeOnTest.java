@@ -36,7 +36,7 @@ public class NbpOperatorSubscribeOnTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final CountDownLatch doneLatch = new CountDownLatch(1);
 
-        NbpTestSubscriber<Integer> NbpObserver = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> NbpObserver = new NbpTestSubscriber<T>();
 
         NbpObservable
         .create(new NbpOnSubscribe<Integer>() {
@@ -75,7 +75,7 @@ public class NbpOperatorSubscribeOnTest {
     @Test
     @Ignore("NbpOnSubscribe.subscribe can't throw")
     public void testThrownErrorHandling() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.create(new NbpOnSubscribe<String>() {
 
             @Override
@@ -90,7 +90,7 @@ public class NbpOperatorSubscribeOnTest {
 
     @Test
     public void testOnError() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.create(new NbpOnSubscribe<String>() {
 
             @Override
@@ -161,7 +161,7 @@ public class NbpOperatorSubscribeOnTest {
 
     @Test(timeout = 5000)
     public void testUnsubscribeInfiniteStream() throws InterruptedException {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         final AtomicInteger count = new AtomicInteger();
         NbpObservable.create(new NbpOnSubscribe<Integer>() {
 

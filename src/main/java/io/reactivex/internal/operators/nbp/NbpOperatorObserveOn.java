@@ -43,7 +43,7 @@ public final class NbpOperatorObserveOn<T> implements NbpOperator<T, T> {
         
         Scheduler.Worker w = scheduler.createWorker();
         
-        return new ObserveOnSubscriber<>(t, w, delayError, bufferSize);
+        return new ObserveOnSubscriber<T>(t, w, delayError, bufferSize);
     }
     
     /**
@@ -78,7 +78,7 @@ public final class NbpOperatorObserveOn<T> implements NbpOperator<T, T> {
             this.worker = worker;
             this.delayError = delayError;
             this.bufferSize = bufferSize;
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.queue = new SpscLinkedArrayQueue<T>(bufferSize);
         }
         
         @Override

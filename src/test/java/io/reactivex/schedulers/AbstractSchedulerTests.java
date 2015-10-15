@@ -385,7 +385,7 @@ public abstract class AbstractSchedulerTests {
             }
         });
 
-        ConcurrentObserverValidator<String> observer = new ConcurrentObserverValidator<>();
+        ConcurrentObserverValidator<String> observer = new ConcurrentObserverValidator<T>();
         // this should call onNext concurrently
         o.subscribe(observer);
 
@@ -404,7 +404,7 @@ public abstract class AbstractSchedulerTests {
 
         Observable<String> o = Observable.fromArray("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten");
 
-        ConcurrentObserverValidator<String> observer = new ConcurrentObserverValidator<>();
+        ConcurrentObserverValidator<String> observer = new ConcurrentObserverValidator<T>();
 
         o.observeOn(scheduler).subscribe(observer);
 
@@ -439,7 +439,7 @@ public abstract class AbstractSchedulerTests {
                     }
                 });
 
-        ConcurrentObserverValidator<String> observer = new ConcurrentObserverValidator<>();
+        ConcurrentObserverValidator<String> observer = new ConcurrentObserverValidator<T>();
 
         o.subscribe(observer);
 
@@ -461,7 +461,7 @@ public abstract class AbstractSchedulerTests {
     private static class ConcurrentObserverValidator<T> extends Observer<T> {
 
         final AtomicInteger concurrentCounter = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final AtomicReference<Throwable> error = new AtomicReference<T>();
         final CountDownLatch completed = new CountDownLatch(1);
 
         @Override

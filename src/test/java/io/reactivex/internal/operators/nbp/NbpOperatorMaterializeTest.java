@@ -94,7 +94,7 @@ public class NbpOperatorMaterializeTest {
 
     @Test
     public void testWithCompletionCausingError() {
-        NbpTestSubscriber<Try<Optional<Integer>>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Try<Optional<Integer>>> ts = new NbpTestSubscriber<T>();
         final RuntimeException ex = new RuntimeException("boo");
         NbpObservable.<Integer>empty().materialize().doOnNext(new Consumer<Object>() {
             @Override
@@ -111,7 +111,7 @@ public class NbpOperatorMaterializeTest {
 
         boolean onCompleted = false;
         boolean onError = false;
-        List<Try<Optional<String>>> notifications = new Vector<>();
+        List<Try<Optional<String>>> notifications = new Vector<T>();
 
         @Override
         public void onComplete() {

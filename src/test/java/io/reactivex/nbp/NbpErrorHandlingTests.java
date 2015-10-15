@@ -32,7 +32,7 @@ public class NbpErrorHandlingTests {
     @Test
     public void testOnNextError() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> caughtError = new AtomicReference<>();
+        final AtomicReference<Throwable> caughtError = new AtomicReference<T>();
         NbpObservable<Long> o = NbpObservable.interval(50, TimeUnit.MILLISECONDS);
         NbpSubscriber<Long> observer = new NbpObserver<Long>() {
 
@@ -67,7 +67,7 @@ public class NbpErrorHandlingTests {
     @Test
     public void testOnNextErrorAcrossThread() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> caughtError = new AtomicReference<>();
+        final AtomicReference<Throwable> caughtError = new AtomicReference<T>();
         NbpObservable<Long> o = NbpObservable.interval(50, TimeUnit.MILLISECONDS);
         NbpSubscriber<Long> observer = new NbpObserver<Long>() {
 

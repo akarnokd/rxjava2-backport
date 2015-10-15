@@ -188,7 +188,7 @@ public class OperatorOnExceptionResumeNextViaObservableTest {
     
     @Test
     public void testBackpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(0, 100000)
                 .onExceptionResumeNext(Observable.just(1))
                 .observeOn(Schedulers.computation())

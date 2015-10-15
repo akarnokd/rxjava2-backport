@@ -56,11 +56,11 @@ public class NbpOperatorDoOnUnsubscribeTest {
                         lowerCount.incrementAndGet();
                 });
 
-        List<Disposable> subscriptions = new ArrayList<>();
-        List<NbpTestSubscriber<Long>> subscribers = new ArrayList<>();
+        List<Disposable> subscriptions = new ArrayList<T>();
+        List<NbpTestSubscriber<Long>> subscribers = new ArrayList<T>();
 
         for (int i = 0; i < subCount; ++i) {
-            NbpTestSubscriber<Long> NbpSubscriber = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Long> NbpSubscriber = new NbpTestSubscriber<T>();
             subscriptions.add(NbpSubscriber);
             longs.subscribe(NbpSubscriber);
             subscribers.add(NbpSubscriber);
@@ -110,11 +110,11 @@ public class NbpOperatorDoOnUnsubscribeTest {
                 .publish()
                 .refCount();
 
-        List<Disposable> subscriptions = new ArrayList<>();
-        List<NbpTestSubscriber<Long>> subscribers = new ArrayList<>();
+        List<Disposable> subscriptions = new ArrayList<T>();
+        List<NbpTestSubscriber<Long>> subscribers = new ArrayList<T>();
 
         for (int i = 0; i < subCount; ++i) {
-            NbpTestSubscriber<Long> NbpSubscriber = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Long> NbpSubscriber = new NbpTestSubscriber<T>();
             longs.subscribe(NbpSubscriber);
             subscriptions.add(NbpSubscriber);
             subscribers.add(NbpSubscriber);

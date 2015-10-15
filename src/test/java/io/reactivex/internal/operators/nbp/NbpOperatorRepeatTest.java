@@ -160,7 +160,7 @@ public class NbpOperatorRepeatTest {
                 .repeat(3)
                 .distinct();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         src.subscribe(ts);
         
@@ -172,8 +172,8 @@ public class NbpOperatorRepeatTest {
     /** Issue #2844: wrong target of request. */
     @Test(timeout = 3000)
     public void testRepeatRetarget() {
-        final List<Integer> concatBase = new ArrayList<>();
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        final List<Integer> concatBase = new ArrayList<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.just(1, 2)
         .repeat(5)
         .concatMap(new Function<Integer, NbpObservable<Integer>>() {

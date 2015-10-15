@@ -51,7 +51,7 @@ public class NbpOperatorToMapTest {
 
         NbpObservable<Map<Integer, String>> mapped = source.toMap(lengthFunc);
 
-        Map<Integer, String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<T>();
         expected.put(1, "a");
         expected.put(2, "bb");
         expected.put(3, "ccc");
@@ -70,7 +70,7 @@ public class NbpOperatorToMapTest {
 
         NbpObservable<Map<Integer, String>> mapped = source.toMap(lengthFunc, duplicate);
 
-        Map<Integer, String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<T>();
         expected.put(1, "aa");
         expected.put(2, "bbbb");
         expected.put(3, "cccccc");
@@ -98,7 +98,7 @@ public class NbpOperatorToMapTest {
         };
         NbpObservable<Map<Integer, String>> mapped = source.toMap(lengthFuncErr);
 
-        Map<Integer, String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<T>();
         expected.put(1, "a");
         expected.put(2, "bb");
         expected.put(3, "ccc");
@@ -128,7 +128,7 @@ public class NbpOperatorToMapTest {
 
         NbpObservable<Map<Integer, String>> mapped = source.toMap(lengthFunc, duplicateErr);
 
-        Map<Integer, String> expected = new HashMap<>();
+        Map<Integer, String> expected = new HashMap<T>();
         expected.put(1, "aa");
         expected.put(2, "bbbb");
         expected.put(3, "cccccc");
@@ -169,7 +169,7 @@ public class NbpOperatorToMapTest {
         };
         NbpObservable<Map<Integer, String>> mapped = source.toMap(lengthFunc, v -> v, mapFactory);
 
-        Map<Integer, String> expected = new LinkedHashMap<>();
+        Map<Integer, String> expected = new LinkedHashMap<T>();
         expected.put(2, "bb");
         expected.put(3, "ccc");
         expected.put(4, "dddd");
@@ -200,7 +200,7 @@ public class NbpOperatorToMapTest {
         };
         NbpObservable<Map<Integer, String>> mapped = source.toMap(lengthFunc, v -> v, mapFactory);
 
-        Map<Integer, String> expected = new LinkedHashMap<>();
+        Map<Integer, String> expected = new LinkedHashMap<T>();
         expected.put(2, "bb");
         expected.put(3, "ccc");
         expected.put(4, "dddd");

@@ -195,8 +195,8 @@ public class ObservableNullTests {
     
     @Test
     public void fromFutureReturnsNull() {
-        CompletableFuture<Object> f = new CompletableFuture<>();
-        TestSubscriber<Object> ts = new TestSubscriber<>();
+        CompletableFuture<Object> f = new CompletableFuture<T>();
+        TestSubscriber<Object> ts = new TestSubscriber<T>();
         Observable.fromFuture(f).subscribe(ts);
         f.complete(null);
         ts.assertNoValues();
@@ -211,12 +211,12 @@ public class ObservableNullTests {
     
     @Test(expected = NullPointerException.class)
     public void fromFutureTimedUnitNull() {
-        Observable.fromFuture(new CompletableFuture<>(), 1, null);
+        Observable.fromFuture(new CompletableFuture<T>(), 1, null);
     }
     
     @Test(expected = NullPointerException.class)
     public void fromFutureTimedSchedulerNull() {
-        Observable.fromFuture(new CompletableFuture<>(), 1, TimeUnit.SECONDS, null);
+        Observable.fromFuture(new CompletableFuture<T>(), 1, TimeUnit.SECONDS, null);
     }
     
     @Test(expected = NullPointerException.class)
@@ -227,7 +227,7 @@ public class ObservableNullTests {
     
     @Test(expected = NullPointerException.class)
     public void fromFutureSchedulerNull() {
-        Observable.fromFuture(new CompletableFuture<>(), null);
+        Observable.fromFuture(new CompletableFuture<T>(), null);
     }
     
     @Test(expected = NullPointerException.class)
@@ -1716,12 +1716,12 @@ public class ObservableNullTests {
 
     @Test(expected = NullPointerException.class)
     public void toMultimapMapMapCollectionSupplierNull() {
-        just1.toMultimap(v -> v, v -> v, () -> new HashMap<>(), null);
+        just1.toMultimap(v -> v, v -> v, () -> new HashMap<T>(), null);
     }
     
     @Test(expected = NullPointerException.class)
     public void toMultimapMapCollectionSupplierReturnsNull() {
-        just1.toMultimap(v -> v, v -> v, () -> new HashMap<>(), v -> null).toBlocking().run();
+        just1.toMultimap(v -> v, v -> v, () -> new HashMap<T>(), v -> null).toBlocking().run();
     }
     
     @Test(expected = NullPointerException.class)

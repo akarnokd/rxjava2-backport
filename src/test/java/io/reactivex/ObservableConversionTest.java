@@ -42,7 +42,7 @@ public class ObservableConversionTest {
         protected Publisher<T> onSubscribe;
         
         public static <T> CylonDetectorObservable<T> create(Publisher<T> onSubscribe) {
-            return new CylonDetectorObservable<>(onSubscribe);
+            return new CylonDetectorObservable<T>(onSubscribe);
         }
 
         protected CylonDetectorObservable(Publisher<T> onSubscribe) {
@@ -137,7 +137,7 @@ public class ObservableConversionTest {
     
     @Test
     public void testConversionBetweenObservableClasses() {
-        final TestSubscriber<String> subscriber = new TestSubscriber<>(new Observer<String>() {
+        final TestSubscriber<String> subscriber = new TestSubscriber<T>(new Observer<String>() {
 
             @Override
             public void onComplete() {
@@ -160,7 +160,7 @@ public class ObservableConversionTest {
         
         Observable.fromIterable(crewOfBattlestarGalactica)
             .doOnNext(System.out::println)
-            .to(new ConvertToCylonDetector<>())
+            .to(new ConvertToCylonDetector<T>())
             .beep(t -> t instanceof Cylon)
             .boop(cylon -> new Jail(cylon))
             .DESTROY()
@@ -174,7 +174,7 @@ public class ObservableConversionTest {
     
     @Test
     public void testConvertToConcurrentQueue() {
-        final AtomicReference<Throwable> thrown = new AtomicReference<>(null);
+        final AtomicReference<Throwable> thrown = new AtomicReference<T>(null);
         final AtomicBoolean isFinished = new AtomicBoolean(false);
         ConcurrentLinkedQueue<? extends Integer> queue = Observable.range(0,5)
                 .flatMap(i -> Observable.range(0, 5)
@@ -188,7 +188,7 @@ public class ObservableConversionTest {
                             return i + k;
                         }))
                     .to(onSubscribe -> {
-                        final ConcurrentLinkedQueue<Integer> q = new ConcurrentLinkedQueue<>();
+                        final ConcurrentLinkedQueue<Integer> q = new ConcurrentLinkedQueue<T>();
                         onSubscribe.subscribe(new Observer<Integer>(){
                             @Override
                             public void onComplete() {

@@ -18,6 +18,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import io.reactivex.*;
+import io.reactivex.Optional;
 import io.reactivex.internal.subscribers.nbp.NbpDisposableSubscriber;
 import io.reactivex.internal.util.Exceptions;
 

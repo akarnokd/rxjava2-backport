@@ -50,9 +50,9 @@ public class OperatorTimestampTest {
 
         InOrder inOrder = inOrder(observer);
 
-        inOrder.verify(observer, times(1)).onNext(new Timed<>(1, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<>(2, 100, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<>(3, 200, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<T>(1, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<T>(2, 100, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<T>(3, 200, TimeUnit.MILLISECONDS));
 
         verify(observer, never()).onError(any(Throwable.class));
         verify(observer, never()).onComplete();
@@ -74,9 +74,9 @@ public class OperatorTimestampTest {
 
         InOrder inOrder = inOrder(observer);
 
-        inOrder.verify(observer, times(1)).onNext(new Timed<>(1, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<>(2, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<>(3, 200, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<T>(1, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<T>(2, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<T>(3, 200, TimeUnit.MILLISECONDS));
 
         verify(observer, never()).onError(any(Throwable.class));
         verify(observer, never()).onComplete();

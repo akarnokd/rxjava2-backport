@@ -13,11 +13,11 @@
 
 package io.reactivex.internal.operators.nbp;
 
-import io.reactivex.functions.*;
-
 import io.reactivex.NbpObservable;
 import io.reactivex.NbpObservable.*;
 import io.reactivex.disposables.*;
+import io.reactivex.exceptions.CompositeException;
+import io.reactivex.functions.Function;
 import io.reactivex.plugins.RxJavaPlugins;
 
 public final class NbpOperatorOnErrorNext<T> implements NbpOperator<T, T> {
@@ -31,7 +31,7 @@ public final class NbpOperatorOnErrorNext<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        OnErrorNextSubscriber<T> parent = new OnErrorNextSubscriber<>(t, nextSupplier, allowFatal);
+        OnErrorNextSubscriber<T> parent = new OnErrorNextSubscriber<T>(t, nextSupplier, allowFatal);
         t.onSubscribe(parent.arbiter);
         return parent;
     }
@@ -88,14 +88,13 @@ public final class NbpOperatorOnErrorNext<T> implements NbpOperator<T, T> {
             try {
                 p = nextSupplier.apply(t);
             } catch (Throwable e) {
-                e.addSuppressed(t);
-                actual.onError(e);
+                actual.onError(new CompositeException(e, t));
                 return;
             }
             
             if (p == null) {
                 NullPointerException npe = new NullPointerException("Observable is null");
-                npe.addSuppressed(t);
+                npe.initCause(t);
                 actual.onError(npe);
                 return;
             }

@@ -27,7 +27,7 @@ public final class NbpOperatorScan<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new ScanSubscriber<>(t, accumulator);
+        return new ScanSubscriber<T>(t, accumulator);
     }
     
     static final class ScanSubscriber<T> implements NbpSubscriber<T> {

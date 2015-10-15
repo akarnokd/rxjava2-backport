@@ -62,7 +62,7 @@ public class NbpPublishSubjectTest {
         NbpSubscriber<Object> observerB = TestHelper.mockNbpSubscriber();
         NbpSubscriber<Object> observerC = TestHelper.mockNbpSubscriber();
 
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<>(observerA);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(observerA);
         
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -171,7 +171,7 @@ public class NbpPublishSubjectTest {
         NbpPublishSubject<String> subject = NbpPublishSubject.create();
 
         NbpSubscriber<String> observer = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(observer);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -206,7 +206,7 @@ public class NbpPublishSubjectTest {
         final AtomicInteger countChildren = new AtomicInteger();
         final AtomicInteger countTotal = new AtomicInteger();
 
-        final ArrayList<String> list = new ArrayList<>();
+        final ArrayList<String> list = new ArrayList<T>();
 
         s.flatMap(new Function<Integer, NbpObservable<String>>() {
 
@@ -257,7 +257,7 @@ public class NbpPublishSubjectTest {
         final NbpPublishSubject<Integer> ps = NbpPublishSubject.create();
 
         NbpSubscriber<Integer> o1 = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>(o1);
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>(o1);
         ps.subscribe(ts);
 
         // emit
@@ -275,7 +275,7 @@ public class NbpPublishSubjectTest {
         ps.onNext(2);
 
         NbpSubscriber<Integer> o2 = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<>(o2);
+        NbpTestSubscriber<Integer> ts2 = new NbpTestSubscriber<T>(o2);
         ps.subscribe(ts2);
 
         // emit
@@ -339,7 +339,7 @@ public class NbpPublishSubjectTest {
 //        PublishSubject<String> ps = PublishSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<>();
+//        TestSubscriber<String> ts = new TestSubscriber<T>();
 //        ps.subscribe(ts);
 //
 //        try {

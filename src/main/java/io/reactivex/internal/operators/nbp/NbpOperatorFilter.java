@@ -27,7 +27,7 @@ public final class NbpOperatorFilter<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> s) {
-        return new FilterSubscriber<>(s, predicate);
+        return new FilterSubscriber<T>(s, predicate);
     }
     
     static final class FilterSubscriber<T> implements NbpSubscriber<T> {

@@ -42,8 +42,8 @@ public class NbpOperatorWindowWithTimeTest {
 
     @Test
     public void testTimedAndCount() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         NbpObservable<String> source = NbpObservable.create(new NbpOnSubscribe<String>() {
             @Override
@@ -76,8 +76,8 @@ public class NbpOperatorWindowWithTimeTest {
 
     @Test
     public void testTimed() {
-        final List<String> list = new ArrayList<>();
-        final List<List<String>> lists = new ArrayList<>();
+        final List<String> list = new ArrayList<T>();
+        final List<List<String>> lists = new ArrayList<T>();
 
         NbpObservable<String> source = NbpObservable.create(new NbpOnSubscribe<String>() {
             @Override
@@ -105,7 +105,7 @@ public class NbpOperatorWindowWithTimeTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -137,7 +137,7 @@ public class NbpOperatorWindowWithTimeTest {
                 stringObservable.subscribe(new NbpObserver<T>() {
                     @Override
                     public void onComplete() {
-                        lists.add(new ArrayList<>(list));
+                        lists.add(new ArrayList<T>(list));
                         list.clear();
                     }
 
@@ -159,8 +159,8 @@ public class NbpOperatorWindowWithTimeTest {
         NbpObservable<NbpObservable<Integer>> source = NbpObservable.range(1, 10)
                 .window(1, TimeUnit.MINUTES, scheduler, 3);
         
-        final List<Integer> list = new ArrayList<>();
-        final List<List<Integer>> lists = new ArrayList<>();
+        final List<Integer> list = new ArrayList<T>();
+        final List<List<Integer>> lists = new ArrayList<T>();
         
         source.subscribe(observeWindow(list, lists));
         
@@ -177,7 +177,7 @@ public class NbpOperatorWindowWithTimeTest {
     
     @Test
     public void testTakeFlatMapCompletes() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         AtomicInteger wip = new AtomicInteger();
         

@@ -34,7 +34,7 @@ public class NbpStartWithTests {
 
     @Test
     public void startWithIterable() {
-        List<String> li = new ArrayList<>();
+        List<String> li = new ArrayList<T>();
         li.add("alpha");
         li.add("beta");
         List<String> values = NbpObservable.just("one", "two").startWith(li).toList().toBlocking().single();
@@ -47,7 +47,7 @@ public class NbpStartWithTests {
 
     @Test
     public void startWithObservable() {
-        List<String> li = new ArrayList<>();
+        List<String> li = new ArrayList<T>();
         li.add("alpha");
         li.add("beta");
         List<String> values = NbpObservable.just("one", "two")

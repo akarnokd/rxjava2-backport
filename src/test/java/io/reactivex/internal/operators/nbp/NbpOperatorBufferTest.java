@@ -309,7 +309,7 @@ public class NbpOperatorBufferTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<T>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -329,7 +329,7 @@ public class NbpOperatorBufferTest {
         NbpObservable<Integer> source = NbpObservable.never();
 
         NbpSubscriber<List<Integer>> o = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<List<Integer>> ts = new NbpTestSubscriber<>(o);
+        NbpTestSubscriber<List<Integer>> ts = new NbpTestSubscriber<T>(o);
 
         source.buffer(100, 200, TimeUnit.MILLISECONDS, scheduler)
         .doOnNext(System.out::println)

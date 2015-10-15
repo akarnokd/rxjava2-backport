@@ -19,8 +19,9 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.reactivestreams.Publisher;
 
-import io.reactivex.*;
 import io.reactivex.Observable;
+import io.reactivex.Optional;
+import io.reactivex.Try;
 import io.reactivex.internal.subscribers.DisposableSubscriber;
 import io.reactivex.internal.util.Exceptions;
 

@@ -27,7 +27,7 @@ public final class NbpOperatorSkip<T> implements NbpOperator<T, T> {
 
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> s) {
-        return new SkipSubscriber<>(s, n);
+        return new SkipSubscriber<T>(s, n);
     }
     
     static final class SkipSubscriber<T> implements NbpSubscriber<T> {

@@ -30,7 +30,7 @@ public class OperatorOnBackpressureDropTest {
 
     @Test
     public void testNoBackpressureSupport() {
-        TestSubscriber<Long> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
         // this will be ignored
         ts.request(100);
         // we take 500 so it unsubscribes
@@ -42,7 +42,7 @@ public class OperatorOnBackpressureDropTest {
 
     @Test(timeout = 500)
     public void testWithObserveOn() throws InterruptedException {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(0, Observable.bufferSize() * 10).onBackpressureDrop().observeOn(Schedulers.io()).subscribe(ts);
         ts.awaitTerminalEvent();
     }
@@ -51,7 +51,7 @@ public class OperatorOnBackpressureDropTest {
     public void testFixBackpressureWithBuffer() throws InterruptedException {
         final CountDownLatch l1 = new CountDownLatch(100);
         final CountDownLatch l2 = new CountDownLatch(150);
-        TestSubscriber<Long> ts = new TestSubscriber<>(new Observer<Long>() {
+        TestSubscriber<Long> ts = new TestSubscriber<T>(new Observer<Long>() {
 
             @Override
             protected void onStart() {

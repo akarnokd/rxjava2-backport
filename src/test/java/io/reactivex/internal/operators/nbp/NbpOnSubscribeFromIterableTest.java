@@ -112,7 +112,7 @@ public class NbpOnSubscribeFromIterableTest {
     public void testNoBackpressure() {
         NbpObservable<Integer> o = NbpObservable.fromIterable(Arrays.asList(1, 2, 3, 4, 5));
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         o.subscribe(ts);
         
@@ -125,7 +125,7 @@ public class NbpOnSubscribeFromIterableTest {
         NbpObservable<Integer> o = NbpObservable.fromIterable(Arrays.asList(1, 2, 3));
         
         for (int i = 0; i < 10; i++) {
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
             
             o.subscribe(ts);
             

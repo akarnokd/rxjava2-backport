@@ -42,11 +42,11 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
         if (other == null) {
-            return new TimeoutTimedSubscriber<>(
-                    new NbpSerializedSubscriber<>(t), // because errors can race 
+            return new TimeoutTimedSubscriber<T>(
+                    new NbpSerializedSubscriber<T>(t), // because errors can race 
                     timeout, unit, scheduler.createWorker());
         }
-        return new TimeoutTimedOtherSubscriber<>(
+        return new TimeoutTimedOtherSubscriber<T>(
                 t, // the FullArbiter serializes
                 timeout, unit, scheduler.createWorker(), other);
     }
@@ -67,9 +67,15 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
         static final AtomicReferenceFieldUpdater<TimeoutTimedOtherSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(TimeoutTimedOtherSubscriber.class, Disposable.class, "timer");
 
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
-        static final Disposable NEW_TIMER = () -> { };
+        static final Disposable NEW_TIMER = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
         volatile long index;
         
@@ -82,7 +88,7 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
             this.unit = unit;
             this.worker = worker;
             this.other = other;
-            this.arbiter = new NbpFullArbiter<>(actual, this, 8);
+            this.arbiter = new NbpFullArbiter<T>(actual, this, 8);
         }
 
         @Override
@@ -112,24 +118,27 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
             }
         }
         
-        void scheduleTimeout(long idx) {
+        void scheduleTimeout(final long idx) {
             Disposable d = timer;
             if (d != null) {
                 d.dispose();
             }
             
             if (TIMER.compareAndSet(this, d, NEW_TIMER)) {
-                d = worker.schedule(() -> {
-                    if (idx == index) {
-                        done = true;
-                        s.dispose();
-                        disposeTimer();
-                        worker.dispose();
-                        
-                        if (other == null) {
-                            actual.onError(new TimeoutException());
-                        } else {
-                            subscribeNext();
+                d = worker.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (idx == index) {
+                            done = true;
+                            s.dispose();
+                            disposeTimer();
+                            worker.dispose();
+                            
+                            if (other == null) {
+                                actual.onError(new TimeoutException());
+                            } else {
+                                subscribeNext();
+                            }
                         }
                     }
                 }, timeout, unit);
@@ -141,7 +150,7 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
         }
         
         void subscribeNext() {
-            other.subscribe(new NbpFullArbiterSubscriber<>(arbiter));
+            other.subscribe(new NbpFullArbiterSubscriber<T>(arbiter));
         }
         
         @Override
@@ -197,9 +206,15 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
         static final AtomicReferenceFieldUpdater<TimeoutTimedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(TimeoutTimedSubscriber.class, Disposable.class, "timer");
 
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
-        static final Disposable NEW_TIMER = () -> { };
+        static final Disposable NEW_TIMER = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
 
         volatile long index;
         
@@ -236,20 +251,23 @@ public final class NbpOperatorTimeoutTimed<T> implements NbpOperator<T, T> {
             scheduleTimeout(idx);
         }
         
-        void scheduleTimeout(long idx) {
+        void scheduleTimeout(final long idx) {
             Disposable d = timer;
             if (d != null) {
                 d.dispose();
             }
             
             if (TIMER.compareAndSet(this, d, NEW_TIMER)) {
-                d = worker.schedule(() -> {
-                    if (idx == index) {
-                        done = true;
-                        s.dispose();
-                        dispose();
-                        
-                        actual.onError(new TimeoutException());
+                d = worker.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (idx == index) {
+                            done = true;
+                            s.dispose();
+                            dispose();
+                            
+                            actual.onError(new TimeoutException());
+                        }
                     }
                 }, timeout, unit);
                 

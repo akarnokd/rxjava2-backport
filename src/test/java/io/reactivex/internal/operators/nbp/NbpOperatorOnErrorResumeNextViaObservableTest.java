@@ -137,7 +137,7 @@ public class NbpOperatorOnErrorResumeNextViaObservableTest {
 
         @SuppressWarnings("unchecked")
         NbpObserver<String> NbpObserver = mock(NbpObserver.class);
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
         NbpObservable.subscribe(ts);
 
         ts.awaitTerminalEvent();
@@ -191,7 +191,7 @@ public class NbpOperatorOnErrorResumeNextViaObservableTest {
     
     @Test
     public void testBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable.range(0, 100000)
                 .onErrorResumeNext(NbpObservable.just(1))
                 .observeOn(Schedulers.computation())

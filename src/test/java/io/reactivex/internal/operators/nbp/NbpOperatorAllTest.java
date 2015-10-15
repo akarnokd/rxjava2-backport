@@ -106,7 +106,7 @@ public class NbpOperatorAllTest {
     
     @Test
     public void testPredicateThrowsExceptionAndValueInCauseMessage() {
-        NbpTestSubscriber<Boolean> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Boolean> ts = new NbpTestSubscriber<T>();
         
         final IllegalArgumentException ex = new IllegalArgumentException();
         

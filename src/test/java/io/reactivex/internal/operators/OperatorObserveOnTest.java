@@ -62,7 +62,7 @@ public class OperatorObserveOnTest {
         Subscriber<String> observer = TestHelper.mockSubscriber();
 
         InOrder inOrder = inOrder(observer);
-        TestSubscriber<String> ts = new TestSubscriber<>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
 
         obs.observeOn(Schedulers.computation()).subscribe(ts);
 
@@ -388,7 +388,7 @@ public class OperatorObserveOnTest {
         final TestScheduler testScheduler = new TestScheduler();
 
         final Subscriber<Integer> observer = TestHelper.mockSubscriber();
-        TestSubscriber<Integer> ts = new TestSubscriber<>(observer);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(observer);
         
         Observable.just(1, 2, 3)
                 .observeOn(testScheduler)
@@ -523,7 +523,7 @@ public class OperatorObserveOnTest {
             }
         });
 
-        TestSubscriber<Integer> testSubscriber = new TestSubscriber<>();
+        TestSubscriber<Integer> testSubscriber = new TestSubscriber<T>();
         observable
                 .take(7)
                 .observeOn(Schedulers.newThread())
@@ -551,7 +551,7 @@ public class OperatorObserveOnTest {
 
         });
 
-        TestSubscriber<Integer> testSubscriber = new TestSubscriber<>(new Observer<Integer>() {
+        TestSubscriber<Integer> testSubscriber = new TestSubscriber<T>(new Observer<Integer>() {
 
             @Override
             public void onComplete() {
@@ -594,7 +594,7 @@ public class OperatorObserveOnTest {
 
     @Test
     public void testAsyncChild() {
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.range(0, 100000).observeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -606,7 +606,7 @@ public class OperatorObserveOnTest {
             final PublishSubject<Long> subject = PublishSubject.create();
     
             final AtomicLong counter = new AtomicLong();
-            TestSubscriber<Long> ts = new TestSubscriber<>(new Observer<Long>() {
+            TestSubscriber<Long> ts = new TestSubscriber<T>(new Observer<Long>() {
     
                 @Override
                 public void onComplete() {
@@ -653,7 +653,7 @@ public class OperatorObserveOnTest {
      */
     @Test
     public void testHotOperatorBackpressure() {
-        TestSubscriber<String> ts = new TestSubscriber<>();
+        TestSubscriber<String> ts = new TestSubscriber<T>();
         Observable.interval(0, 1, TimeUnit.MICROSECONDS)
                 .observeOn(Schedulers.computation())
                 .map(new Function<Long, String>() {
@@ -701,7 +701,7 @@ public class OperatorObserveOnTest {
 
                 });
 
-        TestSubscriber<Long> ts = new TestSubscriber<>();
+        TestSubscriber<Long> ts = new TestSubscriber<T>();
 
         Observable.combineLatest(timer, Observable.<Integer> never(), new BiFunction<Long, Integer, Long>() {
 

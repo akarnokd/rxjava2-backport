@@ -28,7 +28,7 @@ public final class NbpOperatorUnsubscribeOn<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new UnsubscribeSubscriber<>(t, scheduler);
+        return new UnsubscribeSubscriber<T>(t, scheduler);
     }
     
     static final class UnsubscribeSubscriber<T> extends AtomicBoolean implements NbpSubscriber<T>, Disposable {
@@ -72,8 +72,11 @@ public final class NbpOperatorUnsubscribeOn<T> implements NbpOperator<T, T> {
         @Override
         public void dispose() {
             if (compareAndSet(false, true)) {
-                scheduler.scheduleDirect(() -> {
-                    s.dispose();
+                scheduler.scheduleDirect(new Runnable() {
+                    @Override
+                    public void run() {
+                        s.dispose();
+                    }
                 });
             }
         }

@@ -29,7 +29,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastOfManyReturnsLast() {
-        TestSubscriber<Integer> s = new TestSubscriber<>();
+        TestSubscriber<Integer> s = new TestSubscriber<T>();
         Observable.range(1, 10).takeLast(1).subscribe(s);
         s.assertValue(10);
         s.assertNoErrors();
@@ -40,7 +40,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastOfEmptyReturnsEmpty() {
-        TestSubscriber<Object> s = new TestSubscriber<>();
+        TestSubscriber<Object> s = new TestSubscriber<T>();
         Observable.empty().takeLast(1).subscribe(s);
         s.assertNoValues();
         s.assertNoErrors();
@@ -51,7 +51,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastOfOneReturnsLast() {
-        TestSubscriber<Integer> s = new TestSubscriber<>();
+        TestSubscriber<Integer> s = new TestSubscriber<T>();
         Observable.just(1).takeLast(1).subscribe(s);
         s.assertValue(1);
         s.assertNoErrors();
@@ -76,7 +76,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastWithBackpressure() {
-        MySubscriber<Integer> s = new MySubscriber<>(0);
+        MySubscriber<Integer> s = new MySubscriber<T>(0);
         Observable.just(1).takeLast(1).subscribe(s);
         assertEquals(0, s.list.size());
         s.requestMore(1);
@@ -106,7 +106,7 @@ public class OperatorTakeLastOneTest {
             this.initialRequest = initialRequest;
         }
 
-        final List<T> list = new ArrayList<>();
+        final List<T> list = new ArrayList<T>();
 
         public void requestMore(long n) {
             request(n);

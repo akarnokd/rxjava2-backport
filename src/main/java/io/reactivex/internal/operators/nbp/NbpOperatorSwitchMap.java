@@ -38,7 +38,7 @@ public final class NbpOperatorSwitchMap<T, R> implements NbpOperator<R, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super R> t) {
-        return new SwitchMapSubscriber<>(t, mapper, bufferSize);
+        return new SwitchMapSubscriber<T, R>(t, mapper, bufferSize);
     }
     
     static final class SwitchMapSubscriber<T, R> extends AtomicInteger implements NbpSubscriber<T>, Disposable {
@@ -63,7 +63,7 @@ public final class NbpOperatorSwitchMap<T, R> implements NbpOperator<R, T> {
         
         static final SwitchMapInnerSubscriber<Object, Object> CANCELLED;
         static {
-            CANCELLED = new SwitchMapInnerSubscriber<>(null, -1L, 1);
+            CANCELLED = new SwitchMapInnerSubscriber<Object, Object>(null, -1L, 1);
             CANCELLED.cancel();
         }
         
@@ -109,7 +109,7 @@ public final class NbpOperatorSwitchMap<T, R> implements NbpOperator<R, T> {
                 return;
             }
             
-            SwitchMapInnerSubscriber<T, R> nextInner = new SwitchMapInnerSubscriber<>(this, c, bufferSize);
+            SwitchMapInnerSubscriber<T, R> nextInner = new SwitchMapInnerSubscriber<T, R>(this, c, bufferSize);
             
             for (;;) {
                 inner = active;
@@ -293,7 +293,10 @@ public final class NbpOperatorSwitchMap<T, R> implements NbpOperator<R, T> {
         volatile boolean done;
         Throwable error;
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         public SwitchMapInnerSubscriber(SwitchMapSubscriber<T, R> parent, long index, int bufferSize) {
             this.parent = parent;
@@ -301,9 +304,9 @@ public final class NbpOperatorSwitchMap<T, R> implements NbpOperator<R, T> {
             this.bufferSize = bufferSize;
             Queue<R> q;
             if (Pow2.isPowerOfTwo(bufferSize)) {
-                q = new SpscArrayQueue<>(bufferSize);
+                q = new SpscArrayQueue<R>(bufferSize);
             } else {
-                q = new SpscExactArrayQueue<>(bufferSize);
+                q = new SpscExactArrayQueue<R>(bufferSize);
             }
             this.queue = q;
         }

@@ -27,7 +27,7 @@ public final class NbpOperatorSkipLast<T> implements NbpOperator<T, T> {
 
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> s) {
-        return new SkipLastSubscriber<>(s, skip);
+        return new SkipLastSubscriber<T>(s, skip);
     }
     
     static final class SkipLastSubscriber<T> extends ArrayDeque<T> implements NbpSubscriber<T> {

@@ -38,7 +38,7 @@ public class NbpOperatorWindowWithObservableTest {
 
         final NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        final List<NbpSubscriber<Object>> values = new ArrayList<>();
+        final List<NbpSubscriber<Object>> values = new ArrayList<T>();
 
         NbpSubscriber<NbpObservable<Integer>> wo = new NbpObserver<NbpObservable<Integer>>() {
             @Override
@@ -96,7 +96,7 @@ public class NbpOperatorWindowWithObservableTest {
 
         final NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        final List<NbpSubscriber<Object>> values = new ArrayList<>();
+        final List<NbpSubscriber<Object>> values = new ArrayList<T>();
 
         NbpSubscriber<NbpObservable<Integer>> wo = new NbpObserver<NbpObservable<Integer>>() {
             @Override
@@ -152,7 +152,7 @@ public class NbpOperatorWindowWithObservableTest {
 
         final NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        final List<NbpSubscriber<Object>> values = new ArrayList<>();
+        final List<NbpSubscriber<Object>> values = new ArrayList<T>();
 
         NbpSubscriber<NbpObservable<Integer>> wo = new NbpObserver<NbpObservable<Integer>>() {
             @Override
@@ -202,7 +202,7 @@ public class NbpOperatorWindowWithObservableTest {
 
         final NbpSubscriber<Object> o = TestHelper.mockNbpSubscriber();
 
-        final List<NbpSubscriber<Object>> values = new ArrayList<>();
+        final List<NbpSubscriber<Object>> values = new ArrayList<T>();
 
         NbpSubscriber<NbpObservable<Integer>> wo = new NbpObserver<NbpObservable<Integer>>() {
             @Override
@@ -290,7 +290,7 @@ public class NbpOperatorWindowWithObservableTest {
             }
         };
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         source.window(boundary).unsafeSubscribe(ts);
         
         assertFalse(ts.isCancelled());
@@ -307,7 +307,7 @@ public class NbpOperatorWindowWithObservableTest {
             }
         };
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         source.window(boundaryFunc).subscribe(ts);
         
         assertTrue(source.hasSubscribers());
@@ -333,7 +333,7 @@ public class NbpOperatorWindowWithObservableTest {
             }
         };
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         source.window(boundaryFunc).subscribe(ts);
         
         assertTrue(source.hasSubscribers());
@@ -361,7 +361,7 @@ public class NbpOperatorWindowWithObservableTest {
             }
         };
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         source.window(boundaryFunc).subscribe(ts);
         
         assertTrue(source.hasSubscribers());
@@ -392,7 +392,7 @@ public class NbpOperatorWindowWithObservableTest {
             }
         };
         
-        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<NbpObservable<Integer>> ts = new NbpTestSubscriber<T>();
         source.window(boundaryFunc).subscribe(ts);
         
         source.onNext(1);

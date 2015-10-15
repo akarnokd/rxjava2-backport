@@ -57,11 +57,11 @@ public class NbpOperatorTimeIntervalTest {
         subject.onComplete();
 
         inOrder.verify(NbpObserver, times(1)).onNext(
-                new Timed<>(1, 1000, TIME_UNIT));
+                new Timed<T>(1, 1000, TIME_UNIT));
         inOrder.verify(NbpObserver, times(1)).onNext(
-                new Timed<>(2, 2000, TIME_UNIT));
+                new Timed<T>(2, 2000, TIME_UNIT));
         inOrder.verify(NbpObserver, times(1)).onNext(
-                new Timed<>(3, 3000, TIME_UNIT));
+                new Timed<T>(3, 3000, TIME_UNIT));
         inOrder.verify(NbpObserver, times(1)).onComplete();
         inOrder.verifyNoMoreInteractions();
     }

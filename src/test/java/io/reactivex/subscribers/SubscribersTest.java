@@ -141,7 +141,7 @@ public class SubscribersTest {
     
     @Test
     public void testError2() {
-        final AtomicReference<Throwable> value = new AtomicReference<>();
+        final AtomicReference<Throwable> value = new AtomicReference<T>();
         Consumer<Throwable> action = new Consumer<Throwable>() {
             @Override
             public void accept(Throwable t) {
@@ -156,7 +156,7 @@ public class SubscribersTest {
     
     @Test
     public void testError3() {
-        final AtomicReference<Throwable> value = new AtomicReference<>();
+        final AtomicReference<Throwable> value = new AtomicReference<T>();
         Consumer<Throwable> action = new Consumer<Throwable>() {
             @Override
             public void accept(Throwable t) {

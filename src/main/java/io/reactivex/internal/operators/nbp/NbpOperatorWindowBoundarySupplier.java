@@ -39,7 +39,7 @@ public final class NbpOperatorWindowBoundarySupplier<T, B> implements NbpOperato
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super NbpObservable<T>> t) {
-        return new WindowBoundaryMainSubscriber<>(new NbpSerializedSubscriber<>(t), other, bufferSize);
+        return new WindowBoundaryMainSubscriber<T, B>(new NbpSerializedSubscriber<NbpObservable<T>>(t), other, bufferSize);
     }
     
     static final class WindowBoundaryMainSubscriber<T, B> 
@@ -56,7 +56,10 @@ public final class NbpOperatorWindowBoundarySupplier<T, B> implements NbpOperato
         static final AtomicReferenceFieldUpdater<WindowBoundaryMainSubscriber, Disposable> BOUNDARY =
                 AtomicReferenceFieldUpdater.newUpdater(WindowBoundaryMainSubscriber.class, Disposable.class, "boundary");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         NbpUnicastSubject<T> window;
         
@@ -69,7 +72,7 @@ public final class NbpOperatorWindowBoundarySupplier<T, B> implements NbpOperato
 
         public WindowBoundaryMainSubscriber(NbpSubscriber<? super NbpObservable<T>> actual, Supplier<? extends NbpObservable<B>> other,
                 int bufferSize) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<Object>());
             this.other = other;
             this.bufferSize = bufferSize;
             WINDOWS.lazySet(this, 1);
@@ -111,7 +114,7 @@ public final class NbpOperatorWindowBoundarySupplier<T, B> implements NbpOperato
 
             a.onNext(w);
             
-            WindowBoundaryInnerSubscriber<T, B> inner = new WindowBoundaryInnerSubscriber<>(this);
+            WindowBoundaryInnerSubscriber<T, B> inner = new WindowBoundaryInnerSubscriber<T, B>(this);
             
             if (BOUNDARY.compareAndSet(this, null, inner)) {
                 WINDOWS.getAndIncrement(this);
@@ -257,7 +260,7 @@ public final class NbpOperatorWindowBoundarySupplier<T, B> implements NbpOperato
 
                         a.onNext(w);
                         
-                        WindowBoundaryInnerSubscriber<T, B> b = new WindowBoundaryInnerSubscriber<>(this);
+                        WindowBoundaryInnerSubscriber<T, B> b = new WindowBoundaryInnerSubscriber<T, B>(this);
                         
                         if (BOUNDARY.compareAndSet(this, boundary, b)) {
                             p.subscribe(b);
@@ -266,7 +269,7 @@ public final class NbpOperatorWindowBoundarySupplier<T, B> implements NbpOperato
                         continue;
                     }
                     
-                    w.onNext(NotificationLite.getValue(o));
+                    w.onNext(NotificationLite.<T>getValue(o));
                 }
                 
                 missed = leave(-missed);

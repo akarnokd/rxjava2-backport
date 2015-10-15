@@ -33,10 +33,10 @@ public final class NbpOperatorConcatMap<T, U> implements NbpOperator<U, T> {
     }
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super U> s) {
-        NbpSerializedSubscriber<U> ssub = new NbpSerializedSubscriber<>(s);
+        NbpSerializedSubscriber<U> ssub = new NbpSerializedSubscriber<U>(s);
         SerialDisposable sa = new SerialDisposable();
         ssub.onSubscribe(sa);
-        return new SourceSubscriber<>(ssub, sa, mapper, bufferSize);
+        return new SourceSubscriber<T, U>(ssub, sa, mapper, bufferSize);
     }
     
     static final class SourceSubscriber<T, U> extends AtomicInteger implements NbpSubscriber<T> {
@@ -61,8 +61,8 @@ public final class NbpOperatorConcatMap<T, U> implements NbpOperator<U, T> {
             this.sa = sa;
             this.mapper = mapper;
             this.bufferSize = bufferSize;
-            this.inner = new InnerSubscriber<>(actual, sa, this);
-            this.queue = new SpscLinkedArrayQueue<>(bufferSize);
+            this.inner = new InnerSubscriber<U>(actual, sa, this);
+            this.queue = new SpscLinkedArrayQueue<T>(bufferSize);
         }
         @Override
         public void onSubscribe(Disposable s) {

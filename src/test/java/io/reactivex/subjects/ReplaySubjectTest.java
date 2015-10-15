@@ -67,7 +67,7 @@ public class ReplaySubjectTest {
         Subscriber<Object> observerB = TestHelper.mockSubscriber();
         Subscriber<Object> observerC = TestHelper.mockSubscriber();
         Subscriber<Object> observerD = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<>(observerA);
+        TestSubscriber<Object> ts = new TestSubscriber<T>(observerA);
 
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -218,7 +218,7 @@ public class ReplaySubjectTest {
         ReplaySubject<String> subject = ReplaySubject.create();
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -249,7 +249,7 @@ public class ReplaySubjectTest {
     @Test(timeout = 2000)
     public void testNewSubscriberDoesntBlockExisting() throws InterruptedException {
 
-        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<>();
+        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<T>();
         Subscriber<String> observer1 = new Observer<String>() {
 
             @Override
@@ -270,7 +270,7 @@ public class ReplaySubjectTest {
 
         };
 
-        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<>();
+        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<T>();
         final CountDownLatch oneReceived = new CountDownLatch(1);
         final CountDownLatch makeSlow = new CountDownLatch(1);
         final CountDownLatch completed = new CountDownLatch(1);
@@ -535,7 +535,7 @@ public class ReplaySubjectTest {
 //        ReplaySubject<String> ps = ReplaySubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<>();
+//        TestSubscriber<String> ts = new TestSubscriber<T>();
 //        ps.subscribe(ts);
 //
 //        try {
@@ -829,7 +829,7 @@ public class ReplaySubjectTest {
         rs.onNext(3);
         rs.onComplete();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         rs.subscribe(ts);
         
@@ -858,7 +858,7 @@ public class ReplaySubjectTest {
         rs.onNext(3);
         rs.onComplete();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         rs.subscribe(ts);
         
@@ -887,7 +887,7 @@ public class ReplaySubjectTest {
         rs.onNext(3);
         rs.onComplete();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         rs.subscribe(ts);
         

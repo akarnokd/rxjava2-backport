@@ -13,10 +13,10 @@
 
 package io.reactivex.internal.operators.nbp;
 
-import io.reactivex.functions.*;
-
 import io.reactivex.NbpObservable.*;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.exceptions.CompositeException;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -38,7 +38,7 @@ public final class NbpOperatorDoOnEach<T> implements NbpOperator<T, T> {
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new DoOnEachSubscriber<>(t, onNext, onError, onComplete, onAfterTerminate);
+        return new DoOnEachSubscriber<T>(t, onNext, onError, onComplete, onAfterTerminate);
     }
     
     static final class DoOnEachSubscriber<T> implements NbpSubscriber<T> {
@@ -100,7 +100,7 @@ public final class NbpOperatorDoOnEach<T> implements NbpOperator<T, T> {
             try {
                 onError.accept(t);
             } catch (Throwable e) {
-                t.addSuppressed(e);
+                t = new CompositeException(e, t);
             }
             actual.onError(t);
             

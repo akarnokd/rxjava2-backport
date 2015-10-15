@@ -145,7 +145,7 @@ public class AsyncSubjectTest {
         AsyncSubject<String> subject = AsyncSubject.create();
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -194,7 +194,7 @@ public class AsyncSubjectTest {
          */
         for (int i = 0; i < 50; i++) {
             final AsyncSubject<String> subject = AsyncSubject.create();
-            final AtomicReference<String> value1 = new AtomicReference<>();
+            final AtomicReference<String> value1 = new AtomicReference<T>();
 
             subject.subscribe(new Consumer<String>() {
 
@@ -252,7 +252,7 @@ public class AsyncSubjectTest {
     private static class SubjectSubscriberThread extends Thread {
 
         private final AsyncSubject<String> subject;
-        private final AtomicReference<String> value = new AtomicReference<>();
+        private final AtomicReference<String> value = new AtomicReference<T>();
 
         public SubjectSubscriberThread(AsyncSubject<String> subject) {
             this.subject = subject;
@@ -276,7 +276,7 @@ public class AsyncSubjectTest {
 //        AsyncSubject<String> ps = AsyncSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<>();
+//        TestSubscriber<String> ts = new TestSubscriber<T>();
 //        ps.subscribe(ts);
 //
 //        try {
@@ -300,7 +300,7 @@ public class AsyncSubjectTest {
 //
 //        ps.subscribe();
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<>();
+//        TestSubscriber<String> ts = new TestSubscriber<T>();
 //        ps.subscribe(ts);
 //        ps.subscribe();
 //        ps.subscribe();

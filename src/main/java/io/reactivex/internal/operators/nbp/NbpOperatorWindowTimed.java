@@ -51,20 +51,20 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
     
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super NbpObservable<T>> t) {
-        NbpSerializedSubscriber<NbpObservable<T>> actual = new NbpSerializedSubscriber<>(t);
+        NbpSerializedSubscriber<NbpObservable<T>> actual = new NbpSerializedSubscriber<NbpObservable<T>>(t);
         
         if (timespan == timeskip) {
             if (maxSize == Long.MAX_VALUE) {
-                return new WindowExactUnboundedSubscriber<>(
+                return new WindowExactUnboundedSubscriber<T>(
                         actual, 
                         timespan, unit, scheduler, bufferSize);
             }
-            return new WindowExactBoundedSubscriber<>(
+            return new WindowExactBoundedSubscriber<T>(
                         actual,
                         timespan, unit, scheduler, 
                         bufferSize, maxSize, restartTimerOnMaxSize);
         }
-        return new WindowSkipSubscriber<>(actual,
+        return new WindowSkipSubscriber<T>(actual,
                 timespan, timeskip, unit, scheduler.createWorker(), bufferSize);
     }
     
@@ -87,7 +87,10 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
         static final AtomicReferenceFieldUpdater<WindowExactUnboundedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(WindowExactUnboundedSubscriber.class, Disposable.class, "timer");
 
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         static final Object NEXT = new Object();
         
@@ -95,7 +98,7 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
         
         public WindowExactUnboundedSubscriber(NbpSubscriber<? super NbpObservable<T>> actual, long timespan, TimeUnit unit,
                 Scheduler scheduler, int bufferSize) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<Object>());
             this.timespan = timespan;
             this.unit = unit;
             this.scheduler = scheduler;
@@ -248,7 +251,7 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
                         continue;
                     }
                     
-                    w.onNext(NotificationLite.getValue(o));
+                    w.onNext(NotificationLite.<T>getValue(o));
                 }
                 
                 missed = leave(-missed);
@@ -293,13 +296,16 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
         static final AtomicReferenceFieldUpdater<WindowExactBoundedSubscriber, Disposable> TIMER =
                 AtomicReferenceFieldUpdater.newUpdater(WindowExactBoundedSubscriber.class, Disposable.class, "timer");
         
-        static final Disposable CANCELLED = () -> { };
+        static final Disposable CANCELLED = new Disposable() {
+            @Override
+            public void dispose() { }
+        };
         
         public WindowExactBoundedSubscriber(
                 NbpSubscriber<? super NbpObservable<T>> actual, 
                 long timespan, TimeUnit unit, Scheduler scheduler, 
                 int bufferSize, long maxSize, boolean restartTimerOnMaxSize) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<Object>());
             this.timespan = timespan;
             this.unit = unit;
             this.scheduler = scheduler;
@@ -489,7 +495,7 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
                         continue;
                     }
                     
-                    w.onNext(NotificationLite.getValue(o));
+                    w.onNext(NotificationLite.<T>getValue(o));
                     long c = count + 1;
                     
                     if (c >= maxSize) {
@@ -571,13 +577,13 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
         public WindowSkipSubscriber(NbpSubscriber<? super NbpObservable<T>> actual,
                 long timespan, long timeskip, TimeUnit unit, 
                 Worker worker, int bufferSize) {
-            super(actual, new MpscLinkedQueue<>());
+            super(actual, new MpscLinkedQueue<Object>());
             this.timespan = timespan;
             this.timeskip = timeskip;
             this.unit = unit;
             this.worker = worker;
             this.bufferSize = bufferSize;
-            this.windows = new LinkedList<>();
+            this.windows = new LinkedList<NbpUnicastSubject<T>>();
         }
         
         @Override
@@ -594,12 +600,15 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
                 return;
             }
             
-            NbpUnicastSubject<T> w = NbpUnicastSubject.create(bufferSize);
+            final NbpUnicastSubject<T> w = NbpUnicastSubject.create(bufferSize);
             windows.add(w);
             
             actual.onNext(w);
-            worker.schedule(() -> {
-                complete(w);
+            worker.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    complete(w);
+                }
             }, timespan, unit);
             
             worker.schedulePeriodically(this, timeskip, timeskip, unit);
@@ -663,7 +672,7 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
         }
         
         void complete(NbpUnicastSubject<T> w) {
-            queue.offer(new SubjectWork<>(w, false));
+            queue.offer(new SubjectWork<T>(w, false));
             if (enter()) {
                 drainLoop();
             }
@@ -724,12 +733,15 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
                                 continue;
                             }
                             
-                            NbpUnicastSubject<T> w = NbpUnicastSubject.create(bufferSize);
+                            final NbpUnicastSubject<T> w = NbpUnicastSubject.create(bufferSize);
                             ws.add(w);
                             a.onNext(w);
                                 
-                            worker.schedule(() -> {
-                                complete(w);
+                            worker.schedule(new Runnable() {
+                                @Override
+                                public void run() {
+                                    complete(w);
+                                }
                             }, timespan, unit);
                         } else {
                             ws.remove(work.w);
@@ -742,7 +754,7 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
                     }
                     
                     for (NbpUnicastSubject<T> w : ws) {
-                        w.onNext(NotificationLite.getValue(v));
+                        w.onNext(NotificationLite.<T>getValue(v));
                     }
                 }
                 
@@ -758,7 +770,7 @@ public final class NbpOperatorWindowTimed<T> implements NbpOperator<NbpObservabl
 
             NbpUnicastSubject<T> w = NbpUnicastSubject.create(bufferSize);
             
-            SubjectWork<T> sw = new SubjectWork<>(w, true);
+            SubjectWork<T> sw = new SubjectWork<T>(w, true);
             if (!cancelled) {
                 queue.offer(sw);
             }

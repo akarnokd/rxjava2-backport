@@ -94,7 +94,7 @@ public class OperatorDematerializeTest {
 
         Subscriber<Integer> observer = TestHelper.mockSubscriber();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>(observer);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>(observer);
         dematerialize.subscribe(ts);
 
         System.out.println(ts.errors());

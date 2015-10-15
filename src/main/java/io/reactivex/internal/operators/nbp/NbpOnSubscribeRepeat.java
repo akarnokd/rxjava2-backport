@@ -32,7 +32,7 @@ public final class NbpOnSubscribeRepeat<T> implements NbpOnSubscribe<T> {
         MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
         s.onSubscribe(mad);
         
-        RepeatSubscriber<T> rs = new RepeatSubscriber<>(s, count != Long.MAX_VALUE ? count - 1 : Long.MAX_VALUE, mad, source);
+        RepeatSubscriber<T> rs = new RepeatSubscriber<T>(s, count != Long.MAX_VALUE ? count - 1 : Long.MAX_VALUE, mad, source);
         rs.subscribeNext();
     }
     

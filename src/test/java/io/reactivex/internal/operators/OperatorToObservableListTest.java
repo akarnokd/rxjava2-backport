@@ -99,7 +99,7 @@ public class OperatorToObservableListTest {
     @Test
     public void testBackpressureHonored() {
         Observable<List<Integer>> w = Observable.just(1, 2, 3, 4, 5).toList();
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>((Long)null);
         
         w.subscribe(ts);
         
@@ -132,7 +132,7 @@ public class OperatorToObservableListTest {
                 Observable<List<Integer>> sorted = source.toList();
 
                 final CyclicBarrier cb = new CyclicBarrier(2);
-                final TestSubscriber<List<Integer>> ts = new TestSubscriber<>((Long)null);
+                final TestSubscriber<List<Integer>> ts = new TestSubscriber<T>((Long)null);
                 sorted.subscribe(ts);
                 
                 w.schedule(new Runnable() {

@@ -76,7 +76,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
             if (emitting) {
                 AppendOnlyLinkedArrayList<Object> q = queue;
                 if (q == null) {
-                    q = new AppendOnlyLinkedArrayList<>(QUEUE_LINK_SIZE);
+                    q = new AppendOnlyLinkedArrayList<T>(QUEUE_LINK_SIZE);
                     queue = q;
                 }
                 q.add(NotificationLite.next(t));
@@ -105,7 +105,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
                 done = true;
                 AppendOnlyLinkedArrayList<Object> q = queue;
                 if (q == null) {
-                    q = new AppendOnlyLinkedArrayList<>(QUEUE_LINK_SIZE);
+                    q = new AppendOnlyLinkedArrayList<T>(QUEUE_LINK_SIZE);
                     queue = q;
                 }
                 Object err = NotificationLite.error(t);
@@ -143,7 +143,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
             if (emitting) {
                 AppendOnlyLinkedArrayList<Object> q = queue;
                 if (q == null) {
-                    q = new AppendOnlyLinkedArrayList<>(QUEUE_LINK_SIZE);
+                    q = new AppendOnlyLinkedArrayList<T>(QUEUE_LINK_SIZE);
                     queue = q;
                 }
                 q.add(NotificationLite.complete());

@@ -30,14 +30,17 @@ public final class NbpOnSubscribeSubscribeOn<T> implements NbpOnSubscribe<T> {
     }
     
     @Override
-    public void accept(NbpSubscriber<? super T> s) {
+    public void accept(final NbpSubscriber<? super T> s) {
         /*
          * TODO can't use the returned disposable because to dispose it,
          * one must set a Subscription on s on the current thread, but
          * it is expected that onSubscribe is run on the target scheduler.
          */
-        scheduler.scheduleDirect(() -> {
-            source.subscribe(s);
+        scheduler.scheduleDirect(new Runnable() {
+            @Override
+            public void run() {
+                source.subscribe(s);
+            }
         });
     }
     

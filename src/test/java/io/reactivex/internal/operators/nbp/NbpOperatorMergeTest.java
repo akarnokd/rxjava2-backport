@@ -110,7 +110,7 @@ public class NbpOperatorMergeTest {
     public void testMergeList() {
         final NbpObservable<String> o1 = NbpObservable.create(new TestSynchronousObservable());
         final NbpObservable<String> o2 = NbpObservable.create(new TestSynchronousObservable());
-        List<NbpObservable<String>> listOfObservables = new ArrayList<>();
+        List<NbpObservable<String>> listOfObservables = new ArrayList<T>();
         listOfObservables.add(o1);
         listOfObservables.add(o2);
 
@@ -186,7 +186,7 @@ public class NbpOperatorMergeTest {
         final TestASynchronousObservable o2 = new TestASynchronousObservable();
 
         NbpObservable<String> m = NbpObservable.merge(NbpObservable.create(o1), NbpObservable.create(o2));
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>(stringObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(stringObserver);
         m.subscribe(ts);
 
         ts.awaitTerminalEvent();
@@ -332,7 +332,7 @@ public class NbpOperatorMergeTest {
     @Test
     @Ignore("Subscribe should not throw")
     public void testThrownErrorHandling() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable<String> o1 = NbpObservable.create(new NbpOnSubscribe<String>() {
 
             @Override
@@ -418,7 +418,7 @@ public class NbpOperatorMergeTest {
         AtomicBoolean os2 = new AtomicBoolean(false);
         NbpObservable<Long> o2 = createObservableOf5IntervalsOf1SecondIncrementsWithSubscriptionHook(scheduler2, os2);
 
-        NbpTestSubscriber<Long> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Long> ts = new NbpTestSubscriber<T>();
         NbpObservable.merge(o1, o2).subscribe(ts);
 
         // we haven't incremented time so nothing should be received yet
@@ -460,7 +460,7 @@ public class NbpOperatorMergeTest {
             AtomicBoolean os2 = new AtomicBoolean(false);
             NbpObservable<Long> o2 = createObservableOf5IntervalsOf1SecondIncrementsWithSubscriptionHook(scheduler2, os2);
 
-            NbpTestSubscriber<Long> ts = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Long> ts = new NbpTestSubscriber<T>();
             NbpObservable.merge(o1, o2).subscribe(ts);
 
             // we haven't incremented time so nothing should be received yet
@@ -530,7 +530,7 @@ public class NbpOperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             NbpObservable<Integer> merge = NbpObservable.merge(o, o, o);
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent(3, TimeUnit.SECONDS);
@@ -583,7 +583,7 @@ public class NbpOperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             NbpObservable<Integer> merge = NbpObservable.merge(o, o, o);
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent();
@@ -630,7 +630,7 @@ public class NbpOperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             NbpObservable<Integer> merge = NbpObservable.merge(o, o, o);
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent();
@@ -812,7 +812,7 @@ public class NbpOperatorMergeTest {
     @Ignore("Null values not permitted")
     public void mergeWithNullValues() {
         System.out.println("mergeWithNullValues");
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.merge(NbpObservable.just(null, "one"), NbpObservable.just("two", null)).subscribe(ts);
         ts.assertTerminated();
         ts.assertNoErrors();
@@ -823,7 +823,7 @@ public class NbpOperatorMergeTest {
     @Ignore("Null values are no longer permitted")
     public void mergeWithTerminalEventAfterUnsubscribe() {
         System.out.println("mergeWithTerminalEventAfterUnsubscribe");
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable<String> bad = NbpObservable.create(new NbpOnSubscribe<String>() {
 
             @Override
@@ -843,7 +843,7 @@ public class NbpOperatorMergeTest {
     @Test
     @Ignore("Null values are not permitted")
     public void mergingNullObservable() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
         NbpObservable.merge(NbpObservable.just("one"), null).subscribe(ts);
         ts.assertNoErrors();
         ts.assertValue("one");
@@ -851,7 +851,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1AsyncStreamOf1() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNAsyncStreamsOfN(1, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -860,7 +860,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1AsyncStreamOf1000() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNAsyncStreamsOfN(1, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -869,7 +869,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge10AsyncStreamOf1000() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNAsyncStreamsOfN(10, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -878,7 +878,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1000AsyncStreamOf1000() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNAsyncStreamsOfN(1000, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -887,7 +887,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge2000AsyncStreamOf100() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNAsyncStreamsOfN(2000, 100).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -896,7 +896,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge100AsyncStreamOf1() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNAsyncStreamsOfN(100, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -918,7 +918,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1SyncStreamOf1() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNSyncStreamsOfN(1, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -927,7 +927,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1SyncStreamOf1000000() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNSyncStreamsOfN(1, 1000000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -936,7 +936,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1000SyncStreamOf1000() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNSyncStreamsOfN(1000, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -945,7 +945,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge10000SyncStreamOf10() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNSyncStreamsOfN(10000, 10).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -954,7 +954,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void merge1000000SyncStreamOf1() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         mergeNSyncStreamsOfN(1000000, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1001,7 +1001,7 @@ public class NbpOperatorMergeTest {
 
     @Test
     public void mergeManyAsyncSingle() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         NbpObservable<NbpObservable<Integer>> os = NbpObservable.range(1, 10000)
         .map(new Function<Integer, NbpObservable<Integer>>() {
 
@@ -1040,7 +1040,7 @@ public class NbpOperatorMergeTest {
     ;
     
     void runMerge(Function<Integer, NbpObservable<Integer>> func, NbpTestSubscriber<Integer> ts) {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<T>();
         for (int i = 0; i < 1000; i++) {
             list.add(i);
         }

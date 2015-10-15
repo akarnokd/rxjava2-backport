@@ -31,7 +31,7 @@ public class ErrorHandlingTests {
     @Test
     public void testOnNextError() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> caughtError = new AtomicReference<>();
+        final AtomicReference<Throwable> caughtError = new AtomicReference<T>();
         Observable<Long> o = Observable.interval(50, TimeUnit.MILLISECONDS);
         Subscriber<Long> observer = new Observer<Long>() {
 
@@ -66,7 +66,7 @@ public class ErrorHandlingTests {
     @Test
     public void testOnNextErrorAcrossThread() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> caughtError = new AtomicReference<>();
+        final AtomicReference<Throwable> caughtError = new AtomicReference<T>();
         Observable<Long> o = Observable.interval(50, TimeUnit.MILLISECONDS);
         Subscriber<Long> observer = new Observer<Long>() {
 

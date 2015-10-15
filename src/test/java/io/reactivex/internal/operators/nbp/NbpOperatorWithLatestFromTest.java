@@ -84,7 +84,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.subscribe(ts);
 
@@ -110,7 +110,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.subscribe(ts);
 
@@ -137,7 +137,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.subscribe(ts);
 
@@ -164,7 +164,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.subscribe(ts);
 
@@ -191,7 +191,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.subscribe(ts);
 
@@ -219,7 +219,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER_ERROR);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.subscribe(ts);
 
@@ -245,7 +245,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
         
         result.unsafeSubscribe(ts);
         

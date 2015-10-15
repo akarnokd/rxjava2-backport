@@ -37,7 +37,7 @@ public class ComputationSchedulerTests extends AbstractSchedulerConcurrencyTests
 
         final int NUM = 1000000;
         final CountDownLatch latch = new CountDownLatch(1);
-        final HashMap<String, Integer> map = new HashMap<>();
+        final HashMap<String, Integer> map = new HashMap<T>();
 
         final Scheduler.Worker inner = Schedulers.computation().createWorker();
         

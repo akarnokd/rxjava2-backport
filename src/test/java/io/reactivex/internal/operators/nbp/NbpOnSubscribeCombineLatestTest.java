@@ -414,8 +414,8 @@ public class NbpOnSubscribeCombineLatestTest {
         };
         for (int i = 1; i <= n; i++) {
             System.out.println("test1ToNSources: " + i + " sources");
-            List<NbpObservable<Integer>> sources = new ArrayList<>();
-            List<Object> values = new ArrayList<>();
+            List<NbpObservable<Integer>> sources = new ArrayList<T>();
+            List<Object> values = new ArrayList<T>();
             for (int j = 0; j < i; j++) {
                 sources.add(NbpObservable.just(j));
                 values.add(j);
@@ -445,8 +445,8 @@ public class NbpOnSubscribeCombineLatestTest {
         };
         for (int i = 1; i <= n; i++) {
             System.out.println("test1ToNSourcesScheduled: " + i + " sources");
-            List<NbpObservable<Integer>> sources = new ArrayList<>();
-            List<Object> values = new ArrayList<>();
+            List<NbpObservable<Integer>> sources = new ArrayList<T>();
+            List<Object> values = new ArrayList<T>();
             for (int j = 0; j < i; j++) {
                 sources.add(NbpObservable.just(j).subscribeOn(Schedulers.io()));
                 values.add(j);
@@ -718,7 +718,7 @@ public class NbpOnSubscribeCombineLatestTest {
                         }
                 }).take(SIZE);
 
-        NbpTestSubscriber<Long> ts = new NbpTestSubscriber<>();
+        NbpTestSubscriber<Long> ts = new NbpTestSubscriber<T>();
 
         NbpObservable.combineLatest(timer, NbpObservable.<Integer> never(), (t1, t2) -> t1).subscribe(ts);
 

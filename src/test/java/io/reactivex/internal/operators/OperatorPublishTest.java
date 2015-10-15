@@ -115,7 +115,7 @@ public class OperatorPublishTest {
 
         });
 
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         Observable.merge(fast, slow).subscribe(ts);
         is.connect();
         ts.awaitTerminalEvent();
@@ -135,7 +135,7 @@ public class OperatorPublishTest {
             }
 
         });
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         xs.publish(new Function<Observable<Integer>, Observable<Integer>>() {
 
             @Override
@@ -162,7 +162,7 @@ public class OperatorPublishTest {
     @Test
     public void testTakeUntilWithPublishedStream() {
         Observable<Integer> xs = Observable.range(0, Observable.bufferSize() * 2);
-        TestSubscriber<Integer> ts = new TestSubscriber<>();
+        TestSubscriber<Integer> ts = new TestSubscriber<T>();
         ConnectableObservable<Integer> xsp = xs.publish();
         xsp.takeUntil(xsp.skipWhile(new Predicate<Integer>() {
 
@@ -198,7 +198,7 @@ public class OperatorPublishTest {
         final AtomicBoolean child1Unsubscribed = new AtomicBoolean();
         final AtomicBoolean child2Unsubscribed = new AtomicBoolean();
 
-        final TestSubscriber<Integer> ts2 = new TestSubscriber<>();
+        final TestSubscriber<Integer> ts2 = new TestSubscriber<T>();
 
         final TestSubscriber<Integer> ts1 = new TestSubscriber<Integer>() {
             @Override
@@ -246,7 +246,7 @@ public class OperatorPublishTest {
         co.connect();
         // Emit 0
         scheduler.advanceTimeBy(15, TimeUnit.MILLISECONDS);
-        TestSubscriber<Long> subscriber = new TestSubscriber<>();
+        TestSubscriber<Long> subscriber = new TestSubscriber<T>();
         co.subscribe(subscriber);
         // Emit 1 and 2
         scheduler.advanceTimeBy(50, TimeUnit.MILLISECONDS);
@@ -259,7 +259,7 @@ public class OperatorPublishTest {
     public void testSubscribeAfterDisconnectThenConnect() {
         ConnectableObservable<Integer> source = Observable.just(1).publish();
 
-        TestSubscriber<Integer> ts1 = new TestSubscriber<>();
+        TestSubscriber<Integer> ts1 = new TestSubscriber<T>();
 
         source.subscribe(ts1);
 
@@ -269,7 +269,7 @@ public class OperatorPublishTest {
         ts1.assertNoErrors();
         ts1.assertTerminated();
 
-        TestSubscriber<Integer> ts2 = new TestSubscriber<>();
+        TestSubscriber<Integer> ts2 = new TestSubscriber<T>();
 
         source.subscribe(ts2);
 
@@ -287,7 +287,7 @@ public class OperatorPublishTest {
     public void testNoSubscriberRetentionOnCompleted() {
         OperatorPublish<Integer> source = (OperatorPublish<Integer>)Observable.just(1).publish();
 
-        TestSubscriber<Integer> ts1 = new TestSubscriber<>();
+        TestSubscriber<Integer> ts1 = new TestSubscriber<T>();
 
         source.unsafeSubscribe(ts1);
 
@@ -339,7 +339,7 @@ public class OperatorPublishTest {
     public void testZeroRequested() {
         ConnectableObservable<Integer> source = Observable.just(1).publish();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
         
         source.subscribe(ts);
         
@@ -392,9 +392,9 @@ public class OperatorPublishTest {
         Observable<Integer> obs = co.observeOn(Schedulers.computation());
         for (int i = 0; i < 1000; i++) {
             for (int j = 1; j < 6; j++) {
-                List<TestSubscriber<Integer>> tss = new ArrayList<>();
+                List<TestSubscriber<Integer>> tss = new ArrayList<T>();
                 for (int k = 1; k < j; k++) {
-                    TestSubscriber<Integer> ts = new TestSubscriber<>();
+                    TestSubscriber<Integer> ts = new TestSubscriber<T>();
                     tss.add(ts);
                     obs.subscribe(ts);
                 }

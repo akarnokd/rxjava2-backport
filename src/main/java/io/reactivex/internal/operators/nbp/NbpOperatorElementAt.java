@@ -26,7 +26,7 @@ public final class NbpOperatorElementAt<T> implements NbpOperator<T, T> {
     }
     @Override
     public NbpSubscriber<? super T> apply(NbpSubscriber<? super T> t) {
-        return new ElementAtSubscriber<>(t, index, defaultValue);
+        return new ElementAtSubscriber<T>(t, index, defaultValue);
     }
     
     static final class ElementAtSubscriber<T> implements NbpSubscriber<T> {
