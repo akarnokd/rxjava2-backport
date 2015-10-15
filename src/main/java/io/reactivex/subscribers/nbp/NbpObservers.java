@@ -14,9 +14,10 @@
 package io.reactivex.subscribers.nbp;
 
 import java.util.Objects;
-import io.reactivex.functions.*;
 
-import io.reactivex.*;
+import io.reactivex.NbpObserver;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.functions.Functions;
 import io.reactivex.plugins.RxJavaPlugins;
 
 /**
@@ -67,21 +68,24 @@ public final class NbpObservers {
     }
     
     public static <T> NbpObserver<T> create(Consumer<? super T> onNext) {
-        return create(onNext, RxJavaPlugins.errorConsumer(), () -> { }, () -> { });
+        return create(onNext, RxJavaPlugins.errorConsumer(), Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     public static <T> NbpObserver<T> create(Consumer<? super T> onNext, 
             Consumer<? super Throwable> onError) {
-        return create(onNext, onError, () -> { }, () -> { });
+        return create(onNext, onError, Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     public static <T> NbpObserver<T> create(Consumer<? super T> onNext, 
             Consumer<? super Throwable> onError, Runnable onComplete) {
-        return create(onNext, onError, onComplete, () -> { });
+        return create(onNext, onError, onComplete, Functions.emptyRunnable());
     }
 
-    public static <T> NbpObserver<T> create(Consumer<? super T> onNext, 
-            Consumer<? super Throwable> onError, Runnable onComplete, Runnable onStart) {
+    public static <T> NbpObserver<T> create(
+            final Consumer<? super T> onNext, 
+            final Consumer<? super Throwable> onError, 
+            final Runnable onComplete, 
+            final Runnable onStart) {
         Objects.requireNonNull(onNext);
         Objects.requireNonNull(onError);
         Objects.requireNonNull(onComplete);
@@ -154,21 +158,24 @@ public final class NbpObservers {
     }
     
     public static <T> NbpAsyncObserver<T> createAsync(Consumer<? super T> onNext) {
-        return createAsync(onNext, RxJavaPlugins.errorConsumer(), () -> { }, () -> { });
+        return createAsync(onNext, RxJavaPlugins.errorConsumer(), Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     public static <T> NbpAsyncObserver<T> createAsync(Consumer<? super T> onNext, 
             Consumer<? super Throwable> onError) {
-        return createAsync(onNext, onError, () -> { }, () -> { });
+        return createAsync(onNext, onError, Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     public static <T> NbpAsyncObserver<T> createAsync(Consumer<? super T> onNext, 
             Consumer<? super Throwable> onError, Runnable onComplete) {
-        return createAsync(onNext, onError, onComplete, () -> { });
+        return createAsync(onNext, onError, onComplete, Functions.emptyRunnable());
     }
     
-    public static <T> NbpAsyncObserver<T> createAsync(Consumer<? super T> onNext, 
-            Consumer<? super Throwable> onError, Runnable onComplete, Runnable onStart) {
+    public static <T> NbpAsyncObserver<T> createAsync(
+            final Consumer<? super T> onNext, 
+            final Consumer<? super Throwable> onError, 
+            final Runnable onComplete, 
+            final Runnable onStart) {
         Objects.requireNonNull(onNext);
         Objects.requireNonNull(onError);
         Objects.requireNonNull(onComplete);

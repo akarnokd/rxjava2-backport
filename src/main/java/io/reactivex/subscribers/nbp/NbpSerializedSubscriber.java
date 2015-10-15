@@ -14,6 +14,7 @@ package io.reactivex.subscribers.nbp;
 
 import io.reactivex.NbpObservable.NbpSubscriber;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 import io.reactivex.internal.util.*;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -76,7 +77,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
             if (emitting) {
                 AppendOnlyLinkedArrayList<Object> q = queue;
                 if (q == null) {
-                    q = new AppendOnlyLinkedArrayList<T>(QUEUE_LINK_SIZE);
+                    q = new AppendOnlyLinkedArrayList<Object>(QUEUE_LINK_SIZE);
                     queue = q;
                 }
                 q.add(NotificationLite.next(t));
@@ -105,7 +106,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
                 done = true;
                 AppendOnlyLinkedArrayList<Object> q = queue;
                 if (q == null) {
-                    q = new AppendOnlyLinkedArrayList<T>(QUEUE_LINK_SIZE);
+                    q = new AppendOnlyLinkedArrayList<Object>(QUEUE_LINK_SIZE);
                     queue = q;
                 }
                 Object err = NotificationLite.error(t);
@@ -143,7 +144,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
             if (emitting) {
                 AppendOnlyLinkedArrayList<Object> q = queue;
                 if (q == null) {
-                    q = new AppendOnlyLinkedArrayList<T>(QUEUE_LINK_SIZE);
+                    q = new AppendOnlyLinkedArrayList<Object>(QUEUE_LINK_SIZE);
                     queue = q;
                 }
                 q.add(NotificationLite.complete());
@@ -169,9 +170,17 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
                 queue = null;
             }
             
-            q.forEachWhile(this::accept);
+            q.forEachWhile(consumer);
         }
     }
+    
+    final Predicate<Object> consumer = new Predicate<Object>() {
+        @Override
+        public boolean test(Object v) {
+            return accept(v);
+        }
+    };
+
     
     boolean accept(Object value) {
         if (NotificationLite.isComplete(value)) {
@@ -182,7 +191,7 @@ public final class NbpSerializedSubscriber<T> implements NbpSubscriber<T> {
             actual.onError(NotificationLite.getError(value));
             return true;
         }
-        actual.onNext(NotificationLite.getValue(value));
+        actual.onNext(NotificationLite.<T>getValue(value));
         return false;
     }
 }

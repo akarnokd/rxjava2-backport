@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import io.reactivex.NbpObservable.NbpSubscriber;
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.exceptions.CompositeException;
 import io.reactivex.internal.subscribers.nbp.NbpEmptySubscriber;
 
 /**
@@ -59,7 +60,10 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
             AtomicReferenceFieldUpdater.newUpdater(NbpTestSubscriber.class, Disposable.class, "subscription");
     
     /** Indicates a cancelled subscription. */
-    private static final Disposable CANCELLED = () -> { };
+    private static final Disposable CANCELLED = new Disposable() {
+        @Override
+        public void dispose() { }
+    };
     /**
      * Constructs a non-forwarding TestSubscriber with an initial request value of Long.MAX_VALUE.
      */
@@ -74,7 +78,7 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
     public NbpTestSubscriber(NbpSubscriber<? super T> actual) {
         this.actual = actual;
         this.values = new ArrayList<T>();
-        this.errors = new ArrayList<T>();
+        this.errors = new ArrayList<Throwable>();
         this.done = new CountDownLatch(1);
     }
     
@@ -275,13 +279,17 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
      */
     private void fail(String prefix, String message, Iterable<? extends Throwable> errors) {
         AssertionError ae = new AssertionError(prefix + message);
-        errors.forEach(e -> {
+        CompositeException ce = new CompositeException();
+        for (Throwable e : errors) {
             if (e == null) {
-                ae.addSuppressed(new NullPointerException("Throwable was null!"));
+                ce.suppress(new NullPointerException("Throwable was null!"));
             } else {
-                ae.addSuppressed(e);
+                ce.suppress(e);
             }
-        });
+        };
+        if (!ce.isEmpty()) {
+            ae.initCause(ce);
+        }
         throw ae;
     }
     
@@ -353,7 +361,7 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
         }
         int s = errors.size();
         if (s == 0) {
-            fail(prefix, "No errors", Collections.emptyList());
+            fail(prefix, "No errors", Collections.<Throwable>emptyList());
         }
         if (errors.contains(error)) {
             if (s != 1) {
@@ -376,11 +384,17 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
         }
         int s = errors.size();
         if (s == 0) {
-            fail(prefix, "No errors", Collections.emptyList());
+            fail(prefix, "No errors", Collections.<Throwable>emptyList());
         }
         
-        boolean found = errors.stream()
-                .anyMatch(errorClass::isInstance);
+        boolean found = false;
+        
+        for (Throwable e : errors) {
+            if (errorClass.isInstance(e)) {
+                found = true;
+                break;
+            }
+        }
         
         if (found) {
             if (s != 1) {
@@ -621,12 +635,12 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
         }
         int s = errors.size();
         if (s == 0) {
-            fail(prefix, "No errors", Collections.emptyList());
+            fail(prefix, "No errors", Collections.<Throwable>emptyList());
         } else
         if (s == 1) {
             Throwable e = errors.get(0);
             if (e == null) {
-                fail(prefix, "Error is null", Collections.emptyList());
+                fail(prefix, "Error is null", Collections.<Throwable>emptyList());
             }
             String errorMessage = e.getMessage();
             if (!Objects.equals(message, errorMessage)) {
@@ -646,13 +660,13 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<List<Object>> getEvents() {
-        List<List<Object>> result = new ArrayList<T>();
+        List<List<Object>> result = new ArrayList<List<Object>>();
         
         result.add((List)values());
         
         result.add((List)errors());
         
-        List<Object> completeList = new ArrayList<T>();
+        List<Object> completeList = new ArrayList<Object>();
         for (long i = 0; i < completions; i++) {
             completeList.add(Notification.complete());
         }

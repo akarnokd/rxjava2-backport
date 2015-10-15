@@ -14,10 +14,11 @@
 package io.reactivex.subscribers.nbp;
 
 import java.util.Objects;
-import io.reactivex.functions.*;
 
 import io.reactivex.NbpObservable.NbpSubscriber;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.subscribers.nbp.*;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -63,14 +64,14 @@ public final class NbpSubscribers {
     public static <T> NbpDisposableSubscriber<T> createDisposable(
             Consumer<? super T> onNext
     ) {
-        return createDisposable(onNext, RxJavaPlugins.errorConsumer(), () -> { }, () -> { });
+        return createDisposable(onNext, RxJavaPlugins.errorConsumer(), Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     public static <T> NbpDisposableSubscriber<T> createDisposable(
             Consumer<? super T> onNext,
             Consumer<? super Throwable> onError
     ) {
-        return createDisposable(onNext, onError, () -> { }, () -> { });
+        return createDisposable(onNext, onError, Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     public static <T> NbpDisposableSubscriber<T> createDisposable(
@@ -78,14 +79,14 @@ public final class NbpSubscribers {
             Consumer<? super Throwable> onError,
             Runnable onComplete
     ) {
-        return createDisposable(onNext, onError, onComplete, () -> { });
+        return createDisposable(onNext, onError, onComplete, Functions.emptyRunnable());
     }
     
     public static <T> NbpDisposableSubscriber<T> createDisposable(
-            Consumer<? super T> onNext,
-            Consumer<? super Throwable> onError,
-            Runnable onComplete,
-            Runnable onStart
+            final Consumer<? super T> onNext,
+            final Consumer<? super Throwable> onError,
+            final Runnable onComplete,
+            final Runnable onStart
     ) {
         Objects.requireNonNull(onNext);
         Objects.requireNonNull(onError);
@@ -161,14 +162,14 @@ public final class NbpSubscribers {
     public static <T> NbpSubscriber<T> create(
             Consumer<? super T> onNext
     ) {
-        return create(onNext, RxJavaPlugins.errorConsumer(), () -> { }, s -> { });
+        return create(onNext, RxJavaPlugins.errorConsumer(), Functions.emptyRunnable(), Functions.emptyConsumer());
     }
 
     public static <T> NbpSubscriber<T> create(
             Consumer<? super T> onNext,
             Consumer<? super Throwable> onError
     ) {
-        return create(onNext, onError, () -> { }, s -> { });
+        return create(onNext, onError, Functions.emptyRunnable(), Functions.emptyConsumer());
     }
 
     public static <T> NbpSubscriber<T> create(
@@ -176,14 +177,14 @@ public final class NbpSubscribers {
             Consumer<? super Throwable> onError,
             Runnable onComplete
     ) {
-        return create(onNext, onError, onComplete, s -> { });
+        return create(onNext, onError, onComplete, Functions.emptyConsumer());
     }
     
     public static <T> NbpSubscriber<T> create(
-            Consumer<? super T> onNext,
-            Consumer<? super Throwable> onError,
-            Runnable onComplete,
-            Consumer<? super Disposable> onStart
+            final Consumer<? super T> onNext,
+            final Consumer<? super Throwable> onError,
+            final Runnable onComplete,
+            final Consumer<? super Disposable> onStart
     ) {
         Objects.requireNonNull(onNext);
         Objects.requireNonNull(onError);

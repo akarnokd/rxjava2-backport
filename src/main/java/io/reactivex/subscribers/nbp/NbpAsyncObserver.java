@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import io.reactivex.NbpObservable.NbpSubscriber;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.ListCompositeResource;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 
@@ -44,7 +44,10 @@ public abstract class NbpAsyncObserver<T> implements NbpSubscriber<T>, Disposabl
     private final ListCompositeResource<Disposable> resources;
     
     /** The cancelled subscription indicator. */
-    private static final Disposable CANCELLED = () -> { };
+    private static final Disposable CANCELLED = new Disposable() {
+        @Override
+        public void dispose() { }
+    };
     
     /**
      * Constructs an AsyncObserver with resource support.
@@ -58,7 +61,7 @@ public abstract class NbpAsyncObserver<T> implements NbpSubscriber<T>, Disposabl
      * @param withResources true if resource support should be on.
      */
     public NbpAsyncObserver(boolean withResources) {
-        this.resources = withResources ? new ListCompositeResource<T>(Disposables.consumeAndDispose()) : null;
+        this.resources = withResources ? new ListCompositeResource<Disposable>(Disposables.consumeAndDispose()) : null;
     }
 
     /**

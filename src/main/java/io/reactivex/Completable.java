@@ -16,16 +16,15 @@ import java.util.Iterator;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.omg.CORBA.Object;
 import org.reactivestreams.*;
 
-import io.reactivex.NbpObservable.NbpSubscriber;
-import io.reactivex.Single.SingleSubscriber;
+import io.reactivex.NbpObservable.*;
+import io.reactivex.Single.*;
 import io.reactivex.annotations.*;
 import io.reactivex.disposables.*;
 import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.*;
-import io.reactivex.internal.functions.Objects;
+import io.reactivex.internal.functions.*;
 import io.reactivex.internal.operators.completable.*;
 import io.reactivex.internal.subscriptions.DisposableSubscription;
 import io.reactivex.internal.util.Exceptions;
@@ -556,32 +555,35 @@ public class Completable {
      * @throws NullPointerException if flowable is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public static <T> Completable fromNbpObservable(NbpObservable<T> observable) {
-        Objects.requireNonNull(observable);
-        return create(s -> {
-            observable.subscribe(new NbpSubscriber<T>() {
+    public static <T> Completable fromNbpObservable(final NbpObservable<T> observable) {
+        Objects.requireNonNull(observable, "observable is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                observable.subscribe(new NbpSubscriber<T>() {
 
-                @Override
-                public void onComplete() {
-                    s.onComplete();
-                }
+                    @Override
+                    public void onComplete() {
+                        s.onComplete();
+                    }
 
-                @Override
-                public void onError(Throwable e) {
-                    s.onError(e);
-                }
+                    @Override
+                    public void onError(Throwable e) {
+                        s.onError(e);
+                    }
 
-                @Override
-                public void onNext(T value) {
-                    // ignored
-                }
+                    @Override
+                    public void onNext(T value) {
+                        // ignored
+                    }
 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    s.onSubscribe(d);
-                }
-                
-            });
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        s.onSubscribe(d);
+                    }
+                    
+                });
+            }
         });
     }
     
@@ -593,21 +595,24 @@ public class Completable {
      * @throws NullPointerException if run is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public static Completable fromRunnable(Runnable run) {
-        Objects.requireNonNull(run);
-        return create(s -> {
-            BooleanDisposable bs = new BooleanDisposable();
-            s.onSubscribe(bs);
-            try {
-                run.run();
-            } catch (Throwable e) {
-                if (!bs.isDisposed()) {
-                    s.onError(e);
+    public static Completable fromRunnable(final Runnable run) {
+        Objects.requireNonNull(run, "run is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(CompletableSubscriber s) {
+                BooleanDisposable bs = new BooleanDisposable();
+                s.onSubscribe(bs);
+                try {
+                    run.run();
+                } catch (Throwable e) {
+                    if (!bs.isDisposed()) {
+                        s.onError(e);
+                    }
+                    return;
                 }
-                return;
-            }
-            if (!bs.isDisposed()) {
-                s.onComplete();
+                if (!bs.isDisposed()) {
+                    s.onComplete();
+                }
             }
         });
     }
@@ -620,27 +625,30 @@ public class Completable {
      * @throws NullPointerException if single is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public static Completable fromSingle(Single<?> single) {
-        Objects.requireNonNull(single);
-        return create(s -> {
-            single.subscribe(new SingleSubscriber<Object>() {
+    public static <T> Completable fromSingle(final Single<T> single) {
+        Objects.requireNonNull(single, "single is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                single.subscribe(new SingleSubscriber<T>() {
 
-                @Override
-                public void onError(Throwable e) {
-                    s.onError(e);
-                }
+                    @Override
+                    public void onError(Throwable e) {
+                        s.onError(e);
+                    }
 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    s.onSubscribe(d);
-                }
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        s.onSubscribe(d);
+                    }
 
-                @Override
-                public void onSuccess(Object value) {
-                    s.onComplete();
-                }
-                
-            });
+                    @Override
+                    public void onSuccess(T value) {
+                        s.onComplete();
+                    }
+                    
+                });
+            }
         });
     }
     
@@ -652,7 +660,7 @@ public class Completable {
      * @throws NullPointerException if sources is null
      */
     public static Completable merge(Completable... sources) {
-        Objects.requireNonNull(sources);
+        Objects.requireNonNull(sources, "sources is null");
         if (sources.length == 0) {
             return complete();
         } else
@@ -671,7 +679,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public static Completable merge(Iterable<? extends Completable> sources) {
-        Objects.requireNonNull(sources);
+        Objects.requireNonNull(sources, "sources is null");
         return create(new CompletableOnSubscribeMergeIterable(sources));
     }
     
@@ -712,7 +720,7 @@ public class Completable {
      * @throws IllegalArgumentException if maxConcurrency is less than 1
      */
     protected static Completable merge0(Observable<? extends Completable> sources, int maxConcurrency, boolean delayErrors) {
-        Objects.requireNonNull(sources);
+        Objects.requireNonNull(sources, "sources is null");
         if (maxConcurrency < 1) {
             throw new IllegalArgumentException("maxConcurrency > 0 required but it was " + maxConcurrency);
         }
@@ -728,7 +736,7 @@ public class Completable {
      * @throws NullPointerException if sources is null
      */
     public static Completable mergeDelayError(Completable... sources) {
-        Objects.requireNonNull(sources);
+        Objects.requireNonNull(sources, "sources is null");
         return create(new CompletableOnSubscribeMergeDelayErrorArray(sources));
     }
 
@@ -741,7 +749,7 @@ public class Completable {
      * @throws NullPointerException if sources is null
      */
     public static Completable mergeDelayError(Iterable<? extends Completable> sources) {
-        Objects.requireNonNull(sources);
+        Objects.requireNonNull(sources, "sources is null");
         return create(new CompletableOnSubscribeMergeDelayErrorIterable(sources));
     }
 
@@ -798,16 +806,22 @@ public class Completable {
      * @return the new Completable instance
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
-    public static Completable timer(long delay, TimeUnit unit, Scheduler scheduler) {
-        Objects.requireNonNull(unit);
-        Objects.requireNonNull(scheduler);
-        return create(s -> {
-            MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
-            s.onSubscribe(mad);
-            if (!mad.isDisposed()) {
-                mad.set(scheduler.scheduleDirect(() -> {
-                    s.onComplete();
-                }, delay, unit));
+    public static Completable timer(final long delay, final TimeUnit unit, final Scheduler scheduler) {
+        Objects.requireNonNull(unit, "unit is null");
+        Objects.requireNonNull(scheduler, "scheduler is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+                s.onSubscribe(mad);
+                if (!mad.isDisposed()) {
+                    mad.set(scheduler.scheduleDirect(new Runnable() {
+                        @Override
+                        public void run() {
+                            s.onComplete();
+                        }
+                    }, delay, unit));
+                }
             }
         });
     }
@@ -856,102 +870,111 @@ public class Completable {
      * resource is disposed after the terminal event has been emitted
      * @return the new Completable instance
      */
-    public static <R> Completable using(Supplier<R> resourceSupplier, 
-            Function<? super R, ? extends Completable> completableFunction, 
-            Consumer<? super R> disposer, 
-            boolean eager) {
-        Objects.requireNonNull(resourceSupplier);
-        Objects.requireNonNull(completableFunction);
-        Objects.requireNonNull(disposer);
+    public static <R> Completable using(
+            final Supplier<R> resourceSupplier, 
+            final Function<? super R, ? extends Completable> completableFunction, 
+            final Consumer<? super R> disposer, 
+            final boolean eager) {
+        Objects.requireNonNull(resourceSupplier, "resourceSupplier is null");
+        Objects.requireNonNull(completableFunction, "completableFunction is null");
+        Objects.requireNonNull(disposer, "disposer is null");
         
-        return create(s -> {
-            R resource;
-            
-            try {
-                resource = resourceSupplier.get();
-            } catch (Throwable e) {
-                s.onSubscribe(EmptyDisposable.INSTANCE);
-                s.onError(e);
-                return;
-            }
-            
-            Completable cs;
-            
-            try {
-                cs = completableFunction.apply(resource);
-            } catch (Throwable e) {
-                s.onSubscribe(EmptyDisposable.INSTANCE);
-                s.onError(e);
-                return;
-            }
-            
-            if (cs == null) {
-                s.onSubscribe(EmptyDisposable.INSTANCE);
-                s.onError(new NullPointerException("The completable supplied is null"));
-                return;
-            }
-            
-            AtomicBoolean once = new AtomicBoolean();
-            
-            cs.subscribe(new CompletableSubscriber() {
-                Disposable d;
-                void dispose() {
-                    d.dispose();
-                    if (once.compareAndSet(false, true)) {
-                        try {
-                            disposer.accept(resource);
-                        } catch (Throwable ex) {
-                            RxJavaPlugins.onError(ex);
-                        }
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-                    if (eager) {
-                        if (once.compareAndSet(false, true)) {
-                            try {
-                                disposer.accept(resource);
-                            } catch (Throwable ex) {
-                                s.onError(ex);
-                                return;
-                            }
-                        }
-                    }
-                    
-                    s.onComplete();
-                    
-                    if (!eager) {
-                        dispose();
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    if (eager) {
-                        if (once.compareAndSet(false, true)) {
-                            try {
-                                disposer.accept(resource);
-                            } catch (Throwable ex) {
-                                ex.addSuppressed(e);
-                                e = ex;
-                            }
-                        }
-                    }
-                    
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                final R resource;
+                
+                try {
+                    resource = resourceSupplier.get();
+                } catch (Throwable e) {
+                    s.onSubscribe(EmptyDisposable.INSTANCE);
                     s.onError(e);
-                    
-                    if (!eager) {
-                        dispose();
-                    }
+                    return;
                 }
                 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    this.d = d;
-                    s.onSubscribe(this::dispose);
+                Completable cs;
+                
+                try {
+                    cs = completableFunction.apply(resource);
+                } catch (Throwable e) {
+                    s.onSubscribe(EmptyDisposable.INSTANCE);
+                    s.onError(e);
+                    return;
                 }
-            });
+                
+                if (cs == null) {
+                    s.onSubscribe(EmptyDisposable.INSTANCE);
+                    s.onError(new NullPointerException("The completable supplied is null"));
+                    return;
+                }
+                
+                final AtomicBoolean once = new AtomicBoolean();
+                
+                cs.subscribe(new CompletableSubscriber() {
+                    Disposable d;
+                    void disposeThis() {
+                        d.dispose();
+                        if (once.compareAndSet(false, true)) {
+                            try {
+                                disposer.accept(resource);
+                            } catch (Throwable ex) {
+                                RxJavaPlugins.onError(ex);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (eager) {
+                            if (once.compareAndSet(false, true)) {
+                                try {
+                                    disposer.accept(resource);
+                                } catch (Throwable ex) {
+                                    s.onError(ex);
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        s.onComplete();
+                        
+                        if (!eager) {
+                            disposeThis();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (eager) {
+                            if (once.compareAndSet(false, true)) {
+                                try {
+                                    disposer.accept(resource);
+                                } catch (Throwable ex) {
+                                    ex.addSuppressed(e);
+                                    e = ex;
+                                }
+                            }
+                        }
+                        
+                        s.onError(e);
+                        
+                        if (!eager) {
+                            disposeThis();
+                        }
+                    }
+                    
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        this.d = d;
+                        s.onSubscribe(new Disposable() {
+                            @Override
+                            public void dispose() {
+                                disposeThis();
+                            }
+                        });
+                    }
+                });
+            }
         });
     }
     
@@ -976,7 +999,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable ambWith(Completable other) {
-        Objects.requireNonNull(other);
+        Objects.requireNonNull(other, "other is null");
         return amb(this, other);
     }
     
@@ -987,8 +1010,8 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final void await() {
-        CountDownLatch cdl = new CountDownLatch(1);
-        Throwable[] err = new Throwable[1];
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final Throwable[] err = new Throwable[1];
         
         subscribe(new CompletableSubscriber() {
 
@@ -1037,10 +1060,10 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final boolean await(long timeout, TimeUnit unit) {
-        Objects.requireNonNull(unit);
+        Objects.requireNonNull(unit, "unit is null");
         
-        CountDownLatch cdl = new CountDownLatch(1);
-        Throwable[] err = new Throwable[1];
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final Throwable[] err = new Throwable[1];
         
         subscribe(new CompletableSubscriber() {
 
@@ -1102,7 +1125,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable concatWith(Completable other) {
-        Objects.requireNonNull(other);
+        Objects.requireNonNull(other, "other is null");
         return concat(this, other);
     }
 
@@ -1143,40 +1166,49 @@ public class Completable {
      * @throws NullPointerException if unit or scheduler is null
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
-    public final Completable delay(long delay, TimeUnit unit, Scheduler scheduler, boolean delayError) {
-        Objects.requireNonNull(unit);
-        Objects.requireNonNull(scheduler);
-        return create(s -> {
-            CompositeDisposable set = new CompositeDisposable();
-            
-            subscribe(new CompletableSubscriber() {
-
+    public final Completable delay(final long delay, final TimeUnit unit, final Scheduler scheduler, final boolean delayError) {
+        Objects.requireNonNull(unit, "unit is null");
+        Objects.requireNonNull(scheduler, "scheduler is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                final CompositeDisposable set = new CompositeDisposable();
                 
-                @Override
-                public void onComplete() {
-                    set.add(scheduler.scheduleDirect(() -> {
-                        s.onComplete();
-                    }, delay, unit));
-                }
+                subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onError(Throwable e) {
-                    if (delayError) {
-                        set.add(scheduler.scheduleDirect(() -> {
-                            s.onError(e);
+                    
+                    @Override
+                    public void onComplete() {
+                        set.add(scheduler.scheduleDirect(new Runnable() {
+                            @Override
+                            public void run() {
+                                s.onComplete();
+                            }
                         }, delay, unit));
-                    } else {
-                        s.onError(e);
                     }
-                }
 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    set.add(d);
-                    s.onSubscribe(set);
-                }
-                
-            });
+                    @Override
+                    public void onError(final Throwable e) {
+                        if (delayError) {
+                            set.add(scheduler.scheduleDirect(new Runnable() {
+                                @Override
+                                public void run() {
+                                    s.onError(e);
+                                }
+                            }, delay, unit));
+                        } else {
+                            s.onError(e);
+                        }
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        set.add(d);
+                        s.onSubscribe(set);
+                    }
+                    
+                });
+            }
         });
     }
 
@@ -1188,7 +1220,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable doOnComplete(Runnable onComplete) {
-        return doOnLifecycle(d -> { }, e -> { }, onComplete, () -> { }, () -> { });
+        return doOnLifecycle(Functions.emptyConsumer(), Functions.emptyConsumer(), onComplete, Functions.emptyRunnable(), Functions.emptyRunnable());
     }
     
     /**
@@ -1200,7 +1232,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable doOnDispose(Runnable onDispose) {
-        return doOnLifecycle(d -> { }, e -> { }, () -> { }, () -> { }, onDispose);
+        return doOnLifecycle(Functions.emptyConsumer(), Functions.emptyConsumer(), Functions.emptyRunnable(), Functions.emptyRunnable(), onDispose);
     }
     
     /**
@@ -1211,7 +1243,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable doOnError(Consumer<? super Throwable> onError) {
-        return doOnLifecycle(d -> { }, onError, () -> { }, () -> { }, () -> { });
+        return doOnLifecycle(Functions.emptyConsumer(), onError, Functions.emptyRunnable(), Functions.emptyRunnable(), Functions.emptyRunnable());
     }
 
     /**
@@ -1226,72 +1258,78 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     protected final Completable doOnLifecycle(
-            Consumer<? super Disposable> onSubscribe, 
-            Consumer<? super Throwable> onError, 
-            Runnable onComplete, 
-            Runnable onAfterComplete,
-            Runnable onDisposed) {
-        Objects.requireNonNull(onSubscribe);
-        Objects.requireNonNull(onError);
-        Objects.requireNonNull(onComplete);
-        Objects.requireNonNull(onAfterComplete);
-        Objects.requireNonNull(onDisposed);
-        return create(s -> {
-            subscribe(new CompletableSubscriber() {
+            final Consumer<? super Disposable> onSubscribe, 
+            final Consumer<? super Throwable> onError, 
+            final Runnable onComplete, 
+            final Runnable onAfterComplete,
+            final Runnable onDisposed) {
+        Objects.requireNonNull(onSubscribe, "onSubscribe is null");
+        Objects.requireNonNull(onError, "onError is null");
+        Objects.requireNonNull(onComplete, "onComplete is null");
+        Objects.requireNonNull(onAfterComplete, "onAfterComplete is null");
+        Objects.requireNonNull(onDisposed, "onDisposed is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onComplete() {
-                    try {
-                        onComplete.run();
-                    } catch (Throwable e) {
-                        s.onError(e);
-                        return;
-                    }
-                    
-                    s.onComplete();
-                    
-                    try {
-                        onAfterComplete.run();
-                    } catch (Throwable e) {
-                        RxJavaPlugins.onError(e);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    try {
-                        onError.accept(e);
-                    } catch (Throwable ex) {
-                        ex.addSuppressed(e);
-                        e = ex;
-                    }
-                    
-                    s.onError(e);
-                }
-
-                @Override
-                public void onSubscribe(Disposable d) {
-                    
-                    try {
-                        onSubscribe.accept(d);
-                    } catch (Throwable ex) {
-                        d.dispose();
-                        s.onSubscribe(EmptyDisposable.INSTANCE);
-                        s.onError(ex);
-                        return;
-                    }
-                    
-                    s.onSubscribe(() -> {
+                    @Override
+                    public void onComplete() {
                         try {
-                            onDisposed.run();
+                            onComplete.run();
+                        } catch (Throwable e) {
+                            s.onError(e);
+                            return;
+                        }
+                        
+                        s.onComplete();
+                        
+                        try {
+                            onAfterComplete.run();
                         } catch (Throwable e) {
                             RxJavaPlugins.onError(e);
                         }
-                        d.dispose();
-                    });
-                }
-                
-            });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        try {
+                            onError.accept(e);
+                        } catch (Throwable ex) {
+                            ex.addSuppressed(e);
+                            e = ex;
+                        }
+                        
+                        s.onError(e);
+                    }
+
+                    @Override
+                    public void onSubscribe(final Disposable d) {
+                        
+                        try {
+                            onSubscribe.accept(d);
+                        } catch (Throwable ex) {
+                            d.dispose();
+                            s.onSubscribe(EmptyDisposable.INSTANCE);
+                            s.onError(ex);
+                            return;
+                        }
+                        
+                        s.onSubscribe(new Disposable() {
+                            @Override
+                            public void dispose() {
+                                try {
+                                    onDisposed.run();
+                                } catch (Throwable e) {
+                                    RxJavaPlugins.onError(e);
+                                }
+                                d.dispose();
+                            }
+                        });
+                    }
+                    
+                });
+            }
         });
     }
     
@@ -1304,7 +1342,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable doOnSubscribe(Consumer<? super Disposable> onSubscribe) {
-        return doOnLifecycle(onSubscribe, e -> { }, () -> { }, () -> { }, () -> { });
+        return doOnLifecycle(onSubscribe, Functions.emptyConsumer(), Functions.emptyRunnable(), Functions.emptyRunnable(), Functions.emptyRunnable());
     }
     
     /**
@@ -1314,8 +1352,13 @@ public class Completable {
      * @return the new Completable instance
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Completable doOnTerminate(Runnable onTerminate) {
-        return doOnLifecycle(s -> { }, e -> onTerminate.run(), onTerminate, () -> { }, () -> { });
+    public final Completable doOnTerminate(final Runnable onTerminate) {
+        return doOnLifecycle(Functions.emptyConsumer(), new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable e) {
+                onTerminate.run();
+            }
+        }, onTerminate, Functions.emptyRunnable(), Functions.emptyRunnable());
     }
     
     /**
@@ -1340,7 +1383,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
     public final <T> NbpObservable<T> endWith(NbpObservable<T> next) {
-        return next.startWith(toNbpObservable());
+        return next.startWith(this.<T>toNbpObservable());
     }
     
     /**
@@ -1352,7 +1395,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
     public final <T> Observable<T> endWith(Observable<T> next) {
-        return next.startWith(toFlowable());
+        return next.startWith(this.<T>toFlowable());
     }
 
     /**
@@ -1364,7 +1407,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable finallyDo(Runnable onAfterComplete) {
-        return doOnLifecycle(d -> { }, e -> { }, () -> { }, onAfterComplete, () -> { });
+        return doOnLifecycle(Functions.emptyConsumer(), Functions.emptyConsumer(), Functions.emptyRunnable(), onAfterComplete, Functions.emptyRunnable());
     }
     
     /**
@@ -1375,8 +1418,8 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Throwable get() {
-        CountDownLatch cdl = new CountDownLatch(1);
-        Throwable[] err = new Throwable[1];
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final Throwable[] err = new Throwable[1];
         
         subscribe(new CompletableSubscriber() {
 
@@ -1418,10 +1461,10 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Throwable get(long timeout, TimeUnit unit) {
-        Objects.requireNonNull(unit);
+        Objects.requireNonNull(unit, "unit is null");
         
-        CountDownLatch cdl = new CountDownLatch(1);
-        Throwable[] err = new Throwable[1];
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final Throwable[] err = new Throwable[1];
         
         subscribe(new CompletableSubscriber() {
 
@@ -1466,19 +1509,22 @@ public class Completable {
      * @throws NullPointerException if onLift is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Completable lift(CompletableOperator onLift) {
-        Objects.requireNonNull(onLift);
-        return create(s -> {
-            try {
-                // TODO plugin wrapping
+    public final Completable lift(final CompletableOperator onLift) {
+        Objects.requireNonNull(onLift, "onLift is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(CompletableSubscriber s) {
+                try {
+                    // TODO plugin wrapping
 
-                CompletableSubscriber sw = onLift.apply(s);
-                
-                subscribe(sw);
-            } catch (NullPointerException ex) {
-                throw ex;
-            } catch (Throwable ex) {
-                throw toNpe(ex);
+                    CompletableSubscriber sw = onLift.apply(s);
+                    
+                    subscribe(sw);
+                } catch (NullPointerException ex) {
+                    throw ex;
+                } catch (Throwable ex) {
+                    throw toNpe(ex);
+                }
             }
         });
     }
@@ -1492,7 +1538,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable mergeWith(Completable other) {
-        Objects.requireNonNull(other);
+        Objects.requireNonNull(other, "other is null");
         return merge(this, other);
     }
     
@@ -1503,46 +1549,55 @@ public class Completable {
      * @throws NullPointerException if scheduler is null
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
-    public final Completable observeOn(Scheduler scheduler) {
-        Objects.requireNonNull(scheduler);
-        return create(s -> {
-            
-            ArrayCompositeResource<Disposable> ad = new ArrayCompositeResource<T>(2, Disposables.consumeAndDispose());
-            Scheduler.Worker w = scheduler.createWorker();
-            ad.set(0, w);
-            
-            s.onSubscribe(ad);
-            
-            subscribe(new CompletableSubscriber() {
-
-                @Override
-                public void onComplete() {
-                    w.schedule(() -> {
-                        try {
-                            s.onComplete();
-                        } finally {
-                            ad.dispose();
-                        }
-                    });
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    w.schedule(() -> {
-                        try {
-                            s.onError(e);
-                        } finally {
-                            ad.dispose();
-                        }
-                    });
-                }
-
-                @Override
-                public void onSubscribe(Disposable d) {
-                    ad.set(1, d);
-                }
+    public final Completable observeOn(final Scheduler scheduler) {
+        Objects.requireNonNull(scheduler, "scheduler is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
                 
-            });
+                final ArrayCompositeResource<Disposable> ad = new ArrayCompositeResource<Disposable>(2, Disposables.consumeAndDispose());
+                final Scheduler.Worker w = scheduler.createWorker();
+                ad.set(0, w);
+                
+                s.onSubscribe(ad);
+                
+                subscribe(new CompletableSubscriber() {
+
+                    @Override
+                    public void onComplete() {
+                        w.schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    s.onComplete();
+                                } finally {
+                                    ad.dispose();
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        w.schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    s.onError(e);
+                                } finally {
+                                    ad.dispose();
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        ad.set(1, d);
+                    }
+                    
+                });
+            }
         });
     }
     
@@ -1553,7 +1608,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable onErrorComplete() {
-        return onErrorComplete(t -> true);
+        return onErrorComplete(Functions.alwaysTrue());
     }
 
     /**
@@ -1564,42 +1619,45 @@ public class Completable {
      * @return the new Completable instance
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Completable onErrorComplete(Predicate<? super Throwable> predicate) {
-        Objects.requireNonNull(predicate);
+    public final Completable onErrorComplete(final Predicate<? super Throwable> predicate) {
+        Objects.requireNonNull(predicate, "predicate is null");
         
-        return create(s -> {
-            subscribe(new CompletableSubscriber() {
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onComplete() {
-                    s.onComplete();
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    boolean b;
-                    
-                    try {
-                        b = predicate.test(e);
-                    } catch (Throwable ex) {
-                        e.addSuppressed(ex);
-                        s.onError(e);
-                        return;
-                    }
-                    
-                    if (b) {
+                    @Override
+                    public void onComplete() {
                         s.onComplete();
-                    } else {
-                        s.onError(e);
                     }
-                }
 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    s.onSubscribe(d);
-                }
-                
-            });
+                    @Override
+                    public void onError(Throwable e) {
+                        boolean b;
+                        
+                        try {
+                            b = predicate.test(e);
+                        } catch (Throwable ex) {
+                            e.addSuppressed(ex);
+                            s.onError(e);
+                            return;
+                        }
+                        
+                        if (b) {
+                            s.onComplete();
+                        } else {
+                            s.onError(e);
+                        }
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        s.onSubscribe(d);
+                    }
+                    
+                });
+            }
         });
     }
     
@@ -1612,62 +1670,65 @@ public class Completable {
      * @return the new Completable instance
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Completable onErrorResumeNext(Function<? super Throwable, ? extends Completable> errorMapper) {
-        Objects.requireNonNull(errorMapper);
-        return create(s -> {
-            SerialDisposable sd = new SerialDisposable();
-            subscribe(new CompletableSubscriber() {
+    public final Completable onErrorResumeNext(final Function<? super Throwable, ? extends Completable> errorMapper) {
+        Objects.requireNonNull(errorMapper, "errorMapper is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                final SerialDisposable sd = new SerialDisposable();
+                subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onComplete() {
-                    s.onComplete();
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Completable c;
-                    
-                    try {
-                        c = errorMapper.apply(e);
-                    } catch (Throwable ex) {
-                        ex.addSuppressed(e);
-                        s.onError(ex);
-                        return;
+                    @Override
+                    public void onComplete() {
+                        s.onComplete();
                     }
-                    
-                    if (c == null) {
-                        NullPointerException npe = new NullPointerException("The completable returned is null");
-                        npe.addSuppressed(e);
-                        s.onError(npe);
-                        return;
-                    }
-                    
-                    c.subscribe(new CompletableSubscriber() {
 
-                        @Override
-                        public void onComplete() {
-                            s.onComplete();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            s.onError(e);
-                        }
-
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            sd.set(d);
+                    @Override
+                    public void onError(Throwable e) {
+                        Completable c;
+                        
+                        try {
+                            c = errorMapper.apply(e);
+                        } catch (Throwable ex) {
+                            ex.addSuppressed(e);
+                            s.onError(ex);
+                            return;
                         }
                         
-                    });
-                }
+                        if (c == null) {
+                            NullPointerException npe = new NullPointerException("The completable returned is null");
+                            npe.addSuppressed(e);
+                            s.onError(npe);
+                            return;
+                        }
+                        
+                        c.subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    sd.set(d);
-                }
-                
-            });
+                            @Override
+                            public void onComplete() {
+                                s.onComplete();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                s.onError(e);
+                            }
+
+                            @Override
+                            public void onSubscribe(Disposable d) {
+                                sd.set(d);
+                            }
+                            
+                        });
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        sd.set(d);
+                    }
+                    
+                });
+            }
         });
     }
     
@@ -1700,7 +1761,6 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable repeatUntil(BooleanSupplier stop) {
-        Objects.requireNonNull(stop); // FIXME remove once the null-check fixes are merged with Observable
         return fromFlowable(toFlowable().repeatUntil(stop));
     }
     
@@ -1718,7 +1778,7 @@ public class Completable {
      * FIXME the Observable<Void> type doesn't make sense here because nulls are not allowed
      * FIXME add unit test once the type has been fixed
      */ 
-    public final Completable repeatWhen(Function<? super Observable<Void>, ? extends Publisher<?>> handler) {
+    public final Completable repeatWhen(Function<? super Observable<Object>, ? extends Publisher<Object>> handler) {
         return fromFlowable(toFlowable().repeatWhen(handler));
     }
     
@@ -1778,7 +1838,7 @@ public class Completable {
      * @throws NullPointerException if handler is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Completable retryWhen(Function<? super Observable<? extends Throwable>, ? extends Publisher<?>> handler) {
+    public final Completable retryWhen(Function<? super Observable<? extends Throwable>, ? extends Publisher<Object>> handler) {
         return fromFlowable(toFlowable().retryWhen(handler));
     }
 
@@ -1791,7 +1851,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Completable startWith(Completable other) {
-        Objects.requireNonNull(other);
+        Objects.requireNonNull(other, "other is null");
         return concat(other, this);
     }
 
@@ -1804,8 +1864,8 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final <T> NbpObservable<T> startWith(NbpObservable<T> other) {
-        Objects.requireNonNull(other);
-        return other.endWith(toNbpObservable());
+        Objects.requireNonNull(other, "other is null");
+        return other.endWith(this.<T>toNbpObservable());
     }
     /**
      * Returns an Observable which first delivers the events
@@ -1816,8 +1876,8 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final <T> Observable<T> startWith(Observable<T> other) {
-        Objects.requireNonNull(other);
-        return other.endWith(toFlowable());
+        Objects.requireNonNull(other, "other is null");
+        return other.endWith(this.<T>toFlowable());
     }
     
     /**
@@ -1827,7 +1887,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final Disposable subscribe() {
-        MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+        final MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
         subscribe(new CompletableSubscriber() {
             @Override
             public void onComplete() {
@@ -1854,7 +1914,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final void subscribe(CompletableSubscriber s) {
-        Objects.requireNonNull(s);
+        Objects.requireNonNull(s, "s is null");
         try {
             // TODO plugin wrapping the subscriber
             
@@ -1876,11 +1936,11 @@ public class Completable {
      * @throws NullPointerException if either callback is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Disposable subscribe(Consumer<? super Throwable> onError, Runnable onComplete) {
-        Objects.requireNonNull(onError);
-        Objects.requireNonNull(onComplete);
+    public final Disposable subscribe(final Consumer<? super Throwable> onError, final Runnable onComplete) {
+        Objects.requireNonNull(onError, "onError is null");
+        Objects.requireNonNull(onComplete, "onComplete is null");
         
-        MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+        final MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
         subscribe(new CompletableSubscriber() {
             @Override
             public void onComplete() {
@@ -1917,8 +1977,8 @@ public class Completable {
      * @throw NullPointerException if s is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final void subscribe(NbpSubscriber<?> s) {
-        Objects.requireNonNull(s);
+    public final void subscribe(final NbpSubscriber<?> s) {
+        Objects.requireNonNull(s, "s is null");
         try {
             // TODO plugin wrapping the subscriber
             
@@ -1956,10 +2016,10 @@ public class Completable {
      * @return the Disposable that allows cancelling the subscription
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Disposable subscribe(Runnable onComplete) {
-        Objects.requireNonNull(onComplete);
+    public final Disposable subscribe(final Runnable onComplete) {
+        Objects.requireNonNull(onComplete, "onComplete is null");
         
-        MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+        final MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
         subscribe(new CompletableSubscriber() {
             @Override
             public void onComplete() {
@@ -1992,9 +2052,9 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final <T> void subscribe(Subscriber<T> s) {
-        Objects.requireNonNull(s);
+        Objects.requireNonNull(s, "s is null");
         try {
-            Subscriber<?> sw = RxJavaPlugins.onSubscribe(s);
+            final Subscriber<?> sw = RxJavaPlugins.onSubscribe(s);
             
             if (sw == null) {
                 throw new NullPointerException("The RxJavaPlugins.onSubscribe returned a null Subscriber");
@@ -2034,14 +2094,20 @@ public class Completable {
      * @throws NullPointerException if scheduler is null
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
-    public final Completable subscribeOn(Scheduler scheduler) {
-        Objects.requireNonNull(scheduler);
+    public final Completable subscribeOn(final Scheduler scheduler) {
+        Objects.requireNonNull(scheduler, "scheduler is null");
         
-        return create(s -> {
-            // FIXME cancellation of this schedule
-            scheduler.scheduleDirect(() -> {
-                subscribe(s);
-            });
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                // FIXME cancellation of this schedule
+                scheduler.scheduleDirect(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscribe(s);
+                    }
+                });
+            }
         });
     }
 
@@ -2069,7 +2135,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.COMPUTATION)
     public final Completable timeout(long timeout, TimeUnit unit, Completable other) {
-        Objects.requireNonNull(other);
+        Objects.requireNonNull(other, "other is null");
         return timeout0(timeout, unit, Schedulers.computation(), other);
     }
     
@@ -2101,7 +2167,7 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
     public final Completable timeout(long timeout, TimeUnit unit, Scheduler scheduler, Completable other) {
-        Objects.requireNonNull(other);
+        Objects.requireNonNull(other, "other is null");
         return timeout0(timeout, unit, scheduler, other);
     }
     
@@ -2119,8 +2185,8 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
     public final Completable timeout0(long timeout, TimeUnit unit, Scheduler scheduler, Completable other) {
-        Objects.requireNonNull(unit);
-        Objects.requireNonNull(scheduler);
+        Objects.requireNonNull(unit, "unit is null");
+        Objects.requireNonNull(scheduler, "scheduler is null");
         return create(new CompletableOnSubscribeTimeout(this, timeout, unit, scheduler, other));
     }
     
@@ -2142,8 +2208,11 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final <T> Observable<T> toFlowable() {
-        return Observable.create(s -> {
-            subscribe(s);
+        return Observable.create(new Publisher<T>() {
+            @Override
+            public void subscribe(Subscriber<? super T> s) {
+                subscribe(s);
+            }
         });
     }
     
@@ -2154,8 +2223,11 @@ public class Completable {
      */
     @SchedulerSupport(SchedulerKind.NONE)
     public final <T> NbpObservable<T> toNbpObservable() {
-        return NbpObservable.create(s -> {
-            subscribe(s);
+        return NbpObservable.create(new NbpOnSubscribe<T>() {
+            @Override
+            public void accept(NbpSubscriber<? super T> s) {
+                subscribe(s);
+            }
         });
     }
     
@@ -2167,40 +2239,43 @@ public class Completable {
      * @throws NullPointerException if completionValueSupplier is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final <T> Single<T> toSingle(Supplier<? extends T> completionValueSupplier) {
-        Objects.requireNonNull(completionValueSupplier);
-        return Single.create(s -> {
-            subscribe(new CompletableSubscriber() {
+    public final <T> Single<T> toSingle(final Supplier<? extends T> completionValueSupplier) {
+        Objects.requireNonNull(completionValueSupplier, "completionValueSupplier is null");
+        return Single.create(new SingleOnSubscribe<T>() {
+            @Override
+            public void accept(final SingleSubscriber<? super T> s) {
+                subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onComplete() {
-                    T v;
+                    @Override
+                    public void onComplete() {
+                        T v;
 
-                    try {
-                        v = completionValueSupplier.get();
-                    } catch (Throwable e) {
+                        try {
+                            v = completionValueSupplier.get();
+                        } catch (Throwable e) {
+                            s.onError(e);
+                            return;
+                        }
+                        
+                        if (v == null) {
+                            s.onError(new NullPointerException("The value supplied is null"));
+                        } else {
+                            s.onSuccess(v);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
                         s.onError(e);
-                        return;
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        s.onSubscribe(d);
                     }
                     
-                    if (v == null) {
-                        s.onError(new NullPointerException("The value supplied is null"));
-                    } else {
-                        s.onSuccess(v);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    s.onError(e);
-                }
-
-                @Override
-                public void onSubscribe(Disposable d) {
-                    s.onSubscribe(d);
-                }
-                
-            });
+                });
+            }
         });
     }
     
@@ -2212,9 +2287,14 @@ public class Completable {
      * @throws NullPointerException if completionValue is null
      */
     @SchedulerSupport(SchedulerKind.NONE)
-    public final <T> Single<T> toSingleDefault(T completionValue) {
-        Objects.requireNonNull(completionValue);
-        return toSingle(() -> completionValue);
+    public final <T> Single<T> toSingleDefault(final T completionValue) {
+        Objects.requireNonNull(completionValue, "completionValue is null");
+        return toSingle(new Supplier<T>() {
+            @Override
+            public T get() {
+                return completionValue;
+            }
+        });
     }
     
     /**
@@ -2225,31 +2305,40 @@ public class Completable {
      * @throws NullPointerException if scheduler is null
      */
     @SchedulerSupport(SchedulerKind.CUSTOM)
-    public final Completable unsubscribeOn(Scheduler scheduler) {
-        Objects.requireNonNull(scheduler);
-        return create(s -> {
-            subscribe(new CompletableSubscriber() {
+    public final Completable unsubscribeOn(final Scheduler scheduler) {
+        Objects.requireNonNull(scheduler, "scheduler is null");
+        return create(new CompletableOnSubscribe() {
+            @Override
+            public void accept(final CompletableSubscriber s) {
+                subscribe(new CompletableSubscriber() {
 
-                @Override
-                public void onComplete() {
-                    s.onComplete();
-                }
+                    @Override
+                    public void onComplete() {
+                        s.onComplete();
+                    }
 
-                @Override
-                public void onError(Throwable e) {
-                    s.onError(e);
-                }
+                    @Override
+                    public void onError(Throwable e) {
+                        s.onError(e);
+                    }
 
-                @Override
-                public void onSubscribe(Disposable d) {
-                    s.onSubscribe(() -> {
-                        scheduler.scheduleDirect(() -> {
-                            d.dispose();
+                    @Override
+                    public void onSubscribe(final Disposable d) {
+                        s.onSubscribe(new Disposable() {
+                            @Override
+                            public void dispose() {
+                                scheduler.scheduleDirect(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        d.dispose();
+                                    }
+                                });
+                            }
                         });
-                    });
-                }
-                
-            });
+                    }
+                    
+                });
+            }
         });
     }
 }

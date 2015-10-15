@@ -464,7 +464,6 @@ public class TestSubscriber<T> implements Subscriber<T>, Subscription, Disposabl
             fail(prefix, "No errors", Collections.<Throwable>emptyList());
         }
         
-        
         boolean found = false;
         
         for (Throwable e : errors) {
