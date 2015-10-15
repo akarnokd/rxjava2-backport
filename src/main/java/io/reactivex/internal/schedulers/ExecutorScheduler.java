@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.*;
 import io.reactivex.internal.queue.MpscLinkedQueue;
 import io.reactivex.internal.schedulers.ExecutorScheduler.ExecutorWorker.BooleanRunnable;
@@ -46,7 +46,7 @@ public final class ExecutorScheduler extends Scheduler {
         try {
             if (executor instanceof ExecutorService) {
                 Future<?> f = ((ExecutorService)executor).submit(decoratedRun);
-                return () -> f.cancel(true);
+                return Disposables.from(f);
             }
             
             BooleanRunnable br = new BooleanRunnable(decoratedRun);
@@ -60,22 +60,25 @@ public final class ExecutorScheduler extends Scheduler {
     
     @Override
     public Disposable scheduleDirect(Runnable run, long delay, TimeUnit unit) {
-        Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
+        final Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
         if (executor instanceof ScheduledExecutorService) {
             try {
                 Future<?> f = ((ScheduledExecutorService)executor).schedule(decoratedRun, delay, unit);
-                return () -> f.cancel(true);
+                return Disposables.from(f);
             } catch (RejectedExecutionException ex) {
                 RxJavaPlugins.onError(ex);
                 return EmptyDisposable.INSTANCE;
             }
         }
-        MultipleAssignmentResource<Disposable> first = new MultipleAssignmentResource<>(Disposables.consumeAndDispose());
+        MultipleAssignmentResource<Disposable> first = new MultipleAssignmentResource<Disposable>(Disposables.consumeAndDispose());
 
-        MultipleAssignmentResource<Disposable> mar = new MultipleAssignmentResource<>(Disposables.consumeAndDispose(), first);
+        final MultipleAssignmentResource<Disposable> mar = new MultipleAssignmentResource<Disposable>(Disposables.consumeAndDispose(), first);
 
-        Disposable delayed = HELPER.scheduleDirect(() -> {
-            mar.setResource(scheduleDirect(decoratedRun));
+        Disposable delayed = HELPER.scheduleDirect(new Runnable() {
+            @Override
+            public void run() {
+                mar.setResource(scheduleDirect(decoratedRun));
+            }
         }, delay, unit);
         
         first.setResource(delayed);
@@ -89,7 +92,7 @@ public final class ExecutorScheduler extends Scheduler {
             Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
             try {
                 Future<?> f = ((ScheduledExecutorService)executor).scheduleAtFixedRate(decoratedRun, initialDelay, period, unit);
-                return () -> f.cancel(true);
+                return Disposables.from(f);
             } catch (RejectedExecutionException ex) {
                 RxJavaPlugins.onError(ex);
                 return EmptyDisposable.INSTANCE;
@@ -109,11 +112,11 @@ public final class ExecutorScheduler extends Scheduler {
         static final AtomicIntegerFieldUpdater<ExecutorWorker> WIP =
                 AtomicIntegerFieldUpdater.newUpdater(ExecutorWorker.class, "wip");
         
-        final SetCompositeResource<Disposable> tasks = new SetCompositeResource<>(Disposables.consumeAndDispose());
+        final SetCompositeResource<Disposable> tasks = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
         
         public ExecutorWorker(Executor executor) {
             this.executor = executor;
-            this.queue = new MpscLinkedQueue<>();
+            this.queue = new MpscLinkedQueue<Runnable>();
         }
         
         @Override
@@ -151,14 +154,17 @@ public final class ExecutorScheduler extends Scheduler {
             }
             
 
-            MultipleAssignmentResource<Disposable> first = new MultipleAssignmentResource<>(Disposables.consumeAndDispose());
+            MultipleAssignmentResource<Disposable> first = new MultipleAssignmentResource<Disposable>(Disposables.consumeAndDispose());
 
-            MultipleAssignmentResource<Disposable> mar = new MultipleAssignmentResource<>(Disposables.consumeAndDispose(), first);
+            final MultipleAssignmentResource<Disposable> mar = new MultipleAssignmentResource<Disposable>(Disposables.consumeAndDispose(), first);
             
-            Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
+            final Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
             
-            ScheduledRunnable sr = new ScheduledRunnable(() -> {
-                mar.setResource(schedule(decoratedRun));
+            ScheduledRunnable sr = new ScheduledRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    mar.setResource(schedule(decoratedRun));
+                }
             }, tasks);
             tasks.add(sr);
             
@@ -172,7 +178,7 @@ public final class ExecutorScheduler extends Scheduler {
                     return EmptyDisposable.INSTANCE;
                 }
             } else {
-                Disposable d = HELPER.scheduleDirect(sr, delay, unit);
+                final Disposable d = HELPER.scheduleDirect(sr, delay, unit);
                 sr.setFuture(new Future<Object>() {
                     @Override
                     public boolean cancel(boolean mayInterruptIfRunning) {

@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.*;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
+import io.reactivex.internal.functions.Objects;
 import io.reactivex.plugins.RxJavaPlugins;
 
 /**
@@ -61,7 +62,7 @@ public final class TrampolineScheduler extends Scheduler {
     }
 
     static final class TrampolineWorker extends Scheduler.Worker implements Disposable {
-        private final PriorityBlockingQueue<TimedRunnable> queue = new PriorityBlockingQueue<>();
+        private final PriorityBlockingQueue<TimedRunnable> queue = new PriorityBlockingQueue<TimedRunnable>();
         
         private final AtomicInteger wip = new AtomicInteger();
 
@@ -110,9 +111,12 @@ public final class TrampolineScheduler extends Scheduler {
                 return EmptyDisposable.INSTANCE;
             } else {
                 // queue wasn't empty, a parent is already processing so we just add to the end of the queue
-                return () -> {
-                    timedRunnable.disposed = true;
-                    queue.remove(timedRunnable);
+                return new Disposable() {
+                    @Override
+                    public void dispose() {
+                        timedRunnable.disposed = true;
+                        queue.remove(timedRunnable);
+                    }
                 };
             }
         }
@@ -138,9 +142,9 @@ public final class TrampolineScheduler extends Scheduler {
 
         @Override
         public int compareTo(TimedRunnable that) {
-            int result = Long.compare(execTime, that.execTime);
+            int result = Objects.compare(execTime, that.execTime);
             if (result == 0) {
-                return Integer.compare(count, that.count);
+                return Objects.compare(count, that.count);
             }
             return result;
         }

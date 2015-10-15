@@ -877,6 +877,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3,
@@ -888,6 +889,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2, s3);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3, Single<? extends T4> s4,
@@ -900,6 +902,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2, s3, s4);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3, Single<? extends T4> s4,
@@ -914,6 +917,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2, s3, s4, s5);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5, T6, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3, Single<? extends T4> s4,
@@ -929,6 +933,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2, s3, s4, s5, s6);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5, T6, T7, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3, Single<? extends T4> s4,
@@ -946,6 +951,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2, s3, s4, s5, s6, s7);
     }
     
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3, Single<? extends T4> s4,
@@ -964,6 +970,7 @@ public class Single<T> {
         return zipArray(Functions.toFunction(zipper), s1, s2, s3, s4, s5, s6, s7, s8);
     }
     
+    @SuppressWarnings("unchecked")
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> Single<R> zip(
             Single<? extends T1> s1, Single<? extends T2> s2,
             Single<? extends T3> s3, Single<? extends T4> s4,
@@ -1001,6 +1008,7 @@ public class Single<T> {
         this.onSubscribe = onSubscribe;
     }
 
+    @SuppressWarnings("unchecked")
     public final Single<T> ambWith(Single<? extends T> other) {
         Objects.requireNonNull(other, "other is null");
         return amb(this, other);

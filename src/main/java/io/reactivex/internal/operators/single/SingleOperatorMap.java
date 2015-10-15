@@ -26,7 +26,7 @@ public final class SingleOperatorMap<T, R> implements SingleOperator<R, T> {
     }
 
     @Override
-    public SingleSubscriber<? super T> apply(SingleSubscriber<? super R> t) {
+    public SingleSubscriber<? super T> apply(final SingleSubscriber<? super R> t) {
         return new SingleSubscriber<T>() {
             @Override
             public void onSubscribe(Disposable d) {

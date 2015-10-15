@@ -16,7 +16,7 @@ package io.reactivex.internal.schedulers;
 import java.util.concurrent.*;
 
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.*;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -30,13 +30,8 @@ public class NewThreadWorker extends Scheduler.Worker implements Disposable {
 
     volatile boolean disposed;
     
-    /* package */
     public NewThreadWorker(ThreadFactory threadFactory) {
-        ScheduledExecutorService exec = Executors.newScheduledThreadPool(1, threadFactory);
-        // Java 7+: cancelled future tasks can be removed from the executor thus avoiding memory leak
-        if (exec instanceof ScheduledThreadPoolExecutor) {
-            ((ScheduledThreadPoolExecutor)exec).setRemoveOnCancelPolicy(true);
-        }
+        ScheduledExecutorService exec = SchedulerPoolFactory.create(threadFactory);
         executor = exec;
     }
 
@@ -70,7 +65,7 @@ public class NewThreadWorker extends Scheduler.Worker implements Disposable {
             } else {
                 f = executor.schedule(decoratedRun, delayTime, unit);
             }
-            return () -> f.cancel(true);
+            return Disposables.from(f);
         } catch (RejectedExecutionException ex) {
             RxJavaPlugins.onError(ex);
             return EmptyDisposable.INSTANCE;
@@ -90,7 +85,7 @@ public class NewThreadWorker extends Scheduler.Worker implements Disposable {
         Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
         try {
             Future<?> f = executor.scheduleAtFixedRate(decoratedRun, initialDelay, period, unit);
-            return () -> f.cancel(true);
+            return Disposables.from(f);
         } catch (RejectedExecutionException ex) {
             RxJavaPlugins.onError(ex);
             return EmptyDisposable.INSTANCE;

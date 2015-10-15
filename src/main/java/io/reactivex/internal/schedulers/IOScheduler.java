@@ -20,7 +20,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.*;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -54,14 +54,13 @@ public final class IOScheduler extends Scheduler implements SchedulerLifecycle {
 
         CachedWorkerPool(long keepAliveTime, TimeUnit unit) {
             this.keepAliveTime = unit != null ? unit.toNanos(keepAliveTime) : 0L;
-            this.expiringWorkerQueue = new ConcurrentLinkedQueue<>();
-            this.allWorkers = new SetCompositeResource<>(Disposables.consumeAndDispose());
+            this.expiringWorkerQueue = new ConcurrentLinkedQueue<ThreadWorker>();
+            this.allWorkers = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
 
             ScheduledExecutorService evictor = null;
             Future<?> task = null;
             if (unit != null) {
                 evictor = Executors.newScheduledThreadPool(1, EVICTOR_THREAD_FACTORY);
-                ((ScheduledThreadPoolExecutor)evictor).setRemoveOnCancelPolicy(true);
                 try {
                     task = evictor.scheduleWithFixedDelay(
                             new Runnable() {
@@ -148,7 +147,7 @@ public final class IOScheduler extends Scheduler implements SchedulerLifecycle {
     }
     
     public IOScheduler() {
-        this.pool = new AtomicReference<>(NONE);
+        this.pool = new AtomicReference<CachedWorkerPool>(NONE);
         start();
     }
     
@@ -193,7 +192,7 @@ public final class IOScheduler extends Scheduler implements SchedulerLifecycle {
 
         EventLoopWorker(CachedWorkerPool pool) {
             this.pool = pool;
-            this.tasks = new SetCompositeResource<>(Disposables.consumeAndDispose());
+            this.tasks = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
             this.threadWorker = pool.get();
         }
 

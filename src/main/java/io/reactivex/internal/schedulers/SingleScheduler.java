@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.*;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -38,8 +38,7 @@ public final class SingleScheduler extends Scheduler {
     }
 
     static ScheduledExecutorService createExecutor() {
-        ScheduledExecutorService exec = Executors.newScheduledThreadPool(1, new RxThreadFactory("RxSingleScheduler-"));
-        ((ScheduledThreadPoolExecutor)exec).setRemoveOnCancelPolicy(true);
+        ScheduledExecutorService exec = SchedulerPoolFactory.create(new RxThreadFactory("RxSingleScheduler-"));
         return exec;
     }
     
@@ -90,7 +89,7 @@ public final class SingleScheduler extends Scheduler {
             } else {
                 f = executor.schedule(decoratedRun, delay, unit);
             }
-            return () -> f.cancel(true);
+            return Disposables.from(f);
         } catch (RejectedExecutionException ex) {
             RxJavaPlugins.onError(ex);
             return EmptyDisposable.INSTANCE;
@@ -102,7 +101,7 @@ public final class SingleScheduler extends Scheduler {
         Runnable decoratedRun = RxJavaPlugins.onSchedule(run);
         try {
             Future<?> f = executor.scheduleAtFixedRate(decoratedRun, initialDelay, period, unit);
-            return () -> f.cancel(true);
+            return Disposables.from(f);
         } catch (RejectedExecutionException ex) {
             RxJavaPlugins.onError(ex);
             return EmptyDisposable.INSTANCE;
@@ -119,7 +118,7 @@ public final class SingleScheduler extends Scheduler {
         
         public ScheduledWorker(ScheduledExecutorService executor) {
             this.executor = executor;
-            this.tasks = new SetCompositeResource<>(Disposables.consumeAndDispose());
+            this.tasks = new SetCompositeResource<Disposable>(Disposables.consumeAndDispose());
         }
         
         @Override

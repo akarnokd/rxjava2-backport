@@ -28,7 +28,7 @@ public final class SingleOperatorFlatMap<T, R> implements SingleOperator<R, T> {
     
     @Override
     public SingleSubscriber<? super T> apply(SingleSubscriber<? super R> t) {
-        return new SingleFlatMapCallback<>(t, mapper);
+        return new SingleFlatMapCallback<T, R>(t, mapper);
     }
     
     static final class SingleFlatMapCallback<T, R> implements SingleSubscriber<T> {
