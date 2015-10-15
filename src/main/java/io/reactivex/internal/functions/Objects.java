@@ -12,6 +12,8 @@
  */
 package io.reactivex.internal.functions;
 
+import io.reactivex.functions.BiPredicate;
+
 /**
  * Utility methods containing the backport of Java 7's Objects utility class.
  */
@@ -70,5 +72,22 @@ public enum Objects {
      */
     public static int compare(long v1, long v2) {
         return v1 < v2 ? -1 : (v1 > v2 ? 1 : 0);
+    }
+    
+    static final BiPredicate<Object, Object> EQUALS = new BiPredicate<Object, Object>() {
+        @Override
+        public boolean test(Object o1, Object o2) {
+            return Objects.equals(o1, o2);
+        }
+    };
+    
+    /**
+     * Returns a BiPredicate that compares its parameters via Objects.equals().
+     * @param <T> the value type
+     * @return the bipredicate
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> BiPredicate<T, T> equalsPredicate() {
+        return (BiPredicate<T, T>)EQUALS;
     }
 }

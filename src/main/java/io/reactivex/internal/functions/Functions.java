@@ -181,4 +181,17 @@ public enum Functions {
     public static <T> Consumer<T> emptyConsumer() {
         return (Consumer<T>)EMPTY_CONSUMER;
     }
+    
+    static final LongConsumer EMPTY_LONGCONSUMER = new LongConsumer() {
+        @Override
+        public void accept(long v) { }
+    };
+    
+    /**
+     * Returns an empty long consumer that does nothing.
+     * @return an empty long consumer that does nothing.
+     */
+    public static LongConsumer emptyLongConsumer() {
+        return EMPTY_LONGCONSUMER;
+    }
 }
