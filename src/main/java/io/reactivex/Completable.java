@@ -22,6 +22,7 @@ import io.reactivex.NbpObservable.*;
 import io.reactivex.Single.*;
 import io.reactivex.annotations.*;
 import io.reactivex.disposables.*;
+import io.reactivex.exceptions.CompositeException;
 import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.*;
 import io.reactivex.internal.functions.*;
@@ -950,8 +951,7 @@ public class Completable {
                                 try {
                                     disposer.accept(resource);
                                 } catch (Throwable ex) {
-                                    ex.addSuppressed(e);
-                                    e = ex;
+                                    e = new CompositeException(ex, e);
                                 }
                             }
                         }
@@ -1296,8 +1296,7 @@ public class Completable {
                         try {
                             onError.accept(e);
                         } catch (Throwable ex) {
-                            ex.addSuppressed(e);
-                            e = ex;
+                            e = new CompositeException(ex, e);
                         }
                         
                         s.onError(e);
@@ -1639,8 +1638,7 @@ public class Completable {
                         try {
                             b = predicate.test(e);
                         } catch (Throwable ex) {
-                            e.addSuppressed(ex);
-                            s.onError(e);
+                            s.onError(new CompositeException(ex, e));
                             return;
                         }
                         
@@ -1690,14 +1688,13 @@ public class Completable {
                         try {
                             c = errorMapper.apply(e);
                         } catch (Throwable ex) {
-                            ex.addSuppressed(e);
-                            s.onError(ex);
+                            s.onError(new CompositeException(ex, e));
                             return;
                         }
                         
                         if (c == null) {
                             NullPointerException npe = new NullPointerException("The completable returned is null");
-                            npe.addSuppressed(e);
+                            npe.initCause(e);
                             s.onError(npe);
                             return;
                         }
@@ -1956,7 +1953,7 @@ public class Completable {
                 try {
                     onError.accept(e);
                 } catch (Throwable ex) {
-                    e.addSuppressed(ex);
+                    RxJavaPlugins.onError(ex);
                     RxJavaPlugins.onError(e);
                 }
             }

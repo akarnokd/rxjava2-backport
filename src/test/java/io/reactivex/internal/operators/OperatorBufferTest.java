@@ -312,7 +312,7 @@ public class OperatorBufferTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<T>();
+        List<String> list = new ArrayList<String>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -320,11 +320,21 @@ public class OperatorBufferTest {
     }
 
     private <T> void push(final Subscriber<T> observer, final T value, int delay) {
-        innerScheduler.schedule(() -> observer.onNext(value), delay, TimeUnit.MILLISECONDS);
+        innerScheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                observer.onNext(value);
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     private void complete(final Subscriber<?> observer, int delay) {
-        innerScheduler.schedule(observer::onComplete, delay, TimeUnit.MILLISECONDS);
+        innerScheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                observer.onComplete();
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -332,10 +342,15 @@ public class OperatorBufferTest {
         Observable<Integer> source = Observable.never();
 
         Subscriber<List<Integer>> o = TestHelper.mockSubscriber();
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>(o, (Long)null);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>(o, (Long)null);
 
         source.buffer(100, 200, TimeUnit.MILLISECONDS, scheduler)
-        .doOnNext(pv -> System.out.println(pv))
+        .doOnNext(new Consumer<List<Integer>>() {
+            @Override
+            public void accept(List<Integer> pv) {
+                System.out.println(pv);
+            }
+        })
         .subscribe(ts);
 
         InOrder inOrder = Mockito.inOrder(o);
@@ -578,7 +593,12 @@ public class OperatorBufferTest {
         InOrder inOrder = inOrder(o);
         
         result
-        .doOnNext(pv -> System.out.println(pv))
+        .doOnNext(new Consumer<List<Long>>() {
+            @Override
+            public void accept(List<Long> pv) {
+                System.out.println(pv);
+            }
+        })
         .subscribe(o);
         
         scheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -742,7 +762,7 @@ public class OperatorBufferTest {
 
     @Test
     public void testProducerRequestThroughBufferWithSize1() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>(3L);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>(3L);
         
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
@@ -773,7 +793,7 @@ public class OperatorBufferTest {
 
     @Test
     public void testProducerRequestThroughBufferWithSize2() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>();
         final AtomicLong requested = new AtomicLong();
         
         Observable.create(new Publisher<Integer>() {
@@ -801,7 +821,7 @@ public class OperatorBufferTest {
 
     @Test
     public void testProducerRequestThroughBufferWithSize3() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>(3L);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>(3L);
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
 
@@ -830,7 +850,7 @@ public class OperatorBufferTest {
 
     @Test
     public void testProducerRequestThroughBufferWithSize4() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>();
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
 
@@ -858,7 +878,7 @@ public class OperatorBufferTest {
 
     @Test
     public void testProducerRequestOverflowThroughBufferWithSize1() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>(Long.MAX_VALUE >> 1);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>(Long.MAX_VALUE >> 1);
 
         final AtomicLong requested = new AtomicLong();
         
@@ -887,7 +907,7 @@ public class OperatorBufferTest {
 
     @Test
     public void testProducerRequestOverflowThroughBufferWithSize2() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>(Long.MAX_VALUE >> 1);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>(Long.MAX_VALUE >> 1);
 
         final AtomicLong requested = new AtomicLong();
         

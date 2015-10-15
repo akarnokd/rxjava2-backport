@@ -20,14 +20,14 @@ Import
 Gradle:
 
 ```
-compile 'com.github.akarnokd:rxjava2-backport:2.0.0'
+compile 'com.github.akarnokd:rxjava2-backport:2.0.0-RC1'
 ```
 
 
 Ivy:
 
 ```xml
-<dependency org="com.github.akarnokd" name="rxjava2-backport" rev='2.0.0'/>
+<dependency org="com.github.akarnokd" name="rxjava2-backport" rev='2.0.0-RC1'/>
 ```
 
 Releases

@@ -23,7 +23,7 @@ import io.reactivex.functions.*;
 
 import org.junit.*;
 import org.mockito.InOrder;
-import org.reactivestreams.Subscriber;
+import org.reactivestreams.*;
 
 import io.reactivex.*;
 import io.reactivex.Observable;
@@ -230,7 +230,7 @@ public class OperatorDelayTest {
     @Test
     public void testDelayWithObservableNormal1() {
         PublishSubject<Integer> source = PublishSubject.create();
-        final List<PublishSubject<Integer>> delays = new ArrayList<T>();
+        final List<PublishSubject<Integer>> delays = new ArrayList<PublishSubject<Integer>>();
         final int n = 10;
         for (int i = 0; i < n; i++) {
             PublishSubject<Integer> delay = PublishSubject.create();
@@ -581,7 +581,7 @@ public class OperatorDelayTest {
         int n = 3;
 
         PublishSubject<Integer> source = PublishSubject.create();
-        final List<PublishSubject<Integer>> subjects = new ArrayList<T>();
+        final List<PublishSubject<Integer>> subjects = new ArrayList<PublishSubject<Integer>>();
         for (int i = 0; i < n; i++) {
             subjects.add(PublishSubject.<Integer> create());
         }
@@ -629,7 +629,7 @@ public class OperatorDelayTest {
             }
 
         });
-        TestSubscriber<Integer> observer = new TestSubscriber<T>();
+        TestSubscriber<Integer> observer = new TestSubscriber<Integer>();
         delayed.subscribe(observer);
         // all will be delivered after 500ms since range does not delay between them
         scheduler.advanceTimeBy(500L, TimeUnit.MILLISECONDS);
@@ -792,13 +792,18 @@ public class OperatorDelayTest {
         ts.assertNotComplete();
     }
     public void testDelaySupplierSimple() {
-        PublishSubject<Integer> ps = PublishSubject.create();
+        final PublishSubject<Integer> ps = PublishSubject.create();
         
         Observable<Integer> source = Observable.range(1, 5);
         
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
-        source.delaySubscription(() -> ps).subscribe(ts);
+        source.delaySubscription(new Supplier<Publisher<Integer>>() {
+            @Override
+            public Publisher<Integer> get() {
+                return ps;
+            }
+        }).subscribe(ts);
         
         ts.assertNoValues();
         ts.assertNoErrors();
@@ -813,13 +818,18 @@ public class OperatorDelayTest {
     
     @Test
     public void testDelaySupplierCompletes() {
-        PublishSubject<Integer> ps = PublishSubject.create();
+        final PublishSubject<Integer> ps = PublishSubject.create();
         
         Observable<Integer> source = Observable.range(1, 5);
         
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
-        source.delaySubscription(() -> ps).subscribe(ts);
+        source.delaySubscription(new Supplier<Publisher<Integer>>() {
+            @Override
+            public Publisher<Integer> get() {
+                return ps;
+            }
+        }).subscribe(ts);
         
         ts.assertNoValues();
         ts.assertNoErrors();
@@ -835,13 +845,18 @@ public class OperatorDelayTest {
     
     @Test
     public void testDelaySupplierErrors() {
-        PublishSubject<Integer> ps = PublishSubject.create();
+        final PublishSubject<Integer> ps = PublishSubject.create();
         
         Observable<Integer> source = Observable.range(1, 5);
         
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
-        source.delaySubscription(() -> ps).subscribe(ts);
+        source.delaySubscription(new Supplier<Publisher<Integer>>() {
+            @Override
+            public Publisher<Integer> get() {
+                return ps;
+            }
+        }).subscribe(ts);
         
         ts.assertNoValues();
         ts.assertNoErrors();

@@ -145,7 +145,7 @@ public class NbpAsyncSubjectTest {
         NbpAsyncSubject<String> subject = NbpAsyncSubject.create();
 
         NbpSubscriber<String> observer = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(observer);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -194,7 +194,7 @@ public class NbpAsyncSubjectTest {
          */
         for (int i = 0; i < 50; i++) {
             final NbpAsyncSubject<String> subject = NbpAsyncSubject.create();
-            final AtomicReference<String> value1 = new AtomicReference<T>();
+            final AtomicReference<String> value1 = new AtomicReference<String>();
 
             subject.subscribe(new Consumer<String>() {
 
@@ -252,7 +252,7 @@ public class NbpAsyncSubjectTest {
     private static class SubjectSubscriberThread extends Thread {
 
         private final NbpAsyncSubject<String> subject;
-        private final AtomicReference<String> value = new AtomicReference<T>();
+        private final AtomicReference<String> value = new AtomicReference<String>();
 
         public SubjectSubscriberThread(NbpAsyncSubject<String> subject) {
             this.subject = subject;

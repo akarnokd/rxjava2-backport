@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.reactivex.functions.*;
 
 import org.junit.*;
-import org.reactivestreams.Subscriber;
+import org.reactivestreams.*;
 
 import io.reactivex.Observable;
 import io.reactivex.TestHelper;
@@ -302,16 +302,22 @@ public class OperatorFlatMapTest {
     }
 
     private static <T> Observable<T> composer(Observable<T> source, final AtomicInteger subscriptionCount, final int m) {
-        return source.doOnSubscribe(s -> {
-                int n = subscriptionCount.getAndIncrement();
-                if (n >= m) {
-                    Assert.fail("Too many subscriptions! " + (n + 1));
-                }
-        }).doOnComplete(() -> {
-                int n = subscriptionCount.decrementAndGet();
-                if (n < 0) {
-                    Assert.fail("Too many unsubscriptions! " + (n - 1));
-                }
+        return source.doOnSubscribe(new Consumer<Subscription>() {
+            @Override
+            public void accept(Subscription s) {
+                    int n = subscriptionCount.getAndIncrement();
+                    if (n >= m) {
+                        Assert.fail("Too many subscriptions! " + (n + 1));
+                    }
+            }
+        }).doOnComplete(new Runnable() {
+            @Override
+            public void run() {
+                    int n = subscriptionCount.decrementAndGet();
+                    if (n < 0) {
+                        Assert.fail("Too many unsubscriptions! " + (n - 1));
+                    }
+            }
         });
     }
 
@@ -334,7 +340,7 @@ public class OperatorFlatMapTest {
         
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
-        Set<Integer> expected = new HashSet<T>(Arrays.asList(
+        Set<Integer> expected = new HashSet<Integer>(Arrays.asList(
                 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100, 101
         ));
         Assert.assertEquals(expected.size(), ts.valueCount());
@@ -364,7 +370,7 @@ public class OperatorFlatMapTest {
         
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
-        Set<Integer> expected = new HashSet<T>(Arrays.asList(
+        Set<Integer> expected = new HashSet<Integer>(Arrays.asList(
                 1010, 1011, 2020, 2021, 3030, 3031, 4040, 4041, 5050, 5051, 
                 6060, 6061, 7070, 7071, 8080, 8081, 9090, 9091, 10100, 10101
         ));
@@ -406,7 +412,10 @@ public class OperatorFlatMapTest {
         Subscriber<Object> o = TestHelper.mockSubscriber();
         TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
 
-        source.flatMap(just(onNext), just(onError), just0(onCompleted), m).subscribe(ts);
+        Function<Integer, Observable<Integer>> just = just(onNext);
+        Function<Throwable, Observable<Integer>> just2 = just(onError);
+        Supplier<Observable<Integer>> just0 = just0(onCompleted);
+        source.flatMap(just, just2, just0, m).subscribe(ts);
         
         ts.awaitTerminalEvent(1, TimeUnit.SECONDS);
         ts.assertNoErrors();
@@ -490,7 +499,7 @@ public class OperatorFlatMapTest {
             ts.assertNoErrors();
             List<Integer> list = ts.values();
             if (list.size() < 1000) {
-                Set<Integer> set = new HashSet<T>(list);
+                Set<Integer> set = new HashSet<Integer>(list);
                 for (int j = 0; j < 1000; j++) {
                     if (!set.contains(j)) {
                         System.out.println(j + " missing");

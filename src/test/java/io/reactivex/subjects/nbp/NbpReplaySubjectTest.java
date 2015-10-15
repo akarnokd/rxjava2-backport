@@ -67,7 +67,7 @@ public class NbpReplaySubjectTest {
         NbpSubscriber<Object> observerB = TestHelper.mockNbpSubscriber();
         NbpSubscriber<Object> observerC = TestHelper.mockNbpSubscriber();
         NbpSubscriber<Object> observerD = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>(observerA);
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<Object>(observerA);
 
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -218,7 +218,7 @@ public class NbpReplaySubjectTest {
         NbpReplaySubject<String> subject = NbpReplaySubject.create();
 
         NbpSubscriber<String> observer = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(observer);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -249,7 +249,7 @@ public class NbpReplaySubjectTest {
     @Test(timeout = 2000)
     public void testNewSubscriberDoesntBlockExisting() throws InterruptedException {
 
-        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<T>();
+        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<String>();
         NbpSubscriber<String> observer1 = new NbpObserver<String>() {
 
             @Override
@@ -270,7 +270,7 @@ public class NbpReplaySubjectTest {
 
         };
 
-        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<T>();
+        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<String>();
         final CountDownLatch oneReceived = new CountDownLatch(1);
         final CountDownLatch makeSlow = new CountDownLatch(1);
         final CountDownLatch completed = new CountDownLatch(1);

@@ -25,6 +25,7 @@ import org.reactivestreams.Subscriber;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.TestHelper;
+import io.reactivex.functions.Consumer;
 import io.reactivex.subscribers.TestSubscriber;
 
 public class OnSubscribeRangeTest {
@@ -49,7 +50,12 @@ public class OnSubscribeRangeTest {
         
         final AtomicInteger count = new AtomicInteger();
         
-        Observable.range(1, 1000).doOnNext(t1 -> count.incrementAndGet())
+        Observable.range(1, 1000).doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer t1) {
+                count.incrementAndGet();
+            }
+        })
         .take(3).subscribe(observer);
 
         verify(observer, times(1)).onNext(1);
@@ -111,7 +117,7 @@ public class OnSubscribeRangeTest {
 
     @Test
     public void testNoBackpressure() {
-        ArrayList<Integer> list = new ArrayList<T>(Observable.bufferSize() * 2);
+        ArrayList<Integer> list = new ArrayList<Integer>(Observable.bufferSize() * 2);
         for (int i = 1; i <= Observable.bufferSize() * 2 + 1; i++) {
             list.add(i);
         }
@@ -135,7 +141,7 @@ public class OnSubscribeRangeTest {
         ts.request(1);
         source.subscribe(ts);
         
-        List<Integer> list = new ArrayList<T>(100);
+        List<Integer> list = new ArrayList<Integer>(100);
         for (int i = 0; i < 100; i++) {
             list.add(i + start);
             ts.request(1);
@@ -150,7 +156,7 @@ public class OnSubscribeRangeTest {
         ts.request(100);
         source.subscribe(ts);
         
-        List<Integer> list = new ArrayList<T>(100);
+        List<Integer> list = new ArrayList<Integer>(100);
         for (int i = 0; i < 100; i++) {
             list.add(i + start);
         }
@@ -177,7 +183,7 @@ public class OnSubscribeRangeTest {
         ts.request(150);
         source.subscribe(ts);
         
-        List<Integer> list = new ArrayList<T>(100);
+        List<Integer> list = new ArrayList<Integer>(100);
         for (int i = 0; i < 100; i++) {
             list.add(i + 50);
         }

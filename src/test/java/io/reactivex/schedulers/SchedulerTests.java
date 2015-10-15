@@ -69,7 +69,7 @@ final class SchedulerTests {
         Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
         try {
             CapturingUncaughtExceptionHandler handler = new CapturingUncaughtExceptionHandler();
-            CapturingObserver<Object> observer = new CapturingObserver<T>();
+            CapturingObserver<Object> observer = new CapturingObserver<Object>();
             Thread.setDefaultUncaughtExceptionHandler(handler);
             IllegalStateException error = new IllegalStateException("Should be delivered to handler");
             Observable.error(error)

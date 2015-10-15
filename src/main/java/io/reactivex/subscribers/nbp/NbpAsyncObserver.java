@@ -13,12 +13,12 @@
 
 package io.reactivex.subscribers.nbp;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import io.reactivex.NbpObservable.NbpSubscriber;
 import io.reactivex.disposables.*;
 import io.reactivex.internal.disposables.ListCompositeResource;
+import io.reactivex.internal.functions.Objects;
 import io.reactivex.internal.subscriptions.SubscriptionHelper;
 
 /**
@@ -78,7 +78,7 @@ public abstract class NbpAsyncObserver<T> implements NbpSubscriber<T>, Disposabl
      * @see #supportsResources()
      */
     public final void add(Disposable resource) {
-        Objects.requireNonNull(resource);
+        Objects.requireNonNull(resource, "resource is null");
         if (resources != null) {
             add(resource);
         } else {

@@ -25,6 +25,7 @@ import org.reactivestreams.*;
 
 import io.reactivex.Observable;
 import io.reactivex.exceptions.TestException;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.subscriptions.EmptySubscription;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -104,17 +105,23 @@ public class CachedObservableTest {
         final CountDownLatch latch = new CountDownLatch(2);
 
         // subscribe once
-        o.subscribe(v -> {
-                assertEquals("one", v);
-                System.out.println("v: " + v);
-                latch.countDown();
+        o.subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String v) {
+                    assertEquals("one", v);
+                    System.out.println("v: " + v);
+                    latch.countDown();
+            }
         });
 
         // subscribe again
-        o.subscribe(v -> {
-                assertEquals("one", v);
-                System.out.println("v: " + v);
-                latch.countDown();
+        o.subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String v) {
+                    assertEquals("one", v);
+                    System.out.println("v: " + v);
+                    latch.countDown();
+            }
         });
 
         if (!latch.await(1000, TimeUnit.MILLISECONDS)) {
@@ -151,7 +158,7 @@ public class CachedObservableTest {
     public void testAsync() {
         Observable<Integer> source = Observable.range(1, 10000);
         for (int i = 0; i < 100; i++) {
-            TestSubscriber<Integer> ts1 = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts1 = new TestSubscriber<Integer>();
             
             CachedObservable<Integer> cached = CachedObservable.from(source);
             
@@ -162,7 +169,7 @@ public class CachedObservableTest {
             ts1.assertComplete();
             assertEquals(10000, ts1.values().size());
             
-            TestSubscriber<Integer> ts2 = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts2 = new TestSubscriber<Integer>();
             cached.observeOn(Schedulers.computation()).subscribe(ts2);
             
             ts2.awaitTerminalEvent(2, TimeUnit.SECONDS);
@@ -180,14 +187,14 @@ public class CachedObservableTest {
         
         Observable<Long> output = cached.observeOn(Schedulers.computation());
         
-        List<TestSubscriber<Long>> list = new ArrayList<T>(100);
+        List<TestSubscriber<Long>> list = new ArrayList<TestSubscriber<Long>>(100);
         for (int i = 0; i < 100; i++) {
-            TestSubscriber<Long> ts = new TestSubscriber<T>();
+            TestSubscriber<Long> ts = new TestSubscriber<Long>();
             list.add(ts);
             output.skip(i * 10).take(10).subscribe(ts);
         }
 
-        List<Long> expected = new ArrayList<T>();
+        List<Long> expected = new ArrayList<Long>();
         for (int i = 0; i < 10; i++) {
             expected.add((long)(i - 10));
         }
@@ -245,7 +252,7 @@ public class CachedObservableTest {
         ts.assertNotComplete();
         ts.assertError(TestException.class);
         
-        TestSubscriber<Integer> ts2 = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts2 = new TestSubscriber<Integer>();
         source.subscribe(ts2);
         
         ts2.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -258,7 +265,12 @@ public class CachedObservableTest {
         final AtomicInteger count = new AtomicInteger();
         
         Observable<Integer> source = Observable.range(1, 100)
-        .doOnNext(t -> count.getAndIncrement())
+        .doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer t) {
+                count.getAndIncrement();
+            }
+        })
         .cache();
         
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>() {

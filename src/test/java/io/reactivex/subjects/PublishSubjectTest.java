@@ -205,7 +205,7 @@ public class PublishSubjectTest {
         final AtomicInteger countChildren = new AtomicInteger();
         final AtomicInteger countTotal = new AtomicInteger();
 
-        final ArrayList<String> list = new ArrayList<T>();
+        final ArrayList<String> list = new ArrayList<String>();
 
         s.flatMap(new Function<Integer, Observable<String>>() {
 
@@ -274,7 +274,7 @@ public class PublishSubjectTest {
         ps.onNext(2);
 
         Subscriber<Integer> o2 = TestHelper.mockSubscriber();
-        TestSubscriber<Integer> ts2 = new TestSubscriber<T>(o2);
+        TestSubscriber<Integer> ts2 = new TestSubscriber<Integer>(o2);
         ps.subscribe(ts2);
 
         // emit

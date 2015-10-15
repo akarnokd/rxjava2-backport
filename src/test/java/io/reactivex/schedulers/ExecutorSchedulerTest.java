@@ -24,6 +24,7 @@ import org.junit.*;
 import io.reactivex.Scheduler;
 import io.reactivex.Scheduler.Worker;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.schedulers.RxThreadFactory;
 
 public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
@@ -137,7 +138,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
     
     /** A simple executor which queues tasks and executes them one-by-one if executeOne() is called. */
     static final class TestExecutor implements Executor {
-        final ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<T>();
+        final ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<Runnable>();
         @Override
         public void execute(Runnable command) {
             queue.offer(command);

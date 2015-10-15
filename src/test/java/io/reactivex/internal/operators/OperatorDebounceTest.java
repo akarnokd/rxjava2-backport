@@ -276,10 +276,11 @@ public class OperatorDebounceTest {
         verify(o, never()).onError(any(Throwable.class));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void debounceWithTimeBackpressure() throws InterruptedException {
         TestScheduler scheduler = new TestScheduler();
-        TestSubscriber<Integer> subscriber = new TestSubscriber<T>();
+        TestSubscriber<Integer> subscriber = new TestSubscriber<Integer>();
         Observable.merge(
                 Observable.just(1),
                 Observable.just(2).delay(10, TimeUnit.MILLISECONDS, scheduler)

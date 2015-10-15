@@ -114,7 +114,7 @@ public class OnSubscribeFromIterableTest {
 
     @Test
     public void testBackpressureViaRequest() {
-        ArrayList<Integer> list = new ArrayList<T>(Observable.bufferSize());
+        ArrayList<Integer> list = new ArrayList<Integer>(Observable.bufferSize());
         for (int i = 1; i <= Observable.bufferSize() + 1; i++) {
             list.add(i);
         }

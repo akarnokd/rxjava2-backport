@@ -13,11 +13,9 @@
 
 package io.reactivex.subscribers.nbp;
 
-import java.util.Objects;
-
 import io.reactivex.NbpObserver;
 import io.reactivex.functions.Consumer;
-import io.reactivex.internal.functions.Functions;
+import io.reactivex.internal.functions.*;
 import io.reactivex.plugins.RxJavaPlugins;
 
 /**
@@ -86,10 +84,10 @@ public final class NbpObservers {
             final Consumer<? super Throwable> onError, 
             final Runnable onComplete, 
             final Runnable onStart) {
-        Objects.requireNonNull(onNext);
-        Objects.requireNonNull(onError);
-        Objects.requireNonNull(onComplete);
-        Objects.requireNonNull(onStart);
+        Objects.requireNonNull(onNext, "onNext is null");
+        Objects.requireNonNull(onError, "onError is null");
+        Objects.requireNonNull(onComplete, "onComplete is null");
+        Objects.requireNonNull(onStart, "onStart ins null");
         return new NbpObserver<T>() {
             boolean done;
             @Override
@@ -103,8 +101,8 @@ public final class NbpObservers {
                     try {
                         onError.accept(e);
                     } catch (Throwable ex) {
-                        ex.addSuppressed(e);
                         RxJavaPlugins.onError(ex);
+                        RxJavaPlugins.onError(e);
                     }
                 }
             }
@@ -121,8 +119,8 @@ public final class NbpObservers {
                     try {
                         onError.accept(e);
                     } catch (Throwable ex) {
-                        ex.addSuppressed(e);
                         RxJavaPlugins.onError(ex);
+                        RxJavaPlugins.onError(e);
                     }
                 }
             }
@@ -137,8 +135,8 @@ public final class NbpObservers {
                 try {
                     onError.accept(t);
                 } catch (Throwable ex) {
-                    ex.addSuppressed(t);
                     RxJavaPlugins.onError(ex);
+                    RxJavaPlugins.onError(t);
                 }
             }
             
@@ -176,10 +174,10 @@ public final class NbpObservers {
             final Consumer<? super Throwable> onError, 
             final Runnable onComplete, 
             final Runnable onStart) {
-        Objects.requireNonNull(onNext);
-        Objects.requireNonNull(onError);
-        Objects.requireNonNull(onComplete);
-        Objects.requireNonNull(onStart);
+        Objects.requireNonNull(onNext, "onNext is null");
+        Objects.requireNonNull(onError, "onError is null");
+        Objects.requireNonNull(onComplete, "onComplete is null");
+        Objects.requireNonNull(onStart, "onStart is null");
         return new NbpAsyncObserver<T>() {
             boolean done;
             @Override
@@ -192,8 +190,8 @@ public final class NbpObservers {
                     try {
                         onError.accept(e);
                     } catch (Throwable ex) {
-                        ex.addSuppressed(e);
                         RxJavaPlugins.onError(ex);
+                        RxJavaPlugins.onError(e);
                     }
                 }
             }
@@ -210,8 +208,8 @@ public final class NbpObservers {
                     try {
                         onError.accept(e);
                     } catch (Throwable ex) {
-                        ex.addSuppressed(e);
                         RxJavaPlugins.onError(ex);
+                        RxJavaPlugins.onError(e);
                     }
                 }
             }
@@ -226,8 +224,8 @@ public final class NbpObservers {
                 try {
                     onError.accept(t);
                 } catch (Throwable ex) {
-                    ex.addSuppressed(t);
                     RxJavaPlugins.onError(ex);
+                    RxJavaPlugins.onError(t);
                 }
             }
             

@@ -300,7 +300,8 @@ public class ObservableNullTests {
     
     @Test(expected = NullPointerException.class)
     public void fromFutureTimedReturnsNull() {
-        CompletableFuture<Object> f = CompletableFuture.completedFuture(null);
+        FutureTask<Object> f = new FutureTask<Object>(Functions.emptyRunnable(), null);
+        f.run();
         Observable.fromFuture(f, 1, TimeUnit.SECONDS).toBlocking().lastOption();
     }
     

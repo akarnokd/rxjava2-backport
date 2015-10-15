@@ -20,16 +20,16 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.reactivestreams.*;
 
+import io.reactivex.*;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Try;
 import io.reactivex.exceptions.TestException;
+import io.reactivex.functions.*;
 import io.reactivex.internal.subscriptions.*;
 import io.reactivex.observables.GroupedObservable;
 import io.reactivex.schedulers.Schedulers;
@@ -37,7 +37,12 @@ import io.reactivex.subscribers.TestSubscriber;
 
 public class OperatorGroupByTest {
 
-    final Function<String, Integer> length = String::length;
+    final Function<String, Integer> length = new Function<String, Integer>() {
+        @Override
+        public Integer apply(String s) {
+            return s.length();
+        }
+    };
 
     @Test
     public void testGroupBy() {
@@ -98,7 +103,7 @@ public class OperatorGroupByTest {
 
         final AtomicInteger groupCounter = new AtomicInteger();
         final AtomicInteger eventCounter = new AtomicInteger();
-        final AtomicReference<Throwable> error = new AtomicReference<T>();
+        final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
 
         grouped.flatMap(new Function<GroupedObservable<Integer, String>, Observable<String>>() {
 
@@ -141,7 +146,7 @@ public class OperatorGroupByTest {
 
     private static <K, V> Map<K, Collection<V>> toMap(Observable<GroupedObservable<K, V>> observable) {
 
-        final ConcurrentHashMap<K, Collection<V>> result = new ConcurrentHashMap<T>();
+        final ConcurrentHashMap<K, Collection<V>> result = new ConcurrentHashMap<K, Collection<V>>();
 
         observable.toBlocking().forEach(new Consumer<GroupedObservable<K, V>>() {
 
@@ -551,7 +556,12 @@ public class OperatorGroupByTest {
                         Observable<Event> eventStream = eventGroupedObservable;
                         if (eventGroupedObservable.getKey() >= 2) {
                             // filter these
-                            eventStream = eventGroupedObservable.filter(t1 -> false);
+                            eventStream = eventGroupedObservable.filter(new Predicate<Event>() {
+                                @Override
+                                public boolean test(Event t1) {
+                                    return false;
+                                }
+                            });
                         }
 
                         return eventStream
@@ -583,7 +593,7 @@ public class OperatorGroupByTest {
     @Test
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsAndThenComplete() throws InterruptedException {
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<T>();
+        final ArrayList<String> results = new ArrayList<String>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -662,7 +672,7 @@ public class OperatorGroupByTest {
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsWhichThenSubscribesOnAndDelaysAndThenCompletes() throws InterruptedException {
         System.err.println("----------------------------------------------------------------------------------------------");
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<T>();
+        final ArrayList<String> results = new ArrayList<String>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -754,7 +764,7 @@ public class OperatorGroupByTest {
     @Test
     public void testFirstGroupsCompleteAndParentSlowToThenEmitFinalGroupsWhichThenObservesOnAndDelaysAndThenCompletes() throws InterruptedException {
         final CountDownLatch first = new CountDownLatch(2); // there are two groups to first complete
-        final ArrayList<String> results = new ArrayList<T>();
+        final ArrayList<String> results = new ArrayList<String>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -831,7 +841,7 @@ public class OperatorGroupByTest {
 
     @Test
     public void testGroupsWithNestedSubscribeOn() throws InterruptedException {
-        final ArrayList<String> results = new ArrayList<T>();
+        final ArrayList<String> results = new ArrayList<String>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -888,7 +898,7 @@ public class OperatorGroupByTest {
 
     @Test
     public void testGroupsWithNestedObserveOn() throws InterruptedException {
-        final ArrayList<String> results = new ArrayList<T>();
+        final ArrayList<String> results = new ArrayList<String>();
         Observable.create(new Publisher<Integer>() {
 
             @Override
@@ -1079,7 +1089,12 @@ public class OperatorGroupByTest {
             return t1 * 2;
         }
     };
-    Function<Integer, Integer> identity = v -> v;
+    Function<Integer, Integer> identity = new Function<Integer, Integer>() {
+        @Override
+        public Integer apply(Integer v) {
+            return v;
+        }
+    };
 
     @Test
     public void normalBehavior() {
@@ -1119,19 +1134,22 @@ public class OperatorGroupByTest {
         };
 
         Observable<String> m = source.groupBy(keysel, valuesel)
-        .flatMap(g -> {
-            System.out.println("-----------> NEXT: " + g.getKey());
-            return g.take(2).map(new Function<String, String>() {
+        .flatMap(new Function<GroupedObservable<String, String>, Publisher<String>>() {
+            @Override
+            public Publisher<String> apply(final GroupedObservable<String, String> g) {
+                System.out.println("-----------> NEXT: " + g.getKey());
+                return g.take(2).map(new Function<String, String>() {
 
-                int count = 0;
+                    int count = 0;
 
-                @Override
-                public String apply(String v) {
-                    System.out.println(v);
-                    return g.getKey() + "-" + count++;
-                }
+                    @Override
+                    public String apply(String v) {
+                        System.out.println(v);
+                        return g.getKey() + "-" + count++;
+                    }
 
-            });
+                });
+            }
         });
 
         TestSubscriber<String> ts = new TestSubscriber<String>();
@@ -1190,7 +1208,7 @@ public class OperatorGroupByTest {
     public void testExceptionIfSubscribeToChildMoreThanOnce() {
         Observable<Integer> source = Observable.just(0);
 
-        final AtomicReference<GroupedObservable<Integer, Integer>> inner = new AtomicReference<T>();
+        final AtomicReference<GroupedObservable<Integer, Integer>> inner = new AtomicReference<GroupedObservable<Integer, Integer>>();
 
         Observable<GroupedObservable<Integer, Integer>> m = source.groupBy(identity, dbl);
 
@@ -1289,7 +1307,12 @@ public class OperatorGroupByTest {
         TestSubscriber<String> ts = new TestSubscriber<String>();
 
         Observable.range(1, 4000)
-            .doOnNext(v -> System.out.println("testgroupByBackpressure2 >> " + v))
+            .doOnNext(new Consumer<Integer>() {
+                @Override
+                public void accept(Integer v) {
+                    System.out.println("testgroupByBackpressure2 >> " + v);
+                }
+            })
             .groupBy(IS_EVEN2).flatMap(new Function<GroupedObservable<Boolean, Integer>, Observable<String>>() {
 
             @Override
@@ -1329,7 +1352,7 @@ public class OperatorGroupByTest {
     @Test
     public void testGroupByWithNullKey() {
         final String[] key = new String[]{"uninitialized"};
-        final List<String> values = new ArrayList<T>();
+        final List<String> values = new ArrayList<String>();
         Observable.just("a", "b", "c").groupBy(new Function<String, String>() {
 
             @Override
@@ -1383,11 +1406,11 @@ public class OperatorGroupByTest {
     @Test
     public void testGroupByShouldPropagateError() {
         final Throwable e = new RuntimeException("Oops");
-        final TestSubscriber<Integer> inner1 = new TestSubscriber<T>();
-        final TestSubscriber<Integer> inner2 = new TestSubscriber<T>();
+        final TestSubscriber<Integer> inner1 = new TestSubscriber<Integer>();
+        final TestSubscriber<Integer> inner2 = new TestSubscriber<Integer>();
 
         final TestSubscriber<GroupedObservable<Integer, Integer>> outer
-                = new TestSubscriber<T>(new Observer<GroupedObservable<Integer, Integer>>() {
+                = new TestSubscriber<GroupedObservable<Integer, Integer>>(new Observer<GroupedObservable<Integer, Integer>>() {
 
             @Override
             public void onComplete() {
@@ -1487,7 +1510,12 @@ public class OperatorGroupByTest {
         for (int j = 0; j < 1000; j++) {
             Observable.merge(
                     Observable.range(0, 500)
-                    .groupBy(i -> i % (Observable.bufferSize() + 2))
+                    .groupBy(new Function<Integer, Object>() {
+                        @Override
+                        public Object apply(Integer i) {
+                            return i % (Observable.bufferSize() + 2);
+                        }
+                    })
                     .observeOn(Schedulers.computation())
             ).toBlocking().last();
         }
@@ -1498,11 +1526,21 @@ public class OperatorGroupByTest {
      */
     @Test
     public void testBackpressureInnerDoesntOverflowOuter() {
-        TestSubscriber<GroupedObservable<Integer, Integer>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<GroupedObservable<Integer, Integer>> ts = new TestSubscriber<GroupedObservable<Integer, Integer>>((Long)null);
         
         Observable.fromArray(1, 2)
-                .groupBy(v -> v)
-                .doOnNext(g -> g.subscribe()) // this will request Long.MAX_VALUE
+                .groupBy(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                })
+                .doOnNext(new Consumer<GroupedObservable<Integer, Integer>>() {
+                    @Override
+                    public void accept(GroupedObservable<Integer, Integer> g) {
+                        g.subscribe();
+                    }
+                }) // this will request Long.MAX_VALUE
                 .subscribe(ts)
                 ;
         ts.request(1);
@@ -1514,12 +1552,22 @@ public class OperatorGroupByTest {
     
     @Test
     public void testOneGroupInnerRequestsTwiceBuffer() {
-        TestSubscriber<Object> ts1 = new TestSubscriber<T>((Long)null);
-        TestSubscriber<Object> ts2 = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Object> ts1 = new TestSubscriber<Object>((Long)null);
+        final TestSubscriber<Object> ts2 = new TestSubscriber<Object>((Long)null);
         
         Observable.range(1, Observable.bufferSize() * 2)
-        .groupBy(v -> 1)
-        .doOnNext(g -> g.subscribe(ts2))
+        .groupBy(new Function<Integer, Object>() {
+            @Override
+            public Object apply(Integer v) {
+                return 1;
+            }
+        })
+        .doOnNext(new Consumer<GroupedObservable<Object, Integer>>() {
+            @Override
+            public void accept(GroupedObservable<Object, Integer> g) {
+                g.subscribe(ts2);
+            }
+        })
         .subscribe(ts1);
         
         ts1.assertNoValues();

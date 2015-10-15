@@ -21,7 +21,7 @@ import io.reactivex.functions.*;
 
 import org.junit.*;
 import org.mockito.InOrder;
-import org.reactivestreams.Subscriber;
+import org.reactivestreams.*;
 
 import io.reactivex.Observable;
 import io.reactivex.TestHelper;
@@ -68,10 +68,18 @@ public class OnSubscribeUsingTest {
         final Resource resource = mock(Resource.class);
         when(resource.getTextFromWeb()).thenReturn("Hello world!");
 
-        Supplier<Resource> resourceFactory = () -> resource;
+        Supplier<Resource> resourceFactory = new Supplier<Resource>() {
+            @Override
+            public Resource get() {
+                return resource;
+            }
+        };
 
-        Function<Resource, Observable<String>> observableFactory = res -> {
-            return Observable.fromArray(res.getTextFromWeb().split(" "));
+        Function<Resource, Observable<String>> observableFactory = new Function<Resource, Observable<String>>() {
+            @Override
+            public Observable<String> apply(Resource res) {
+                return Observable.fromArray(res.getTextFromWeb().split(" "));
+            }
         };
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
@@ -127,8 +135,11 @@ public class OnSubscribeUsingTest {
             }
         };
 
-        Function<Resource, Observable<String>> observableFactory = res -> {
-                return Observable.fromArray(res.getTextFromWeb().split(" "));
+        Function<Resource, Observable<String>> observableFactory = new Function<Resource, Observable<String>>() {
+            @Override
+            public Observable<String> apply(Resource res) {
+                    return Observable.fromArray(res.getTextFromWeb().split(" "));
+            }
         };
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
@@ -161,11 +172,19 @@ public class OnSubscribeUsingTest {
     }
 
     private void performTestUsingWithResourceFactoryError(boolean disposeEagerly) {
-        Supplier<Disposable> resourceFactory = () -> {
-            throw new TestException();
+        Supplier<Disposable> resourceFactory = new Supplier<Disposable>() {
+            @Override
+            public Disposable get() {
+                throw new TestException();
+            }
         };
 
-        Function<Disposable, Observable<Integer>> observableFactory = s -> Observable.empty();
+        Function<Disposable, Observable<Integer>> observableFactory = new Function<Disposable, Observable<Integer>>() {
+            @Override
+            public Observable<Integer> apply(Disposable s) {
+                return Observable.empty();
+            }
+        };
 
         Observable.using(resourceFactory, observableFactory, disposeSubscription)
         .toBlocking()
@@ -184,10 +203,18 @@ public class OnSubscribeUsingTest {
 
     private void performTestUsingWithObservableFactoryError(boolean disposeEagerly) {
         final Runnable unsubscribe = mock(Runnable.class);
-        Supplier<Disposable> resourceFactory = () -> Disposables.from(unsubscribe);
+        Supplier<Disposable> resourceFactory = new Supplier<Disposable>() {
+            @Override
+            public Disposable get() {
+                return Disposables.from(unsubscribe);
+            }
+        };
 
-        Function<Disposable, Observable<Integer>> observableFactory = subscription -> {
-            throw new TestException();
+        Function<Disposable, Observable<Integer>> observableFactory = new Function<Disposable, Observable<Integer>>() {
+            @Override
+            public Observable<Integer> apply(Disposable subscription) {
+                throw new TestException();
+            }
         };
 
         try {
@@ -222,10 +249,16 @@ public class OnSubscribeUsingTest {
             }
         };
 
-        Function<Disposable, Observable<Integer>> observableFactory = subscription -> {
-            return Observable.create(t1 -> {
-                throw new TestException();
-            });
+        Function<Disposable, Observable<Integer>> observableFactory = new Function<Disposable, Observable<Integer>>() {
+            @Override
+            public Observable<Integer> apply(Disposable subscription) {
+                return Observable.create(new Publisher<Integer>() {
+                    @Override
+                    public void subscribe(Subscriber<? super Integer> t1) {
+                        throw new TestException();
+                    }
+                });
+            }
         };
 
         try {
@@ -243,12 +276,17 @@ public class OnSubscribeUsingTest {
 
     @Test
     public void testUsingDisposesEagerlyBeforeCompletion() {
-        final List<String> events = new ArrayList<T>();
+        final List<String> events = new ArrayList<String>();
         Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Runnable completion = createOnCompletedAction(events);
         final Runnable unsub =createUnsubAction(events);
 
-        Function<Resource, Observable<String>> observableFactory = resource -> Observable.fromArray(resource.getTextFromWeb().split(" "));
+        Function<Resource, Observable<String>> observableFactory = new Function<Resource, Observable<String>>() {
+            @Override
+            public Observable<String> apply(Resource resource) {
+                return Observable.fromArray(resource.getTextFromWeb().split(" "));
+            }
+        };
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
         
@@ -265,7 +303,7 @@ public class OnSubscribeUsingTest {
 
     @Test
     public void testUsingDoesNotDisposesEagerlyBeforeCompletion() {
-        final List<String> events = new ArrayList<T>();
+        final List<String> events = new ArrayList<String>();
         Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Runnable completion = createOnCompletedAction(events);
         final Runnable unsub = createUnsubAction(events);
@@ -294,7 +332,7 @@ public class OnSubscribeUsingTest {
     
     @Test
     public void testUsingDisposesEagerlyBeforeError() {
-        final List<String> events = new ArrayList<T>();
+        final List<String> events = new ArrayList<String>();
         Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Consumer<Throwable> onError = createOnErrorAction(events);
         final Runnable unsub = createUnsubAction(events);
@@ -322,14 +360,17 @@ public class OnSubscribeUsingTest {
     
     @Test
     public void testUsingDoesNotDisposesEagerlyBeforeError() {
-        final List<String> events = new ArrayList<T>();
+        final List<String> events = new ArrayList<String>();
         final Supplier<Resource> resourceFactory = createResourceFactory(events);
         final Consumer<Throwable> onError = createOnErrorAction(events);
         final Runnable unsub = createUnsubAction(events);
         
-        Function<Resource, Observable<String>> observableFactory = resource -> {
-            return Observable.fromArray(resource.getTextFromWeb().split(" "))
-                    .concatWith(Observable.<String>error(new RuntimeException()));
+        Function<Resource, Observable<String>> observableFactory = new Function<Resource, Observable<String>>() {
+            @Override
+            public Observable<String> apply(Resource resource) {
+                return Observable.fromArray(resource.getTextFromWeb().split(" "))
+                        .concatWith(Observable.<String>error(new RuntimeException()));
+            }
         };
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
@@ -345,30 +386,50 @@ public class OnSubscribeUsingTest {
     }
 
     private static Runnable createUnsubAction(final List<String> events) {
-        return () -> events.add("unsub");
+        return new Runnable() {
+            @Override
+            public void run() {
+                events.add("unsub");
+            }
+        };
     }
 
     private static Consumer<Throwable> createOnErrorAction(final List<String> events) {
-        return t -> events.add("error");
+        return new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable t) {
+                events.add("error");
+            }
+        };
     }
 
     private static Supplier<Resource> createResourceFactory(final List<String> events) {
-        return () -> new Resource() {
-
+        return new Supplier<Resource>() {
             @Override
-            public String getTextFromWeb() {
-                return "hello world";
-            }
+            public Resource get() {
+                return new Resource() {
 
-            @Override
-            public void dispose() {
-                events.add("disposed");
+                    @Override
+                    public String getTextFromWeb() {
+                        return "hello world";
+                    }
+
+                    @Override
+                    public void dispose() {
+                        events.add("disposed");
+                    }
+                };
             }
         };
     }
     
     private static Runnable createOnCompletedAction(final List<String> events) {
-        return () -> events.add("completed");
+        return new Runnable() {
+            @Override
+            public void run() {
+                events.add("completed");
+            }
+        };
     }
     
 }

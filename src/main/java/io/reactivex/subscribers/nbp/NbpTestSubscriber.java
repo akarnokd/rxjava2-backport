@@ -20,6 +20,7 @@ import io.reactivex.NbpObservable.NbpSubscriber;
 import io.reactivex.Notification;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.CompositeException;
+import io.reactivex.internal.functions.Objects;
 import io.reactivex.internal.subscribers.nbp.NbpEmptySubscriber;
 
 /**
@@ -460,7 +461,6 @@ public class NbpTestSubscriber<T> implements NbpSubscriber<T>, Disposable {
      * @param values the values expected
      * @see #assertValueSet(Collection)
      */
-    @SafeVarargs
     public final void assertValues(T... values) {
         String prefix = "";
         if (done.getCount() != 0) {

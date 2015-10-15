@@ -31,7 +31,7 @@ public class SchedulerLifecycleTest {
         System.out.println("testShutdown >> Giving time threads to spin-up");
         Thread.sleep(500);
         
-        Set<Thread> rxThreads = new HashSet<T>();
+        Set<Thread> rxThreads = new HashSet<Thread>();
         for (Thread t : Thread.getAllStackTraces().keySet()) {
             if (t.getName().startsWith("Rx")) {
                 rxThreads.add(t);
@@ -108,7 +108,7 @@ public class SchedulerLifecycleTest {
         System.out.println("testStartIdempotence >> giving some time");
         Thread.sleep(500);
         
-        Set<Thread> rxThreads = new HashSet<T>();
+        Set<Thread> rxThreads = new HashSet<Thread>();
         for (Thread t : Thread.getAllStackTraces().keySet()) {
             if (t.getName().startsWith("Rx")) {
                 rxThreads.add(t);
@@ -120,7 +120,7 @@ public class SchedulerLifecycleTest {
         System.out.println("testStartIdempotence >> giving some time again");
         Thread.sleep(500);
         
-        Set<Thread> rxThreads2 = new HashSet<T>();
+        Set<Thread> rxThreads2 = new HashSet<Thread>();
         for (Thread t : Thread.getAllStackTraces().keySet()) {
             if (t.getName().startsWith("Rx")) {
                 rxThreads2.add(t);

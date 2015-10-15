@@ -249,7 +249,7 @@ public class ReplaySubjectTest {
     @Test(timeout = 2000)
     public void testNewSubscriberDoesntBlockExisting() throws InterruptedException {
 
-        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<T>();
+        final AtomicReference<String> lastValueForSubscriber1 = new AtomicReference<String>();
         Subscriber<String> observer1 = new Observer<String>() {
 
             @Override
@@ -270,7 +270,7 @@ public class ReplaySubjectTest {
 
         };
 
-        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<T>();
+        final AtomicReference<String> lastValueForSubscriber2 = new AtomicReference<String>();
         final CountDownLatch oneReceived = new CountDownLatch(1);
         final CountDownLatch makeSlow = new CountDownLatch(1);
         final CountDownLatch completed = new CountDownLatch(1);

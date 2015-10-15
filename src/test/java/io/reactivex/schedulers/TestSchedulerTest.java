@@ -183,7 +183,7 @@ public class TestSchedulerTest {
             poller = Observable.create(new Publisher<Object>() {
                 @Override
                 public void subscribe(final Subscriber<? super Object> aSubscriber) {
-                    BooleanSubscription bs = new BooleanSubscription();
+                    final BooleanSubscription bs = new BooleanSubscription();
                     aSubscriber.onSubscribe(bs);
                     inner.schedule(new Runnable() {
                         @Override

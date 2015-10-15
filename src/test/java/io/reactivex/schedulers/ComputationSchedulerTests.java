@@ -37,7 +37,7 @@ public class ComputationSchedulerTests extends AbstractSchedulerConcurrencyTests
 
         final int NUM = 1000000;
         final CountDownLatch latch = new CountDownLatch(1);
-        final HashMap<String, Integer> map = new HashMap<T>();
+        final HashMap<String, Integer> map = new HashMap<String, Integer>();
 
         final Scheduler.Worker inner = Schedulers.computation().createWorker();
         
@@ -91,6 +91,7 @@ public class ComputationSchedulerTests extends AbstractSchedulerConcurrencyTests
     public final void testComputationThreadPool1() {
         Observable<Integer> o1 = Observable.<Integer> just(1, 2, 3, 4, 5);
         Observable<Integer> o2 = Observable.<Integer> just(6, 7, 8, 9, 10);
+        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.<Integer> merge(o1, o2).map(new Function<Integer, String>() {
 
             @Override
@@ -117,6 +118,7 @@ public class ComputationSchedulerTests extends AbstractSchedulerConcurrencyTests
 
         Observable<Integer> o1 = Observable.<Integer> just(1, 2, 3, 4, 5);
         Observable<Integer> o2 = Observable.<Integer> just(6, 7, 8, 9, 10);
+        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.<Integer> merge(o1, o2).subscribeOn(Schedulers.computation()).map(new Function<Integer, String>() {
 
             @Override

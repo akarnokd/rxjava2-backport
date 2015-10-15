@@ -423,7 +423,7 @@ public class BehaviorSubjectTest {
                     }
                 });
                 
-                final AtomicReference<Object> o = new AtomicReference<T>();
+                final AtomicReference<Object> o = new AtomicReference<Object>();
                 
                 rs.subscribeOn(s).observeOn(Schedulers.io())
                 .subscribe(new Observer<Object>() {

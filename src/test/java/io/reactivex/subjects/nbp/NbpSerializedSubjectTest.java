@@ -24,8 +24,8 @@ public class NbpSerializedSubjectTest {
 
     @Test
     public void testBasic() {
-        NbpSerializedSubject<String, String> subject = new NbpSerializedSubject<T>(NbpPublishSubject.<String> create());
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
+        NbpSerializedSubject<String, String> subject = new NbpSerializedSubject<String, String>(NbpPublishSubject.<String> create());
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>();
         subject.subscribe(ts);
         subject.onNext("hello");
         subject.onComplete();

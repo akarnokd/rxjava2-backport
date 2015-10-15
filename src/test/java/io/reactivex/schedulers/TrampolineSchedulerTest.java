@@ -17,15 +17,16 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
-import org.reactivestreams.Subscriber;
+import org.reactivestreams.*;
 
 import io.reactivex.*;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler.Worker;
 import io.reactivex.disposables.*;
+import io.reactivex.functions.*;
+import io.reactivex.internal.functions.Functions;
 import io.reactivex.subscribers.TestSubscriber;
 
 public class TrampolineSchedulerTest extends AbstractSchedulerTests {
@@ -42,6 +43,7 @@ public class TrampolineSchedulerTest extends AbstractSchedulerTests {
 
         Observable<Integer> o1 = Observable.<Integer> just(1, 2, 3, 4, 5);
         Observable<Integer> o2 = Observable.<Integer> just(6, 7, 8, 9, 10);
+        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.<Integer> merge(o1, o2).subscribeOn(Schedulers.trampoline()).map(new Function<Integer, String>() {
 
             @Override
@@ -62,7 +64,7 @@ public class TrampolineSchedulerTest extends AbstractSchedulerTests {
 
     @Test
     public void testNestedTrampolineWithUnsubscribe() {
-        final ArrayList<String> workDone = new ArrayList<T>();
+        final ArrayList<String> workDone = new ArrayList<String>();
         final CompositeDisposable workers = new CompositeDisposable();
         Worker worker = Schedulers.trampoline().createWorker();
         try {
@@ -106,12 +108,23 @@ public class TrampolineSchedulerTest extends AbstractSchedulerTests {
     public void testTrampolineWorkerHandlesConcurrentScheduling() {
         final Worker trampolineWorker = Schedulers.trampoline().createWorker();
         final Subscriber<Object> observer = TestHelper.mockSubscriber();
-        final TestSubscriber<Disposable> ts = new TestSubscriber<T>(observer);
+        final TestSubscriber<Disposable> ts = new TestSubscriber<Disposable>(observer);
 
         // Spam the trampoline with actions.
         Observable.range(0, 50)
-                .flatMap(count -> Observable.interval(1, TimeUnit.MICROSECONDS).map(
-                        count1 -> trampolineWorker.schedule(() -> {})).take(100))
+                .flatMap(new Function<Integer, Publisher<Disposable>>() {
+                    @Override
+                    public Publisher<Disposable> apply(Integer count) {
+                        return Observable
+                                .interval(1, TimeUnit.MICROSECONDS)
+                                .map(new Function<Long, Disposable>() {
+                                    @Override
+                                    public Disposable apply(Long ount1) {
+                                        return trampolineWorker.schedule(Functions.emptyRunnable());
+                                    }
+                                }).take(100);
+                    }
+                })
                 .subscribeOn(Schedulers.computation())
                 .subscribe(ts);
         ts.awaitTerminalEvent();

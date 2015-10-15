@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.subscribers.TestSubscriber;
 
 public class OperatorDoOnUnsubscribeTest {
@@ -40,27 +41,36 @@ public class OperatorDoOnUnsubscribeTest {
                 // The stream needs to be infinite to ensure the stream does not terminate
                 // before it is unsubscribed
                 .interval(50, TimeUnit.MILLISECONDS)
-                .doOnCancel(() -> {
-                    // Test that upper stream will be notified for un-subscription
-                    // from a child subscriber
-                        upperLatch.countDown();
-                        upperCount.incrementAndGet();
+                .doOnCancel(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Test that upper stream will be notified for un-subscription
+                        // from a child subscriber
+                            upperLatch.countDown();
+                            upperCount.incrementAndGet();
+                    }
                 })
-                .doOnNext(aLong -> {
-                        // Ensure there is at least some onNext events before un-subscription happens
-                        onNextLatch.countDown();
+                .doOnNext(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) {
+                            // Ensure there is at least some onNext events before un-subscription happens
+                            onNextLatch.countDown();
+                    }
                 })
-                .doOnCancel(() -> {
-                    // Test that lower stream will be notified for a direct un-subscription
-                        lowerLatch.countDown();
-                        lowerCount.incrementAndGet();
+                .doOnCancel(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Test that lower stream will be notified for a direct un-subscription
+                            lowerLatch.countDown();
+                            lowerCount.incrementAndGet();
+                    }
                 });
 
-        List<Disposable> subscriptions = new ArrayList<T>();
-        List<TestSubscriber<Long>> subscribers = new ArrayList<T>();
+        List<Disposable> subscriptions = new ArrayList<Disposable>();
+        List<TestSubscriber<Long>> subscribers = new ArrayList<TestSubscriber<Long>>();
 
         for (int i = 0; i < subCount; ++i) {
-            TestSubscriber<Long> subscriber = new TestSubscriber<T>();
+            TestSubscriber<Long> subscriber = new TestSubscriber<Long>();
             subscriptions.add(subscriber);
             longs.subscribe(subscriber);
             subscribers.add(subscriber);
@@ -93,28 +103,37 @@ public class OperatorDoOnUnsubscribeTest {
                 // The stream needs to be infinite to ensure the stream does not terminate
                 // before it is unsubscribed
                 .interval(50, TimeUnit.MILLISECONDS)
-                .doOnCancel(() -> {
-                    // Test that upper stream will be notified for un-subscription
-                        upperLatch.countDown();
-                        upperCount.incrementAndGet();
+                .doOnCancel(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Test that upper stream will be notified for un-subscription
+                            upperLatch.countDown();
+                            upperCount.incrementAndGet();
+                    }
                 })
-                .doOnNext(aLong -> {
-                        // Ensure there is at least some onNext events before un-subscription happens
-                        onNextLatch.countDown();
+                .doOnNext(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) {
+                            // Ensure there is at least some onNext events before un-subscription happens
+                            onNextLatch.countDown();
+                    }
                 })
-                .doOnCancel(() -> {
-                    // Test that lower stream will be notified for un-subscription
-                        lowerLatch.countDown();
-                        lowerCount.incrementAndGet();
+                .doOnCancel(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Test that lower stream will be notified for un-subscription
+                            lowerLatch.countDown();
+                            lowerCount.incrementAndGet();
+                    }
                 })
                 .publish()
                 .refCount();
 
-        List<Disposable> subscriptions = new ArrayList<T>();
-        List<TestSubscriber<Long>> subscribers = new ArrayList<T>();
+        List<Disposable> subscriptions = new ArrayList<Disposable>();
+        List<TestSubscriber<Long>> subscribers = new ArrayList<TestSubscriber<Long>>();
 
         for (int i = 0; i < subCount; ++i) {
-            TestSubscriber<Long> subscriber = new TestSubscriber<T>();
+            TestSubscriber<Long> subscriber = new TestSubscriber<Long>();
             longs.subscribe(subscriber);
             subscriptions.add(subscriber);
             subscribers.add(subscriber);

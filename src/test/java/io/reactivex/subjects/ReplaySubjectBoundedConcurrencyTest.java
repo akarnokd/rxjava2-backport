@@ -197,7 +197,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
         }
 
         // assert all threads got the same results
-        List<Long> sums = new ArrayList<T>();
+        List<Long> sums = new ArrayList<Long>();
         for (List<Long> values : listOfListsOfValues) {
             long v = 0;
             for (long l : values) {
@@ -230,7 +230,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
     public void testSubscribeCompletionRaceCondition() {
         for (int i = 0; i < 50; i++) {
             final ReplaySubject<String> subject = ReplaySubject.createUnbounded();
-            final AtomicReference<String> value1 = new AtomicReference<T>();
+            final AtomicReference<String> value1 = new AtomicReference<String>();
 
             subject.subscribe(new Consumer<String>() {
 
@@ -303,7 +303,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
     private static class SubjectObserverThread extends Thread {
 
         private final ReplaySubject<String> subject;
-        private final AtomicReference<String> value = new AtomicReference<T>();
+        private final AtomicReference<String> value = new AtomicReference<String>();
 
         public SubjectObserverThread(ReplaySubject<String> subject) {
             this.subject = subject;
@@ -325,7 +325,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
         Scheduler s = Schedulers.io();
         Scheduler.Worker worker = Schedulers.io().createWorker();
         try {
-            for (int i = 0; i < 50_000; i++) {
+            for (int i = 0; i < 50000; i++) {
                 if (i % 1000 == 0) {
                     System.out.println(i);
                 }
@@ -349,7 +349,7 @@ public class ReplaySubjectBoundedConcurrencyTest {
                     }
                 });
                 
-                final AtomicReference<Object> o = new AtomicReference<T>();
+                final AtomicReference<Object> o = new AtomicReference<Object>();
                 
                 rs
 //                .doOnSubscribe(v -> System.out.println("!! " + j))

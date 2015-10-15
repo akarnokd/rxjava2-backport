@@ -59,7 +59,7 @@ public class OperatorDefaultIfEmptyTest {
     @Test
     @Ignore("Subscribers should not throw")
     public void testEmptyButClientThrows() {
-        Subscriber<Integer> o = TestHelper.mockSubscriber();
+        final Subscriber<Integer> o = TestHelper.mockSubscriber();
         
         Observable.<Integer>empty().defaultIfEmpty(1).subscribe(new Observer<Integer>() {
             @Override

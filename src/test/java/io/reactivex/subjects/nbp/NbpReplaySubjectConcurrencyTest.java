@@ -199,7 +199,7 @@ public class NbpReplaySubjectConcurrencyTest {
         }
 
         // assert all threads got the same results
-        List<Long> sums = new ArrayList<T>();
+        List<Long> sums = new ArrayList<Long>();
         for (List<Long> values : listOfListsOfValues) {
             long v = 0;
             for (long l : values) {
@@ -232,7 +232,7 @@ public class NbpReplaySubjectConcurrencyTest {
     public void testSubscribeCompletionRaceCondition() {
         for (int i = 0; i < 50; i++) {
             final NbpReplaySubject<String> subject = NbpReplaySubject.create();
-            final AtomicReference<String> value1 = new AtomicReference<T>();
+            final AtomicReference<String> value1 = new AtomicReference<String>();
 
             subject.subscribe(new Consumer<String>() {
 
@@ -305,7 +305,7 @@ public class NbpReplaySubjectConcurrencyTest {
     private static class SubjectObserverThread extends Thread {
 
         private final NbpReplaySubject<String> subject;
-        private final AtomicReference<String> value = new AtomicReference<T>();
+        private final AtomicReference<String> value = new AtomicReference<String>();
 
         public SubjectObserverThread(NbpReplaySubject<String> subject) {
             this.subject = subject;
@@ -348,7 +348,7 @@ public class NbpReplaySubjectConcurrencyTest {
                     }
                 });
                 
-                final AtomicReference<Object> o = new AtomicReference<T>();
+                final AtomicReference<Object> o = new AtomicReference<Object>();
                 
                 rs.subscribeOn(s).observeOn(Schedulers.io())
                 .subscribe(new NbpObserver<Object>() {

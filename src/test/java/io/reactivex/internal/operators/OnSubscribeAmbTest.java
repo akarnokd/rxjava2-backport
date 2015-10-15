@@ -48,7 +48,7 @@ public class OnSubscribeAmbTest {
 
             @Override
             public void subscribe(final Subscriber<? super String> subscriber) {
-                CompositeDisposable parentSubscription = new CompositeDisposable();
+                final CompositeDisposable parentSubscription = new CompositeDisposable();
                 
                 subscriber.onSubscribe(new Subscription() {
                     @Override
@@ -64,17 +64,24 @@ public class OnSubscribeAmbTest {
                 
                 long delay = interval;
                 for (final String value : values) {
-                    parentSubscription.add(innerScheduler.schedule(() ->
-                            subscriber.onNext(value)
+                    parentSubscription.add(innerScheduler.schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            subscriber.onNext(value);
+                        }
+                    }
                     , delay, TimeUnit.MILLISECONDS));
                     delay += interval;
                 }
-                parentSubscription.add(innerScheduler.schedule(() -> {
-                        if (e == null) {
-                            subscriber.onComplete();
-                        } else {
-                            subscriber.onError(e);
-                        }
+                parentSubscription.add(innerScheduler.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                            if (e == null) {
+                                subscriber.onComplete();
+                            } else {
+                                subscriber.onError(e);
+                            }
+                    }
                 }, delay, TimeUnit.MILLISECONDS));
             }
         });
@@ -89,6 +96,7 @@ public class OnSubscribeAmbTest {
         Observable<String> observable3 = createObservable(new String[] {
                 "3", "33", "333", "3333" }, 3000, null);
 
+        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.amb(observable1,
                 observable2, observable3);
 
@@ -118,6 +126,7 @@ public class OnSubscribeAmbTest {
         Observable<String> observable3 = createObservable(new String[] {},
                 3000, new IOException("fake exception"));
 
+        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.amb(observable1,
                 observable2, observable3);
 
@@ -145,6 +154,7 @@ public class OnSubscribeAmbTest {
         Observable<String> observable3 = createObservable(new String[] {
                 "3" }, 3000, null);
 
+        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.amb(observable1,
                 observable2, observable3);
 
@@ -158,6 +168,7 @@ public class OnSubscribeAmbTest {
         inOrder.verifyNoMoreInteractions();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testProducerRequestThroughAmb() {
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
@@ -224,10 +235,16 @@ public class OnSubscribeAmbTest {
     }
     
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testSubscriptionOnlyHappensOnce() throws InterruptedException {
         final AtomicLong count = new AtomicLong();
-        Consumer<Subscription> incrementer = s -> count.incrementAndGet();
+        Consumer<Subscription> incrementer = new Consumer<Subscription>() {
+            @Override
+            public void accept(Subscription s) {
+                count.incrementAndGet();
+            }
+        };
         
         //this aync stream should emit first
         Observable<Integer> o1 = Observable.just(1).doOnSubscribe(incrementer)
@@ -243,6 +260,7 @@ public class OnSubscribeAmbTest {
         assertEquals(2, count.get());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testSecondaryRequestsPropagatedToChildren() throws InterruptedException {
         //this aync stream should emit first
@@ -269,16 +287,20 @@ public class OnSubscribeAmbTest {
         // then second observable does not get subscribed to before first
         // subscription completes hence first observable emits result through
         // amb
-        int result = Observable.just(1).doOnNext(t -> {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    //
-                }
+        int result = Observable.just(1).doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer t) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        //
+                    }
+            }
         }).ambWith(Observable.just(2)).toBlocking().single();
         assertEquals(1, result);
     }
  
+    @SuppressWarnings("unchecked")
     @Test
     public void testAmbCancelsOthers() {
         PublishSubject<Integer> source1 = PublishSubject.create();

@@ -20,7 +20,6 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 import org.mockito.*;
@@ -43,8 +42,11 @@ public class OnSubscribeCombineLatestTest {
         PublishSubject<String> w1 = PublishSubject.create();
         PublishSubject<String> w2 = PublishSubject.create();
 
-        Observable<String> combined = Observable.combineLatest(w1, w2, (v1, v2) -> {
-            throw new RuntimeException("I don't work.");
+        Observable<String> combined = Observable.combineLatest(w1, w2, new BiFunction<String, String, String>() {
+            @Override
+            public String apply(String v1, String v2) {
+                throw new RuntimeException("I don't work.");
+            }
         });
         combined.subscribe(w);
 
@@ -216,28 +218,41 @@ public class OnSubscribeCombineLatestTest {
     }
 
     private Function3<String, String, String, String> getConcat3StringsCombineLatestFunction() {
-        Function3<String, String, String, String> combineLatestFunction = (a1, a2, a3) -> {
-            if (a1 == null) {
-                a1 = "";
+        Function3<String, String, String, String> combineLatestFunction = new Function3<String, String, String, String>() {
+            @Override
+            public String apply(String a1, String a2, String a3) {
+                if (a1 == null) {
+                    a1 = "";
+                }
+                if (a2 == null) {
+                    a2 = "";
+                }
+                if (a3 == null) {
+                    a3 = "";
+                }
+                return a1 + a2 + a3;
             }
-            if (a2 == null) {
-                a2 = "";
-            }
-            if (a3 == null) {
-                a3 = "";
-            }
-            return a1 + a2 + a3;
         };
         return combineLatestFunction;
     }
 
     private BiFunction<String, Integer, String> getConcatStringIntegerCombineLatestFunction() {
-        BiFunction<String, Integer, String> combineLatestFunction = (s, i) -> getStringValue(s) + getStringValue(i);
+        BiFunction<String, Integer, String> combineLatestFunction = new BiFunction<String, Integer, String>() {
+            @Override
+            public String apply(String s, Integer i) {
+                return getStringValue(s) + getStringValue(i);
+            }
+        };
         return combineLatestFunction;
     }
 
     private Function3<String, Integer, int[], String> getConcatStringIntegerIntArrayCombineLatestFunction() {
-        return (s, i, iArray) -> getStringValue(s) + getStringValue(i) + getStringValue(iArray);
+        return new Function3<String, Integer, int[], String>() {
+            @Override
+            public String apply(String s, Integer i, int[] iArray) {
+                return getStringValue(s) + getStringValue(i) + getStringValue(iArray);
+            }
+        };
     }
 
     private static String getStringValue(Object o) {
@@ -252,7 +267,12 @@ public class OnSubscribeCombineLatestTest {
         }
     }
 
-    BiFunction<Integer, Integer, Integer> or = (t1, t2) -> t1 | t2;
+    BiFunction<Integer, Integer, Integer> or = new BiFunction<Integer, Integer, Integer>() {
+        @Override
+        public Integer apply(Integer t1, Integer t2) {
+            return t1 | t2;
+        }
+    };
 
     @Test
     public void combineSimple() {
@@ -416,8 +436,8 @@ public class OnSubscribeCombineLatestTest {
         };
         for (int i = 1; i <= n; i++) {
             System.out.println("test1ToNSources: " + i + " sources");
-            List<Observable<Integer>> sources = new ArrayList<T>();
-            List<Object> values = new ArrayList<T>();
+            List<Observable<Integer>> sources = new ArrayList<Observable<Integer>>();
+            List<Object> values = new ArrayList<Object>();
             for (int j = 0; j < i; j++) {
                 sources.add(Observable.just(j));
                 values.add(j);
@@ -447,8 +467,8 @@ public class OnSubscribeCombineLatestTest {
         };
         for (int i = 1; i <= n; i++) {
             System.out.println("test1ToNSourcesScheduled: " + i + " sources");
-            List<Observable<Integer>> sources = new ArrayList<T>();
-            List<Object> values = new ArrayList<T>();
+            List<Observable<Integer>> sources = new ArrayList<Observable<Integer>>();
+            List<Object> values = new ArrayList<Object>();
             for (int j = 0; j < i; j++) {
                 sources.add(Observable.just(j).subscribeOn(Schedulers.io()));
                 values.add(j);
@@ -496,7 +516,12 @@ public class OnSubscribeCombineLatestTest {
         Observable<Integer> s2 = Observable.just(2);
 
         Observable<List<Integer>> result = Observable.combineLatest(s1, s2, 
-                (t1, t2) -> Arrays.asList(t1, t2));
+                new BiFunction<Integer, Integer, List<Integer>>() {
+                    @Override
+                    public List<Integer> apply(Integer t1, Integer t2) {
+                        return Arrays.asList(t1, t2);
+                    }
+                });
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
 
@@ -514,7 +539,12 @@ public class OnSubscribeCombineLatestTest {
         Observable<Integer> s3 = Observable.just(3);
 
         Observable<List<Integer>> result = Observable.combineLatest(s1, s2, s3,
-                (Function3<Integer, Integer, Integer, List<Integer>>) (t1, t2, t3) -> Arrays.asList(t1, t2, t3));
+                new Function3<Integer, Integer, Integer, List<Integer>>() {
+                    @Override
+                    public List<Integer> apply(Integer t1, Integer t2, Integer t3) {
+                        return Arrays.asList(t1, t2, t3);
+                    }
+                });
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
 
@@ -743,16 +773,24 @@ public class OnSubscribeCombineLatestTest {
         final int SIZE = 2000;
         Observable<Long> timer = Observable.interval(0, 1, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.newThread())
-                .doOnEach(n -> {
-                        //                        System.out.println(n);
-                        if (count.incrementAndGet() >= SIZE) {
-                            latch.countDown();
-                        }
+                .doOnEach(new Consumer<Try<Optional<Long>>>() {
+                    @Override
+                    public void accept(Try<Optional<Long>> n) {
+                            //                        System.out.println(n);
+                            if (count.incrementAndGet() >= SIZE) {
+                                latch.countDown();
+                            }
+                    }
                 }).take(SIZE);
 
-        TestSubscriber<Long> ts = new TestSubscriber<T>();
+        TestSubscriber<Long> ts = new TestSubscriber<Long>();
 
-        Observable.combineLatest(timer, Observable.<Integer> never(), (t1, t2) -> t1).subscribe(ts);
+        Observable.combineLatest(timer, Observable.<Integer> never(), new BiFunction<Long, Integer, Long>() {
+            @Override
+            public Long apply(Long t1, Integer t2) {
+                return t1;
+            }
+        }).subscribe(ts);
 
         if (!latch.await(SIZE + 1000, TimeUnit.MILLISECONDS)) {
             fail("timed out");
@@ -763,6 +801,7 @@ public class OnSubscribeCombineLatestTest {
     
     @Test(timeout=10000)
     public void testCombineLatestRequestOverflow() throws InterruptedException {
+        @SuppressWarnings("unchecked")
         List<Observable<Integer>> sources = Arrays.asList(Observable.fromArray(1, 2, 3, 4), 
                 Observable.fromArray(5,6,7,8));
         Observable<Integer> o = Observable.combineLatest(sources,new Function<Object[], Integer>() {

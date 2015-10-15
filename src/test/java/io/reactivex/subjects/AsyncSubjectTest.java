@@ -194,7 +194,7 @@ public class AsyncSubjectTest {
          */
         for (int i = 0; i < 50; i++) {
             final AsyncSubject<String> subject = AsyncSubject.create();
-            final AtomicReference<String> value1 = new AtomicReference<T>();
+            final AtomicReference<String> value1 = new AtomicReference<String>();
 
             subject.subscribe(new Consumer<String>() {
 
@@ -252,7 +252,7 @@ public class AsyncSubjectTest {
     private static class SubjectSubscriberThread extends Thread {
 
         private final AsyncSubject<String> subject;
-        private final AtomicReference<String> value = new AtomicReference<T>();
+        private final AtomicReference<String> value = new AtomicReference<String>();
 
         public SubjectSubscriberThread(AsyncSubject<String> subject) {
             this.subject = subject;
