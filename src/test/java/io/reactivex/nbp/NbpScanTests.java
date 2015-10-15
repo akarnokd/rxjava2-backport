@@ -29,6 +29,6 @@ public class NbpScanTests {
         })
         .take(10)
         .toBlocking()
-        .forEach(System.out::println);
+        .forEach(pv -> System.out.println(pv));
     }
 }

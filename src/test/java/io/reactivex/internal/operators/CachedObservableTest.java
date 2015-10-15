@@ -36,7 +36,7 @@ public class CachedObservableTest {
         
         assertFalse("Source is connected!", source.isConnected());
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.subscribe(ts);
 
@@ -58,7 +58,7 @@ public class CachedObservableTest {
         
         assertFalse("Source is connected!", source.isConnected());
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         ts.request(10);
         
         source.subscribe(ts);
@@ -135,7 +135,7 @@ public class CachedObservableTest {
     
     @Test
     public void testTake() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
 
         CachedObservable<Integer> cached = CachedObservable.from(Observable.range(1, 100));
         cached.take(10).subscribe(ts);
@@ -221,7 +221,7 @@ public class CachedObservableTest {
             }
         });
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         firehose.cache().observeOn(Schedulers.computation()).takeLast(100).subscribe(ts);
         
         ts.awaitTerminalEvent(3, TimeUnit.SECONDS);
@@ -238,7 +238,7 @@ public class CachedObservableTest {
                 .cache();
         
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         source.subscribe(ts);
         
         ts.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

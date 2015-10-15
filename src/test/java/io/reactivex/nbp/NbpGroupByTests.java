@@ -48,7 +48,7 @@ public class NbpGroupByTests {
         .flatMap(g -> g.map(event -> event.instanceId + " - " + event.values.get("count200")))
         .take(20)
         .toBlocking()
-        .forEach(System.out::println);
+        .forEach(pv -> System.out.println(pv));
 
         System.out.println("**** finished");
     }

@@ -17,6 +17,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.reactivestreams.*;
 
 import io.reactivex.NbpObservable.NbpSubscriber;
@@ -34,11 +36,14 @@ public enum TestHelper {
     public static <T> Subscriber<T> mockSubscriber() {
         Subscriber<T> w = mock(Subscriber.class);
         
-        Mockito.doAnswer(a -> {
-            Subscription s = a.getArgumentAt(0, Subscription.class);
-            s.request(Long.MAX_VALUE);
-            return null;
-        }).when(w).onSubscribe(any());
+        Mockito.doAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock a) throws Throwable {
+                Subscription s = a.getArgumentAt(0, Subscription.class);
+                s.request(Long.MAX_VALUE);
+                return null;
+            }
+        }).when(w).onSubscribe((Subscription)any());
         
         return w;
     }

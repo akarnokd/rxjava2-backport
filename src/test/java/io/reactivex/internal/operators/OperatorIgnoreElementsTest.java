@@ -55,7 +55,7 @@ public class OperatorIgnoreElementsTest {
     
     @Test
     public void testCompletedOk() {
-        TestSubscriber<Object> ts = new TestSubscriber<T>();
+        TestSubscriber<Object> ts = new TestSubscriber<Object>();
         Observable.range(1, 10).ignoreElements().subscribe(ts);
         ts.assertNoErrors();
         ts.assertNoValues();
@@ -66,7 +66,7 @@ public class OperatorIgnoreElementsTest {
     
     @Test
     public void testErrorReceived() {
-        TestSubscriber<Object> ts = new TestSubscriber<T>();
+        TestSubscriber<Object> ts = new TestSubscriber<Object>();
         TestException ex = new TestException("boo");
         Observable.error(ex).ignoreElements().subscribe(ts);
         ts.assertNoValues();

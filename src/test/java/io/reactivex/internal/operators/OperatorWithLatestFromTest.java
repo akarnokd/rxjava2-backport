@@ -84,7 +84,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -110,7 +110,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -137,7 +137,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -164,7 +164,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -191,7 +191,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -219,7 +219,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER_ERROR);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -245,7 +245,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         result.unsafeSubscribe(ts);
         
@@ -261,7 +261,7 @@ public class OperatorWithLatestFromTest {
         
         Observable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         
         result.subscribe(ts);
 

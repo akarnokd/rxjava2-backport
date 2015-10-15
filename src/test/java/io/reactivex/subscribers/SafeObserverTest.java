@@ -29,7 +29,7 @@ public class SafeObserverTest {
 
     @Test
     public void onNextFailure() {
-        AtomicReference<Throwable> onError = new AtomicReference<T>();
+        AtomicReference<Throwable> onError = new AtomicReference<Throwable>();
         try {
             OBSERVER_ONNEXT_FAIL(onError).onNext("one");
             fail("expects exception to be thrown");
@@ -42,9 +42,9 @@ public class SafeObserverTest {
 
     @Test
     public void onNextFailureSafe() {
-        AtomicReference<Throwable> onError = new AtomicReference<T>();
+        AtomicReference<Throwable> onError = new AtomicReference<Throwable>();
         try {
-            SafeSubscriber<String> safeSubscriber = new SafeSubscriber<T>(OBSERVER_ONNEXT_FAIL(onError));
+            SafeSubscriber<String> safeSubscriber = new SafeSubscriber<String>(OBSERVER_ONNEXT_FAIL(onError));
             safeSubscriber.onSubscribe(EmptySubscription.INSTANCE);
             safeSubscriber.onNext("one");
             assertNotNull(onError.get());
@@ -57,7 +57,7 @@ public class SafeObserverTest {
 
     @Test
     public void onCompletedFailure() {
-        AtomicReference<Throwable> onError = new AtomicReference<T>();
+        AtomicReference<Throwable> onError = new AtomicReference<Throwable>();
         try {
             OBSERVER_ONCOMPLETED_FAIL(onError).onComplete();
             fail("expects exception to be thrown");
@@ -83,7 +83,7 @@ public class SafeObserverTest {
     @Ignore("Subscribers can't throw")
     public void onErrorFailureSafe() {
         try {
-            new SafeSubscriber<T>(OBSERVER_ONERROR_FAIL()).onError(new SafeObserverTestException("error!"));
+            new SafeSubscriber<String>(OBSERVER_ONERROR_FAIL()).onError(new SafeObserverTestException("error!"));
             fail("expects exception to be thrown");
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class SafeObserverTest {
     @Ignore("Subscribers can't throw")
     public void onErrorNotImplementedFailureSafe() {
         try {
-            new SafeSubscriber<T>(OBSERVER_ONERROR_NOTIMPLEMENTED()).onError(new SafeObserverTestException("error!"));
+            new SafeSubscriber<String>(OBSERVER_ONERROR_NOTIMPLEMENTED()).onError(new SafeObserverTestException("error!"));
             fail("expects exception to be thrown");
         } catch (Exception e) {
             assertTrue(e instanceof OnErrorNotImplementedException);
@@ -134,7 +134,7 @@ public class SafeObserverTest {
     @Ignore("Subscribers can't throw")
     public void onNextOnErrorFailureSafe() {
         try {
-            new SafeSubscriber<T>(OBSERVER_ONNEXT_ONERROR_FAIL()).onNext("one");
+            new SafeSubscriber<String>(OBSERVER_ONNEXT_ONERROR_FAIL()).onNext("one");
             fail("expects exception to be thrown");
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,7 +174,7 @@ public class SafeObserverTest {
                     
                 }
             });
-            new SafeSubscriber<T>(o).onComplete();
+            new SafeSubscriber<String>(o).onComplete();
             fail("expects exception to be thrown");
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,7 +191,7 @@ public class SafeObserverTest {
     @Test
     @Ignore("Subscribers can't throw")
     public void onErrorSuccessWithUnsubscribeFailure() {
-        AtomicReference<Throwable> onError = new AtomicReference<T>();
+        AtomicReference<Throwable> onError = new AtomicReference<Throwable>();
         Subscriber<String> o = OBSERVER_SUCCESS(onError);
         try {
             o.onSubscribe(new Subscription() {
@@ -207,7 +207,7 @@ public class SafeObserverTest {
                     
                 }
             });
-            new SafeSubscriber<T>(o).onError(new SafeObserverTestException("failed"));
+            new SafeSubscriber<String>(o).onError(new SafeObserverTestException("failed"));
             fail("we expect the unsubscribe failure to cause an exception to be thrown");
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,7 +245,7 @@ public class SafeObserverTest {
                     
                 }
             });
-            new SafeSubscriber<T>(o).onError(new SafeObserverTestException("onError failure"));
+            new SafeSubscriber<String>(o).onError(new SafeObserverTestException("onError failure"));
             fail("expects exception to be thrown");
         } catch (Exception e) {
             e.printStackTrace();
@@ -294,7 +294,7 @@ public class SafeObserverTest {
                     
                 }
             });
-            new SafeSubscriber<T>(o).onError(new SafeObserverTestException("error!"));
+            new SafeSubscriber<String>(o).onError(new SafeObserverTestException("error!"));
             fail("expects exception to be thrown");
         } catch (Exception e) {
             e.printStackTrace();
@@ -478,8 +478,8 @@ public class SafeObserverTest {
     @Test
     @Ignore("Subscribers can't throw")
     public void testOnCompletedThrows() {
-        final AtomicReference<Throwable> error = new AtomicReference<T>();
-        SafeSubscriber<Integer> s = new SafeSubscriber<T>(new Observer<Integer>() {
+        final AtomicReference<Throwable> error = new AtomicReference<Throwable>();
+        SafeSubscriber<Integer> s = new SafeSubscriber<Integer>(new Observer<Integer>() {
             @Override
             public void onNext(Integer t) {
                 
@@ -515,7 +515,7 @@ public class SafeObserverTest {
             public void onComplete() {
             }
         };
-        SafeSubscriber<Integer> s = new SafeSubscriber<T>(actual);
+        SafeSubscriber<Integer> s = new SafeSubscriber<Integer>(actual);
         
         assertSame(actual, s.actual());
     }

@@ -42,7 +42,7 @@ public class OperatorOnBackpressureDropTest {
 
     @Test(timeout = 500)
     public void testWithObserveOn() throws InterruptedException {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(0, Observable.bufferSize() * 10).onBackpressureDrop().observeOn(Schedulers.io()).subscribe(ts);
         ts.awaitTerminalEvent();
     }

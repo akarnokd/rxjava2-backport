@@ -37,7 +37,7 @@ public class OnSubscribeToObservableFutureTest {
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
         
         Observable.fromFuture(future).subscribe(ts);
         
@@ -58,7 +58,7 @@ public class OnSubscribeToObservableFutureTest {
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
         
         Observable.fromFuture(future).subscribe(ts);
         
@@ -79,7 +79,7 @@ public class OnSubscribeToObservableFutureTest {
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
         ts.dispose();
         
         Observable.fromFuture(future).subscribe(ts);
@@ -125,7 +125,7 @@ public class OnSubscribeToObservableFutureTest {
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
         Observable<Object> futureObservable = Observable.fromFuture(future);
         
         futureObservable.subscribeOn(Schedulers.computation()).subscribe(ts);

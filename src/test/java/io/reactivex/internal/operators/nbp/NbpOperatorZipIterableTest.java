@@ -332,7 +332,7 @@ public class NbpOperatorZipIterableTest {
 
     }
     
-    Consumer<String> printer = System.out::println;
+    Consumer<String> printer = pv -> System.out.println(pv);
 
     static final class SquareStr implements Function<Integer, String> {
         final AtomicInteger counter = new AtomicInteger();

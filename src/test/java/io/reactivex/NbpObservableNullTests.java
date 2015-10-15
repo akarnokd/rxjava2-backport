@@ -804,7 +804,7 @@ public class NbpObservableNullTests {
     
     @Test(expected = NullPointerException.class)
     public void doOnLifecycleOnSubscribeNull() {
-        just1.doOnLifecycle(null, () -> { });
+        just1.doOnLifecycle(null, Functions.emptyRunnable());
     }
     
     @Test(expected = NullPointerException.class)
@@ -1408,7 +1408,7 @@ public class NbpObservableNullTests {
     
     @Test(expected = NullPointerException.class)
     public void subscribeOnSubscribeNull() {
-        just1.subscribe(e -> { }, e -> { }, () -> { }, null);
+        just1.subscribe(e -> { }, e -> { }, Functions.emptyRunnable(), null);
     }
     
     @Test(expected = NullPointerException.class)

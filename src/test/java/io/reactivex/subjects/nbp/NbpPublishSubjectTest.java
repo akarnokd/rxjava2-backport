@@ -339,7 +339,7 @@ public class NbpPublishSubjectTest {
 //        PublishSubject<String> ps = PublishSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //
 //        try {

@@ -400,7 +400,7 @@ public class OperatorConcatTest {
         final TestObservable<String> w2 = new TestObservable<T>(callOnce, okToContinue, "four", "five", "six");
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer, null);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer, null);
 
         final Observable<String> concat = Observable.concat(Observable.create(w1), Observable.create(w2));
 
@@ -442,7 +442,7 @@ public class OperatorConcatTest {
         final TestObservable<String> w2 = new TestObservable<T>(callOnce, okToContinue, "four", "five", "six");
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer, null);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer, null);
         
         TestObservable<Observable<String>> observableOfObservables = new TestObservable<T>(Observable.create(w1), Observable.create(w2));
         Observable<String> concatF = Observable.concat(Observable.create(observableOfObservables));
@@ -656,7 +656,7 @@ public class OperatorConcatTest {
     
     @Test
     public void testInnerBackpressureWithAlignedBoundaries() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(0, Observable.bufferSize() * 2)
                 .concatWith(Observable.range(0, Observable.bufferSize() * 2))
                 .observeOn(Schedulers.computation()) // observeOn has a backpressured RxRingBuffer
@@ -675,7 +675,7 @@ public class OperatorConcatTest {
      */
     @Test
     public void testInnerBackpressureWithoutAlignedBoundaries() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(0, (Observable.bufferSize() * 2) + 10)
                 .concatWith(Observable.range(0, (Observable.bufferSize() * 2) + 10))
                 .observeOn(Schedulers.computation()) // observeOn has a backpressured RxRingBuffer
@@ -701,7 +701,7 @@ public class OperatorConcatTest {
             
         });
         
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.concat(o, o).subscribe(ts);
         ts.awaitTerminalEvent(500, TimeUnit.MILLISECONDS);
         ts.assertTerminated();
@@ -796,7 +796,7 @@ public class OperatorConcatTest {
             if (i % 1000 == 0) {
                 System.out.println("concatMapRangeAsyncLoop > " + i);
             }
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             Observable.range(0, 1000)
             .concatMap(new Function<Integer, Observable<Integer>>() {
                 @Override

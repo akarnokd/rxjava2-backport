@@ -276,7 +276,7 @@ public class NbpAsyncSubjectTest {
 //        NbpAsyncSubject<String> ps = NbpAsyncSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //
 //        try {
@@ -300,7 +300,7 @@ public class NbpAsyncSubjectTest {
 //
 //        ps.subscribe();
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //        ps.subscribe();
 //        ps.subscribe();

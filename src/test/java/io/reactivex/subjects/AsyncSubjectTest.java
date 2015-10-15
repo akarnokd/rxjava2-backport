@@ -145,7 +145,7 @@ public class AsyncSubjectTest {
         AsyncSubject<String> subject = AsyncSubject.create();
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -276,7 +276,7 @@ public class AsyncSubjectTest {
 //        AsyncSubject<String> ps = AsyncSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //
 //        try {
@@ -300,7 +300,7 @@ public class AsyncSubjectTest {
 //
 //        ps.subscribe();
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //        ps.subscribe();
 //        ps.subscribe();

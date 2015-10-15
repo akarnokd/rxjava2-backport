@@ -13,8 +13,6 @@
 
 package io.reactivex;
 
-import java.util.Optional;
-
 import org.junit.*;
 
 public class NotificationTest {

@@ -32,7 +32,7 @@ public class StartWithTests {
 
     @Test
     public void startWithIterable() {
-        List<String> li = new ArrayList<T>();
+        List<String> li = new ArrayList<String>();
         li.add("alpha");
         li.add("beta");
         List<String> values = Observable.just("one", "two").startWith(li).toList().toBlocking().single();
@@ -45,7 +45,7 @@ public class StartWithTests {
 
     @Test
     public void startWithObservable() {
-        List<String> li = new ArrayList<T>();
+        List<String> li = new ArrayList<String>();
         li.add("alpha");
         li.add("beta");
         List<String> values = Observable.just("one", "two")

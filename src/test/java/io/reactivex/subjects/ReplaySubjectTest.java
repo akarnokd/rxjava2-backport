@@ -67,7 +67,7 @@ public class ReplaySubjectTest {
         Subscriber<Object> observerB = TestHelper.mockSubscriber();
         Subscriber<Object> observerC = TestHelper.mockSubscriber();
         Subscriber<Object> observerD = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<T>(observerA);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(observerA);
 
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -218,7 +218,7 @@ public class ReplaySubjectTest {
         ReplaySubject<String> subject = ReplaySubject.create();
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -535,7 +535,7 @@ public class ReplaySubjectTest {
 //        ReplaySubject<String> ps = ReplaySubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //
 //        try {
@@ -829,7 +829,7 @@ public class ReplaySubjectTest {
         rs.onNext(3);
         rs.onComplete();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         
         rs.subscribe(ts);
         
@@ -858,7 +858,7 @@ public class ReplaySubjectTest {
         rs.onNext(3);
         rs.onComplete();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         
         rs.subscribe(ts);
         
@@ -887,7 +887,7 @@ public class ReplaySubjectTest {
         rs.onNext(3);
         rs.onComplete();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         
         rs.subscribe(ts);
         

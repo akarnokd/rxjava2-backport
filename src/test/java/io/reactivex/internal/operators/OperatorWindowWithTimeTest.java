@@ -179,7 +179,7 @@ public class OperatorWindowWithTimeTest {
     
     @Test
     public void testTakeFlatMapCompletes() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         AtomicInteger wip = new AtomicInteger();
         
@@ -197,7 +197,7 @@ public class OperatorWindowWithTimeTest {
                         ;
             }
         })
-        .doOnNext(System.out::println)
+        .doOnNext(pv -> System.out.println(pv))
         .subscribe(ts);
         
         ts.awaitTerminalEvent(5, TimeUnit.SECONDS);

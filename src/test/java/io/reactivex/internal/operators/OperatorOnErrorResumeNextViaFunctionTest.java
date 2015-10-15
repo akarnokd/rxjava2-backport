@@ -150,7 +150,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
     @Test
     @Ignore("Failed operator may leave the child subscriber in an inconsistent state which prevents further error delivery.")
     public void testOnErrorResumeReceivesErrorFromPreviousNonProtectedOperator() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.just(1).lift(new Operator<String, Integer>() {
 
             @Override
@@ -183,7 +183,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
     @Test
     @Ignore("A crashing operator may leave the downstream in an inconsistent state and not suitable for event delivery")
     public void testOnErrorResumeReceivesErrorFromPreviousNonProtectedOperatorOnNext() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.just(1).lift(new Operator<String, Integer>() {
 
             @Override
@@ -260,7 +260,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
         @SuppressWarnings("unchecked")
         Observer<String> observer = mock(Observer.class);
         
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer, Long.MAX_VALUE);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer, Long.MAX_VALUE);
         observable.subscribe(ts);
         ts.awaitTerminalEvent();
 
@@ -312,7 +312,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
     
     @Test
     public void testBackpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(0, 100000)
                 .onErrorResumeNext(new Function<Throwable, Observable<Integer>>() {
 

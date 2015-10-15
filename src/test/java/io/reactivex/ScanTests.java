@@ -17,18 +17,29 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import io.reactivex.EventStream.Event;
+import io.reactivex.functions.*;
+
 public class ScanTests {
 
     @Test
     public void testUnsubscribeScan() {
 
         EventStream.getEventStream("HTTP-ClusterB", 20)
-        .scan(new HashMap<String, String>(), (accum, perInstanceEvent) -> {
-            accum.put("instance", perInstanceEvent.instanceId);
-            return accum;
+        .scan(new HashMap<String, String>(), new BiFunction<HashMap<String, String>, Event, HashMap<String, String>>() {
+            @Override
+            public HashMap<String, String> apply(HashMap<String, String> accum, Event perInstanceEvent) {
+                accum.put("instance", perInstanceEvent.instanceId);
+                return accum;
+            }
         })
         .take(10)
         .toBlocking()
-        .forEach(System.out::println);
+        .forEach(new Consumer<HashMap<String, String>>() {
+            @Override
+            public void accept(HashMap<String, String> v) {
+                System.out.println(v);
+            }
+        });
     }
 }

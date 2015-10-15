@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.*;
 
 import org.junit.Test;
+import org.reactivestreams.*;
 
 import io.reactivex.CovarianceTest.*;
 
@@ -59,6 +60,7 @@ public class ConcatTests {
         Observable<String> o2 = Observable.just("three", "four");
         Observable<String> o3 = Observable.just("five", "six");
 
+        @SuppressWarnings("unchecked")
         Iterable<Observable<String>> is = Arrays.asList(o1, o2, o3);
 
         List<String> values = Observable.concat(Observable.fromIterable(is)).toList().toBlocking().single();
@@ -141,11 +143,14 @@ public class ConcatTests {
         Media media = new Media();
         HorrorMovie horrorMovie2 = new HorrorMovie();
         
-        Observable<Movie> o1 = Observable.create(o -> {
-                o.onNext(horrorMovie1);
-                o.onNext(movie);
-                //                o.onNext(new Media()); // correctly doesn't compile
-                o.onComplete();
+        Observable<Movie> o1 = Observable.create(new Publisher<Movie>() {
+            @Override
+            public void subscribe(Subscriber<? super Movie> o) {
+                    o.onNext(horrorMovie1);
+                    o.onNext(movie);
+                    //                o.onNext(new Media()); // correctly doesn't compile
+                    o.onComplete();
+            }
         });
 
         Observable<Media> o2 = Observable.just(media, horrorMovie2);

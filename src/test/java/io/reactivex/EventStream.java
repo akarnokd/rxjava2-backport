@@ -15,6 +15,9 @@ package io.reactivex;
 
 import java.util.*;
 
+import org.reactivestreams.Subscriber;
+
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -26,20 +29,23 @@ public final class EventStream {
     }
     public static Observable<Event> getEventStream(final String type, final int numInstances) {
         
-        return Observable.<Event>generate(s -> {
-            s.onNext(randomEvent(type, numInstances));
-            try {
-                // slow it down somewhat
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                s.onError(e);
+        return Observable.<Event>generate(new Consumer<Subscriber<Event>>() {
+            @Override
+            public void accept(Subscriber<Event> s) {
+                s.onNext(randomEvent(type, numInstances));
+                try {
+                    // slow it down somewhat
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    s.onError(e);
+                }
             }
         }).subscribeOn(Schedulers.newThread());
     }
 
     public static Event randomEvent(String type, int numInstances) {
-        Map<String, Object> values = new LinkedHashMap<T>();
+        Map<String, Object> values = new LinkedHashMap<String, Object>();
         values.put("count200", randomIntFrom0to(4000));
         values.put("count4xx", randomIntFrom0to(300));
         values.put("count5xx", randomIntFrom0to(500));

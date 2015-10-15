@@ -95,7 +95,7 @@ public class OperatorSkipLastTest {
     @Test
     public void testSkipLastWithBackpressure() {
         Observable<Integer> o = Observable.range(0, Observable.bufferSize() * 2).skipLast(Observable.bufferSize() + 10);
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         o.observeOn(Schedulers.computation()).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();

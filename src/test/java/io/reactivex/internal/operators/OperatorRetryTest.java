@@ -61,7 +61,7 @@ public class OperatorRetryTest {
             }
             
         });
-        TestSubscriber<String> ts = new TestSubscriber<T>(consumer);
+        TestSubscriber<String> ts = new TestSubscriber<String>(consumer);
         producer.retryWhen(new Function<Observable<? extends Throwable>, Observable<?>>() {
 
             @Override
@@ -490,7 +490,7 @@ public class OperatorRetryTest {
     public void testSourceObservableCallsUnsubscribe() throws InterruptedException {
         final AtomicInteger subsCount = new AtomicInteger(0);
 
-        final TestSubscriber<String> ts = new TestSubscriber<T>();
+        final TestSubscriber<String> ts = new TestSubscriber<String>();
 
         Publisher<String> onSubscribe = new Publisher<String>() {
             @Override
@@ -521,7 +521,7 @@ public class OperatorRetryTest {
     public void testSourceObservableRetry1() throws InterruptedException {
         final AtomicInteger subsCount = new AtomicInteger(0);
 
-        final TestSubscriber<String> ts = new TestSubscriber<T>();
+        final TestSubscriber<String> ts = new TestSubscriber<String>();
 
         Publisher<String> onSubscribe = new Publisher<String>() {
             @Override
@@ -540,7 +540,7 @@ public class OperatorRetryTest {
     public void testSourceObservableRetry0() throws InterruptedException {
         final AtomicInteger subsCount = new AtomicInteger(0);
 
-        final TestSubscriber<String> ts = new TestSubscriber<T>();
+        final TestSubscriber<String> ts = new TestSubscriber<String>();
 
         Publisher<String> onSubscribe = new Publisher<String>() {
             @Override
@@ -706,7 +706,7 @@ public class OperatorRetryTest {
             for (int i = 0; i < 400; i++) {
                 Subscriber<String> observer = TestHelper.mockSubscriber();
                 Observable<String> origin = Observable.create(new FuncWithErrors(NUM_RETRIES));
-                TestSubscriber<String> ts = new TestSubscriber<T>(observer);
+                TestSubscriber<String> ts = new TestSubscriber<String>(observer);
                 origin.retry().observeOn(Schedulers.computation()).unsafeSubscribe(ts);
                 ts.awaitTerminalEvent(5, TimeUnit.SECONDS);
                 
@@ -749,7 +749,7 @@ public class OperatorRetryTest {
                             final AtomicInteger nexts = new AtomicInteger();
                             try {
                                 Observable<String> origin = Observable.create(new FuncWithErrors(NUM_RETRIES));
-                                TestSubscriber<String> ts = new TestSubscriber<T>();
+                                TestSubscriber<String> ts = new TestSubscriber<String>();
                                 origin.retry()
                                 .observeOn(Schedulers.computation()).unsafeSubscribe(ts);
                                 ts.awaitTerminalEvent(2500, TimeUnit.MILLISECONDS);

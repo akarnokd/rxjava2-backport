@@ -863,7 +863,7 @@ public class OperatorReplayTest {
     public void testColdReplayNoBackpressure() {
         Observable<Integer> source = Observable.range(0, 1000).replay().autoConnect();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.subscribe(ts);
 
@@ -880,7 +880,7 @@ public class OperatorReplayTest {
     public void testColdReplayBackpressure() {
         Observable<Integer> source = Observable.range(0, 1000).replay().autoConnect();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         ts.request(10);
         
         source.subscribe(ts);
@@ -961,7 +961,7 @@ public class OperatorReplayTest {
     
     @Test
     public void testTake() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
 
         Observable<Integer> cached = Observable.range(1, 100).replay().autoConnect();
         cached.take(10).subscribe(ts);
@@ -1047,7 +1047,7 @@ public class OperatorReplayTest {
             }
         });
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         firehose.replay().autoConnect().observeOn(Schedulers.computation()).takeLast(100).subscribe(ts);
         
         ts.awaitTerminalEvent(3, TimeUnit.SECONDS);
@@ -1064,7 +1064,7 @@ public class OperatorReplayTest {
                 .replay().autoConnect();
         
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         source.subscribe(ts);
         
         ts.assertValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

@@ -328,7 +328,7 @@ public class OperatorFlatMapTest {
             }
         }, m);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.subscribe(ts);
         
@@ -358,7 +358,7 @@ public class OperatorFlatMapTest {
             }
         }, m);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.subscribe(ts);
         
@@ -404,7 +404,7 @@ public class OperatorFlatMapTest {
         Observable<Integer> source = Observable.fromIterable(Arrays.asList(10, 20, 30));
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
 
         source.flatMap(just(onNext), just(onError), just0(onCompleted), m).subscribe(ts);
         
@@ -429,7 +429,7 @@ public class OperatorFlatMapTest {
             if (i % 10 == 0) {
                 System.out.println("flatMapRangeAsyncLoop > " + i);
             }
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             Observable.range(0, 1000)
             .flatMap(new Function<Integer, Observable<Integer>>() {
                 @Override
@@ -466,7 +466,7 @@ public class OperatorFlatMapTest {
             if (i % 10 == 0) {
                 System.out.println("flatMapRangeAsyncLoop > " + i);
             }
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             Observable.range(0, 1000)
             .flatMap(new Function<Integer, Observable<Integer>>() {
                 final Random rnd = new Random();
@@ -504,7 +504,7 @@ public class OperatorFlatMapTest {
     @Test
     public void flatMapIntPassthruAsync() {
         for (int i = 0;i < 1000; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             
             Observable.range(1, 1000).flatMap(new Function<Integer, Observable<Integer>>() {
                 @Override
@@ -522,7 +522,7 @@ public class OperatorFlatMapTest {
     @Test
     public void flatMapTwoNestedSync() {
         for (final int n : new int[] { 1, 1000, 1000000 }) {
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
     
             Observable.just(1, 2).flatMap(new Function<Integer, Observable<Integer>>() {
                 @Override

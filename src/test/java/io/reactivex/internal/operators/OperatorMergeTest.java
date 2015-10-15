@@ -197,7 +197,7 @@ public class OperatorMergeTest {
         final TestASynchronousObservable o2 = new TestASynchronousObservable();
 
         Observable<String> m = Observable.merge(Observable.create(o1), Observable.create(o2));
-        TestSubscriber<String> ts = new TestSubscriber<T>(stringObserver);
+        TestSubscriber<String> ts = new TestSubscriber<String>(stringObserver);
         m.subscribe(ts);
 
         ts.awaitTerminalEvent();
@@ -343,7 +343,7 @@ public class OperatorMergeTest {
     @Test
     @Ignore("Subscribe should not throw")
     public void testThrownErrorHandling() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable<String> o1 = Observable.create(new Publisher<String>() {
 
             @Override
@@ -549,7 +549,7 @@ public class OperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             Observable<Integer> merge = Observable.merge(o.onBackpressureBuffer(), o.onBackpressureBuffer(), o.onBackpressureBuffer());
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent(3, TimeUnit.SECONDS);
@@ -602,7 +602,7 @@ public class OperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             Observable<Integer> merge = Observable.merge(o, o, o);
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent();
@@ -649,7 +649,7 @@ public class OperatorMergeTest {
 
         for (int i = 0; i < 10; i++) {
             Observable<Integer> merge = Observable.merge(o.onBackpressureBuffer(), o.onBackpressureBuffer(), o.onBackpressureBuffer());
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             merge.subscribe(ts);
 
             ts.awaitTerminalEvent();
@@ -871,7 +871,7 @@ public class OperatorMergeTest {
     @Ignore("Null values not permitted")
     public void mergeWithNullValues() {
         System.out.println("mergeWithNullValues");
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.merge(Observable.just(null, "one"), Observable.just("two", null)).subscribe(ts);
         ts.assertTerminated();
         ts.assertNoErrors();
@@ -882,7 +882,7 @@ public class OperatorMergeTest {
     @Ignore("Null values are no longer permitted")
     public void mergeWithTerminalEventAfterUnsubscribe() {
         System.out.println("mergeWithTerminalEventAfterUnsubscribe");
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable<String> bad = Observable.create(new Publisher<String>() {
 
             @Override
@@ -902,7 +902,7 @@ public class OperatorMergeTest {
     @Test
     @Ignore("Null values are not permitted")
     public void mergingNullObservable() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.merge(Observable.just("one"), null).subscribe(ts);
         ts.assertNoErrors();
         ts.assertValue("one");
@@ -910,7 +910,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1AsyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNAsyncStreamsOfN(1, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -919,7 +919,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1AsyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNAsyncStreamsOfN(1, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -928,7 +928,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge10AsyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNAsyncStreamsOfN(10, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -937,7 +937,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1000AsyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNAsyncStreamsOfN(1000, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -946,7 +946,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge2000AsyncStreamOf100() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNAsyncStreamsOfN(2000, 100).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -955,7 +955,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge100AsyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNAsyncStreamsOfN(100, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -977,7 +977,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1SyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNSyncStreamsOfN(1, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -986,7 +986,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1SyncStreamOf1000000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNSyncStreamsOfN(1, 1000000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -995,7 +995,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1000SyncStreamOf1000() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNSyncStreamsOfN(1000, 1000).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1004,7 +1004,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge10000SyncStreamOf10() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNSyncStreamsOfN(10000, 10).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1013,7 +1013,7 @@ public class OperatorMergeTest {
 
     @Test
     public void merge1000000SyncStreamOf1() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         mergeNSyncStreamsOfN(1000000, 1).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -1060,7 +1060,7 @@ public class OperatorMergeTest {
 
     @Test
     public void mergeManyAsyncSingle() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable<Observable<Integer>> os = Observable.range(1, 10000)
         .map(new Function<Integer, Observable<Integer>>() {
 

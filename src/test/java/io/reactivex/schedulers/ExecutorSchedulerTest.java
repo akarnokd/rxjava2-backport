@@ -85,7 +85,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
                 if (i % 50000 == 0) {
                     System.out.println("  -> still scheduling: " + i);
                 }
-                w.schedule(() -> { }, 1, TimeUnit.DAYS);
+                w.schedule(Functions.emptyRunnable(), 1, TimeUnit.DAYS);
             }
         }
         
@@ -219,7 +219,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
 //        };
 //        ExecutorWorker w = (ExecutorWorker)Schedulers.from(e).createWorker();
 //        
-//        w.schedule(() -> { }, 50, TimeUnit.MILLISECONDS);
+//        w.schedule(Functions.emptyRunnable(), 50, TimeUnit.MILLISECONDS);
 //        
 //        assertTrue(w.tasks.hasSubscriptions());
 //        
@@ -238,7 +238,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
 //        };
 //        ExecutorWorker w = (ExecutorWorker)Schedulers.from(e).createWorker();
 //        
-//        Disposable s = w.schedule(() -> { }, 1, TimeUnit.DAYS);
+//        Disposable s = w.schedule(Functions.emptyRunnable(), 1, TimeUnit.DAYS);
 //        
 //        assertTrue(w.tasks.hasSubscriptions());
 //        

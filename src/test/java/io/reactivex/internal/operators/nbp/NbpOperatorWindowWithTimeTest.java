@@ -195,7 +195,7 @@ public class NbpOperatorWindowWithTimeTest {
                         ;
             }
         })
-        .doOnNext(System.out::println)
+        .doOnNext(pv -> System.out.println(pv))
         .subscribe(ts);
         
         ts.awaitTerminalEvent(5, TimeUnit.SECONDS);

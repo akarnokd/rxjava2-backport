@@ -37,7 +37,7 @@ public class NbpZipTests {
                         });
                 })
                 .take(10)
-                .toBlocking().forEach(System.out::println);
+                .toBlocking().forEach(pv -> System.out.println(pv));
 
         System.out.println("**** finished");
     }

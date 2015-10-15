@@ -278,7 +278,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue2826() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         final RuntimeException e = new RuntimeException("You shall not pass");
         final AtomicInteger c = new AtomicInteger();
         Observable.just(1).map(new Function<Integer, Integer>() {
@@ -375,7 +375,7 @@ public class OperatorRetryWithPredicateTest {
                     }
                 });
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(3L);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(3L);
         source
         .retry(new BiPredicate<Integer, Throwable>() {
             @Override

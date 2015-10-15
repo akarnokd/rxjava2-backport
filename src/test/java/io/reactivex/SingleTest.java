@@ -21,8 +21,9 @@ import java.util.concurrent.atomic.*;
 
 import org.junit.Test;
 
-import io.reactivex.Single.SingleSubscriber;
+import io.reactivex.Single.*;
 import io.reactivex.disposables.*;
+import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -31,14 +32,14 @@ public class SingleTest {
 
     @Test
     public void testHelloWorld() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Single.just("Hello World!").subscribe(ts);
         ts.assertValueSequence(Arrays.asList("Hello World!"));
     }
 
     @Test
     public void testHelloWorld2() {
-        final AtomicReference<String> v = new AtomicReference<T>();
+        final AtomicReference<String> v = new AtomicReference<String>();
         Single.just("Hello World!").subscribe(new SingleSubscriber<String>() {
 
             @Override
@@ -62,36 +63,51 @@ public class SingleTest {
 
     @Test
     public void testMap() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Single.just("A")
-                .map(s -> s + "B")
+                .map(new Function<String, String>() {
+                    @Override
+                    public String apply(String s) {
+                        return s + "B";
+                    }
+                })
                 .subscribe(ts);
         ts.assertValueSequence(Arrays.asList("AB"));
     }
 
     @Test
     public void testZip() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Single<String> a = Single.just("A");
         Single<String> b = Single.just("B");
 
-        Single.zip(a, b, (a1, b1) -> a1 + b1)
-                .subscribe(ts);
+        Single.zip(a, b, new BiFunction<String, String, String>() {
+            @Override
+            public String apply(String a1, String b1) {
+                return a1 + b1;
+            }
+        })
+        .subscribe(ts);
         ts.assertValueSequence(Arrays.asList("AB"));
     }
 
     @Test
     public void testZipWith() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
 
-        Single.just("A").zipWith(Single.just("B"), (a1, b1) -> a1 + b1)
-                .subscribe(ts);
+        Single.just("A").zipWith(Single.just("B"), new BiFunction<String, String, String>() {
+            @Override
+            public String apply(String a1, String b1) {
+                return a1 + b1;
+            }
+        })
+        .subscribe(ts);
         ts.assertValueSequence(Arrays.asList("AB"));
     }
 
     @Test
     public void testMerge() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Single<String> a = Single.just("A");
         Single<String> b = Single.just("B");
 
@@ -101,7 +117,7 @@ public class SingleTest {
 
     @Test
     public void testMergeWith() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
 
         Single.just("A").mergeWith(Single.just("B")).subscribe(ts);
         ts.assertValueSequence(Arrays.asList("A", "B"));
@@ -109,11 +125,14 @@ public class SingleTest {
 
     @Test
     public void testCreateSuccess() {
-        TestSubscriber<Object> ts = new TestSubscriber<T>();
+        TestSubscriber<Object> ts = new TestSubscriber<Object>();
         
-        Single.create(s -> {
-            s.onSubscribe(EmptyDisposable.INSTANCE);
-            s.onSuccess("Hello");
+        Single.create(new SingleOnSubscribe<Object>() {
+            @Override
+            public void accept(SingleSubscriber<? super Object> s) {
+                s.onSubscribe(EmptyDisposable.INSTANCE);
+                s.onSuccess("Hello");
+            }
         }).subscribe(ts);
         
         ts.assertValueSequence(Arrays.asList("Hello"));
@@ -121,10 +140,13 @@ public class SingleTest {
 
     @Test
     public void testCreateError() {
-        TestSubscriber<Object> ts = new TestSubscriber<T>();
-        Single.create(s -> {
-            s.onSubscribe(EmptyDisposable.INSTANCE);
-            s.onError(new RuntimeException("fail"));
+        TestSubscriber<Object> ts = new TestSubscriber<Object>();
+        Single.create(new SingleOnSubscribe<Object>() {
+            @Override
+            public void accept(SingleSubscriber<? super Object> s) {
+                s.onSubscribe(EmptyDisposable.INSTANCE);
+                s.onError(new RuntimeException("fail"));
+            }
         }).subscribe(ts);
         
         ts.assertError(RuntimeException.class);
@@ -133,17 +155,23 @@ public class SingleTest {
 
     @Test
     public void testAsync() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Single.just("Hello")
                 .subscribeOn(Schedulers.io())
-                .map(v -> {
-                    System.out.println("SubscribeOn Thread: " + Thread.currentThread());
-                    return v;
+                .map(new Function<String, String>() {
+                    @Override
+                    public String apply(String v) {
+                        System.out.println("SubscribeOn Thread: " + Thread.currentThread());
+                        return v;
+                    }
                 })
                 .observeOn(Schedulers.computation())
-                .map(v -> {
-                    System.out.println("ObserveOn Thread: " + Thread.currentThread());
-                    return v;
+                .map(new Function<String, String>() {
+                    @Override
+                    public String apply(String v) {
+                        System.out.println("ObserveOn Thread: " + Thread.currentThread());
+                        return v;
+                    }
                 })
                 .subscribe(ts);
         ts.awaitTerminalEvent();
@@ -152,8 +180,13 @@ public class SingleTest {
 
     @Test
     public void testFlatMap() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
-        Single.just("Hello").flatMap(s -> Single.just(s + " World!").subscribeOn(Schedulers.computation())
+        TestSubscriber<String> ts = new TestSubscriber<String>();
+        Single.just("Hello").flatMap(new Function<String, Single<String>>() {
+            @Override
+            public Single<String> apply(String s) {
+                return Single.just(s + " World!").subscribeOn(Schedulers.computation());
+            }
+        }
         ).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertValueSequence(Arrays.asList("Hello World!"));
@@ -161,15 +194,18 @@ public class SingleTest {
 
     @Test
     public void testTimeout() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
-        Single<String> s1 = Single.<String>create(s -> {
-            s.onSubscribe(EmptyDisposable.INSTANCE);
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                // ignore as we expect this for the test
+        TestSubscriber<String> ts = new TestSubscriber<String>();
+        Single<String> s1 = Single.<String>create(new SingleOnSubscribe<String>() {
+            @Override
+            public void accept(SingleSubscriber<? super String> s) {
+                s.onSubscribe(EmptyDisposable.INSTANCE);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    // ignore as we expect this for the test
+                }
+                s.onSuccess("success");
             }
-            s.onSuccess("success");
         }).subscribeOn(Schedulers.io());
 
         s1.timeout(100, TimeUnit.MILLISECONDS).subscribe(ts);
@@ -180,15 +216,18 @@ public class SingleTest {
 
     @Test
     public void testTimeoutWithFallback() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
-        Single<String> s1 = Single.<String>create(s -> {
-            s.onSubscribe(EmptyDisposable.INSTANCE);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    // ignore as we expect this for the test
-                }
-                s.onSuccess("success");
+        TestSubscriber<String> ts = new TestSubscriber<String>();
+        Single<String> s1 = Single.<String>create(new SingleOnSubscribe<String>() {
+            @Override
+            public void accept(SingleSubscriber<? super String> s) {
+                s.onSubscribe(EmptyDisposable.INSTANCE);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        // ignore as we expect this for the test
+                    }
+                    s.onSuccess("success");
+            }
         }).subscribeOn(Schedulers.io());
 
         s1.timeout(100, TimeUnit.MILLISECONDS, Single.just("hello")).subscribe(ts);
@@ -200,34 +239,40 @@ public class SingleTest {
 
     @Test
     public void testUnsubscribe() throws InterruptedException {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         final AtomicBoolean unsubscribed = new AtomicBoolean();
         final AtomicBoolean interrupted = new AtomicBoolean();
         final CountDownLatch latch = new CountDownLatch(2);
 
-        Single<String> s1 = Single.<String>create(s -> {
-            MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
-            s.onSubscribe(mad);
-            final Thread t = new Thread(new Runnable() {
+        Single<String> s1 = Single.<String>create(new SingleOnSubscribe<String>() {
+            @Override
+            public void accept(final SingleSubscriber<? super String> s) {
+                MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+                s.onSubscribe(mad);
+                final Thread t = new Thread(new Runnable() {
 
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(5000);
-                        s.onSuccess("success");
-                    } catch (InterruptedException e) {
-                        interrupted.set(true);
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                            s.onSuccess("success");
+                        } catch (InterruptedException e) {
+                            interrupted.set(true);
+                            latch.countDown();
+                        }
+                    }
+
+                });
+                mad.set(new Disposable() {
+                    @Override
+                    public void dispose() {
+                        unsubscribed.set(true);
+                        t.interrupt();
                         latch.countDown();
                     }
-                }
-
-            });
-            mad.set(() -> {
-                unsubscribed.set(true);
-                t.interrupt();
-                latch.countDown();
-            });
-            t.start();
+                });
+                t.start();
+            }
         });
 
         s1.subscribe(ts);
@@ -249,7 +294,7 @@ public class SingleTest {
      */
     @Test
     public void testUnsubscribe2() throws InterruptedException {
-        MultipleAssignmentDisposable md = new MultipleAssignmentDisposable();
+        final MultipleAssignmentDisposable md = new MultipleAssignmentDisposable();
         SingleSubscriber<String> ts = new SingleSubscriber<String>() {
 
             @Override
@@ -272,30 +317,36 @@ public class SingleTest {
         final AtomicBoolean interrupted = new AtomicBoolean();
         final CountDownLatch latch = new CountDownLatch(2);
 
-        Single<String> s1 = Single.create(s -> {
-            MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
-            s.onSubscribe(mad);
-            final Thread t = new Thread(new Runnable() {
+        Single<String> s1 = Single.create(new SingleOnSubscribe<String>() {
+            @Override
+            public void accept(final SingleSubscriber<? super String> s) {
+                MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+                s.onSubscribe(mad);
+                final Thread t = new Thread(new Runnable() {
 
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(5000);
-                        s.onSuccess("success");
-                    } catch (InterruptedException e) {
-                        interrupted.set(true);
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                            s.onSuccess("success");
+                        } catch (InterruptedException e) {
+                            interrupted.set(true);
+                            latch.countDown();
+                        }
+                    }
+
+                });
+                mad.set(new Disposable() {
+                    @Override
+                    public void dispose() {
+                        unsubscribed.set(true);
+                        t.interrupt();
                         latch.countDown();
                     }
-                }
+                });
+                t.start();
 
-            });
-            mad.set(() -> {
-                unsubscribed.set(true);
-                t.interrupt();
-                latch.countDown();
-            });
-            t.start();
-
+            }
         });
 
         s1.subscribe(ts);
@@ -321,30 +372,36 @@ public class SingleTest {
         final AtomicBoolean interrupted = new AtomicBoolean();
         final CountDownLatch latch = new CountDownLatch(2);
 
-        Single<String> s1 = Single.create(s -> {
-            MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
-            s.onSubscribe(mad);
-            final Thread t = new Thread(new Runnable() {
+        Single<String> s1 = Single.create(new SingleOnSubscribe<String>() {
+            @Override
+            public void accept(final SingleSubscriber<? super String> s) {
+                MultipleAssignmentDisposable mad = new MultipleAssignmentDisposable();
+                s.onSubscribe(mad);
+                final Thread t = new Thread(new Runnable() {
 
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(5000);
-                        s.onSuccess("success");
-                    } catch (InterruptedException e) {
-                        interrupted.set(true);
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                            s.onSuccess("success");
+                        } catch (InterruptedException e) {
+                            interrupted.set(true);
+                            latch.countDown();
+                        }
+                    }
+
+                });
+                mad.set(new Disposable() {
+                    @Override
+                    public void dispose() {
+                        unsubscribed.set(true);
+                        t.interrupt();
                         latch.countDown();
                     }
-                }
+                });
+                t.start();
 
-            });
-            mad.set(() -> {
-                unsubscribed.set(true);
-                t.interrupt();
-                latch.countDown();
-            });
-            t.start();
-
+            }
         });
 
         Disposable subscription = s1.subscribe();
@@ -363,12 +420,15 @@ public class SingleTest {
     
     @Test
     public void testBackpressureAsObservable() {
-        Single<String> s = Single.create(t -> {
-            t.onSubscribe(EmptyDisposable.INSTANCE);
-            t.onSuccess("hello");
+        Single<String> s = Single.create(new SingleOnSubscribe<String>() {
+            @Override
+            public void accept(SingleSubscriber<? super String> t) {
+                t.onSubscribe(EmptyDisposable.INSTANCE);
+                t.onSuccess("hello");
+            }
         });
 
-        TestSubscriber<String> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<String> ts = new TestSubscriber<String>((Long)null);
 
         s.subscribe(ts);
 
@@ -382,7 +442,7 @@ public class SingleTest {
     @Test
     public void testToObservable() {
     	Observable<String> a = Single.just("a").toFlowable();
-    	TestSubscriber<String> ts = new TestSubscriber<T>();
+    	TestSubscriber<String> ts = new TestSubscriber<String>();
     	a.subscribe(ts);
     	ts.assertValue("a");
     	ts.assertNoErrors();

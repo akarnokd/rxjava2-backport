@@ -115,7 +115,7 @@ public class OperatorPublishTest {
 
         });
 
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.merge(fast, slow).subscribe(ts);
         is.connect();
         ts.awaitTerminalEvent();
@@ -135,7 +135,7 @@ public class OperatorPublishTest {
             }
 
         });
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         xs.publish(new Function<Observable<Integer>, Observable<Integer>>() {
 
             @Override
@@ -162,7 +162,7 @@ public class OperatorPublishTest {
     @Test
     public void testTakeUntilWithPublishedStream() {
         Observable<Integer> xs = Observable.range(0, Observable.bufferSize() * 2);
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         ConnectableObservable<Integer> xsp = xs.publish();
         xsp.takeUntil(xsp.skipWhile(new Predicate<Integer>() {
 
@@ -339,7 +339,7 @@ public class OperatorPublishTest {
     public void testZeroRequested() {
         ConnectableObservable<Integer> source = Observable.just(1).publish();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         
         source.subscribe(ts);
         
@@ -394,7 +394,7 @@ public class OperatorPublishTest {
             for (int j = 1; j < 6; j++) {
                 List<TestSubscriber<Integer>> tss = new ArrayList<T>();
                 for (int k = 1; k < j; k++) {
-                    TestSubscriber<Integer> ts = new TestSubscriber<T>();
+                    TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
                     tss.add(ts);
                     obs.subscribe(ts);
                 }

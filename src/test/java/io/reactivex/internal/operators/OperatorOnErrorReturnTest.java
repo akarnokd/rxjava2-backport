@@ -130,7 +130,7 @@ public class OperatorOnErrorReturnTest {
 
         @SuppressWarnings("unchecked")
         Observer<String> observer = mock(Observer.class);
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer, Long.MAX_VALUE);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer, Long.MAX_VALUE);
         observable.subscribe(ts);
         ts.awaitTerminalEvent();
 
@@ -144,7 +144,7 @@ public class OperatorOnErrorReturnTest {
     
     @Test
     public void testBackpressure() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(0, 100000)
                 .onErrorReturn(new Function<Throwable, Integer>() {
 

@@ -490,7 +490,7 @@ public class OperatorMergeDelayErrorTest {
 
     @Test
     public void testErrorInParentObservable() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.mergeDelayError(
                 Observable.just(Observable.just(1), Observable.just(2))
                         .startWith(Observable.<Integer> error(new RuntimeException()))
@@ -519,7 +519,7 @@ public class OperatorMergeDelayErrorTest {
     
             Subscriber<String> stringObserver = TestHelper.mockSubscriber();
             
-            TestSubscriber<String> ts = new TestSubscriber<T>(stringObserver);
+            TestSubscriber<String> ts = new TestSubscriber<String>(stringObserver);
             Observable<String> m = Observable.mergeDelayError(parentObservable);
             m.subscribe(ts);
             System.out.println("testErrorInParentObservableDelayed | " + i);
@@ -568,7 +568,7 @@ public class OperatorMergeDelayErrorTest {
                     }
                 }), 1);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.subscribe(ts);
         

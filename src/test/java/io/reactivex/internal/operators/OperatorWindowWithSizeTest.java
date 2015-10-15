@@ -107,7 +107,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeNonOverlapping() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 10000).doOnNext(new Consumer<Integer>() {
 
@@ -126,7 +126,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeNonOverlappingAsyncSource() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 100000)
                 .doOnNext(new Consumer<Integer>() {
@@ -150,7 +150,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeOverlapping() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 10000).doOnNext(new Consumer<Integer>() {
 
@@ -169,7 +169,7 @@ public class OperatorWindowWithSizeTest {
 
     @Test
     public void testWindowUnsubscribeOverlappingAsyncSource() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         final AtomicInteger count = new AtomicInteger();
         Observable.merge(Observable.range(1, 100000)
                 .doOnNext(new Consumer<Integer>() {
@@ -271,7 +271,7 @@ public class OperatorWindowWithSizeTest {
     
     @Test
     public void testTakeFlatMapCompletes() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         final int indicator = 999999999;
         

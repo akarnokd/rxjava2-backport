@@ -76,7 +76,7 @@ public class OperatorSubscribeOnTest {
     @Test
     @Ignore("Publisher.subscribe can't throw")
     public void testThrownErrorHandling() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.create(new Publisher<String>() {
 
             @Override
@@ -91,7 +91,7 @@ public class OperatorSubscribeOnTest {
 
     @Test
     public void testOnError() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.create(new Publisher<String>() {
 
             @Override
@@ -162,7 +162,7 @@ public class OperatorSubscribeOnTest {
 
     @Test(timeout = 5000)
     public void testUnsubscribeInfiniteStream() throws InterruptedException {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         final AtomicInteger count = new AtomicInteger();
         Observable.create(new Publisher<Integer>() {
 
@@ -188,7 +188,7 @@ public class OperatorSubscribeOnTest {
     @Test
     public void testBackpressureReschedulesCorrectly() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(10);
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(new Observer<Integer>() {
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(new Observer<Integer>() {
 
             @Override
             public void onComplete() {
@@ -218,7 +218,7 @@ public class OperatorSubscribeOnTest {
 
     @Test
     public void testSetProducerSynchronousRequest() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.just(1, 2, 3).lift(new Operator<Integer, Integer>() {
 
             @Override

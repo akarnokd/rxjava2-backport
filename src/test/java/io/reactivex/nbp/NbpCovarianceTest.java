@@ -66,7 +66,7 @@ public class NbpCovarianceTest {
         .doOnNext(g -> System.out.println(g.key()))
         .flatMap(g -> 
             g
-            .doOnNext(System.out::println)
+            .doOnNext(pv -> System.out.println(pv))
             .compose(m -> m.concatWith(NbpObservable.just(new ActionMovie()))
         )
         .map(Object::toString))

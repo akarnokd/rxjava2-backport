@@ -156,7 +156,7 @@ public class OperatorMergeMaxConcurrentTest {
     @Test
     public void testSimple() {
         for (int i = 1; i < 100; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             List<Observable<Integer>> sourceList = new ArrayList<T>(i);
             List<Integer> result = new ArrayList<T>(i);
             for (int j = 1; j <= i; j++) {
@@ -174,7 +174,7 @@ public class OperatorMergeMaxConcurrentTest {
     @Test
     public void testSimpleOneLess() {
         for (int i = 2; i < 100; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             List<Observable<Integer>> sourceList = new ArrayList<T>(i);
             List<Integer> result = new ArrayList<T>(i);
             for (int j = 1; j <= i; j++) {
@@ -204,7 +204,7 @@ public class OperatorMergeMaxConcurrentTest {
     @Test(timeout = 10000)
     public void testSimpleAsync() {
         for (int i = 1; i < 50; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             List<Observable<Integer>> sourceList = new ArrayList<T>(i);
             Set<Integer> expected = new HashSet<T>(i);
             for (int j = 1; j <= i; j++) {
@@ -234,7 +234,7 @@ public class OperatorMergeMaxConcurrentTest {
             if (System.currentTimeMillis() - t > TimeUnit.SECONDS.toMillis(9)) {
                 break;
             }
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             List<Observable<Integer>> sourceList = new ArrayList<T>(i);
             Set<Integer> expected = new HashSet<T>(i);
             for (int j = 1; j <= i; j++) {
@@ -289,7 +289,7 @@ public class OperatorMergeMaxConcurrentTest {
         sourceList.add(Observable.range(0, 100000).subscribeOn(Schedulers.io()));
         sourceList.add(Observable.range(0, 100000).subscribeOn(Schedulers.io()));
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         Observable.merge(sourceList, 2).take(5).subscribe(ts);
         

@@ -283,7 +283,7 @@ public class OperatorTakeTest {
     @Test(timeout = 2000)
     public void testTakeObserveOn() {
         Subscriber<Object> o = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
         
         INFINITE_OBSERVABLE.onBackpressureDrop()
         .observeOn(Schedulers.newThread()).take(1).subscribe(ts);
@@ -298,7 +298,7 @@ public class OperatorTakeTest {
     
     @Test
     public void testProducerRequestThroughTake() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
@@ -326,7 +326,7 @@ public class OperatorTakeTest {
     
     @Test
     public void testProducerRequestThroughTakeIsModified() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         ts.request(3);
         final AtomicLong requested = new AtomicLong();
         Observable.create(new Publisher<Integer>() {
@@ -426,7 +426,7 @@ public class OperatorTakeTest {
     public void testReentrantTake() {
         PublishSubject<Integer> source = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.take(1).doOnNext(v -> source.onNext(2)).subscribe(ts);
         

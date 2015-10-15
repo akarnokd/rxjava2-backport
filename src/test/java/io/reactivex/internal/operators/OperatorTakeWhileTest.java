@@ -223,7 +223,7 @@ public class OperatorTakeWhileTest {
                 return t1 < 100;
             }
         });
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(5L);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(5L);
         
         source.subscribe(ts);
         
@@ -244,7 +244,7 @@ public class OperatorTakeWhileTest {
                 return t1 < 2;
             }
         });
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.unsafeSubscribe(ts);
         
@@ -256,7 +256,7 @@ public class OperatorTakeWhileTest {
     
     @Test
     public void testErrorCauseIncludesLastValue() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.just("abc").takeWhile(new Predicate<String>() {
             @Override
             public boolean test(String t1) {

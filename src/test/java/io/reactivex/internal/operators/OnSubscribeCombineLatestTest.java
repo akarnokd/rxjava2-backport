@@ -718,7 +718,7 @@ public class OnSubscribeCombineLatestTest {
         BiFunction<String, Integer, String> combineLatestFunction = getConcatStringIntegerCombineLatestFunction();
 
         int NUM = Observable.bufferSize() * 4;
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.combineLatest(
                 Observable.just("one", "two"),
                 Observable.range(2, NUM), 

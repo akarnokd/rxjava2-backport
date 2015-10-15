@@ -161,7 +161,7 @@ public class OperatorRepeatTest {
                 .repeat(3)
                 .distinct();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         src.subscribe(ts);
         
@@ -174,7 +174,7 @@ public class OperatorRepeatTest {
     @Test(timeout = 3000)
     public void testRepeatRetarget() {
         final List<Integer> concatBase = new ArrayList<T>();
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.just(1, 2)
         .repeat(5)
         .concatMap(new Function<Integer, Observable<Integer>>() {

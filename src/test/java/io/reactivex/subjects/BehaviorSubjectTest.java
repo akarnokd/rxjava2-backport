@@ -127,7 +127,7 @@ public class BehaviorSubjectTest {
         Subscriber<Object> observerB = TestHelper.mockSubscriber();
         Subscriber<Object> observerC = TestHelper.mockSubscriber();
 
-        TestSubscriber<Object> ts = new TestSubscriber<T>(observerA);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(observerA);
         
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -358,7 +358,7 @@ public class BehaviorSubjectTest {
 //        BehaviorSubject<String> ps = BehaviorSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //
 //        try {

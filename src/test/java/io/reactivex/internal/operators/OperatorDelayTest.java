@@ -216,7 +216,7 @@ public class OperatorDelayTest {
         Observable<Integer> result = Observable.just(1, 2, 3).delaySubscription(100, TimeUnit.MILLISECONDS, scheduler);
 
         Subscriber<Object> o = TestHelper.mockSubscriber();
-        TestSubscriber<Object> ts = new TestSubscriber<T>(o);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(o);
 
         result.subscribe(ts);
         ts.dispose();
@@ -638,7 +638,7 @@ public class OperatorDelayTest {
 
     @Test
     public void testBackpressureWithTimedDelay() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(1, Observable.bufferSize() * 2)
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.computation())
@@ -666,7 +666,7 @@ public class OperatorDelayTest {
     
     @Test
     public void testBackpressureWithSubscriptionTimedDelay() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(1, Observable.bufferSize() * 2)
                 .delaySubscription(100, TimeUnit.MILLISECONDS)
                 .delay(100, TimeUnit.MILLISECONDS)
@@ -695,7 +695,7 @@ public class OperatorDelayTest {
 
     @Test
     public void testBackpressureWithSelectorDelay() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(1, Observable.bufferSize() * 2)
                 .delay(new Function<Integer, Observable<Long>>() {
 
@@ -730,7 +730,7 @@ public class OperatorDelayTest {
 
     @Test
     public void testBackpressureWithSelectorDelayAndSubscriptionDelay() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(1, Observable.bufferSize() * 2)
                 .delay(new Supplier<Observable<Long>>() {
 
@@ -775,7 +775,7 @@ public class OperatorDelayTest {
         
         PublishSubject<Integer> ps = PublishSubject.create();
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         ps.delay(1, TimeUnit.SECONDS, test).subscribe(ts);
         
@@ -796,7 +796,7 @@ public class OperatorDelayTest {
         
         Observable<Integer> source = Observable.range(1, 5);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.delaySubscription(() -> ps).subscribe(ts);
         
@@ -817,7 +817,7 @@ public class OperatorDelayTest {
         
         Observable<Integer> source = Observable.range(1, 5);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.delaySubscription(() -> ps).subscribe(ts);
         
@@ -839,7 +839,7 @@ public class OperatorDelayTest {
         
         Observable<Integer> source = Observable.range(1, 5);
         
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
         source.delaySubscription(() -> ps).subscribe(ts);
         

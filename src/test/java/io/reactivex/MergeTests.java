@@ -18,8 +18,10 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import org.junit.Test;
+import org.reactivestreams.Publisher;
 
 import io.reactivex.CovarianceTest.*;
+import io.reactivex.functions.Supplier;
 
 public class MergeTests {
 
@@ -62,6 +64,7 @@ public class MergeTests {
         Observable<Movie> o1 = Observable.just(new HorrorMovie(), new Movie());
         Observable<Media> o2 = Observable.just(new Media(), new HorrorMovie());
 
+        @SuppressWarnings("unchecked")
         List<Media> values = Observable.merge(o1, o2).toList().toBlocking().single();
 
         assertTrue(values.get(0) instanceof HorrorMovie);
@@ -73,13 +76,19 @@ public class MergeTests {
     @Test
     public void testMergeCovariance4() {
 
-        Observable<Movie> o1 = Observable.defer(() -> Observable.just(
-                new HorrorMovie(),
-                new Movie()
-        ));
+        Observable<Movie> o1 = Observable.defer(new Supplier<Publisher<Movie>>() {
+            @Override
+            public Publisher<Movie> get() {
+                return Observable.just(
+                        new HorrorMovie(),
+                        new Movie()
+                );
+            }
+        });
         
         Observable<Media> o2 = Observable.just(new Media(), new HorrorMovie());
 
+        @SuppressWarnings("unchecked")
         List<Media> values = Observable.merge(o1, o2).toList().toBlocking().single();
 
         assertTrue(values.get(0) instanceof HorrorMovie);

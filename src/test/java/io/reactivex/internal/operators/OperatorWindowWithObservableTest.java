@@ -391,7 +391,7 @@ public class OperatorWindowWithObservableTest {
             }
         };
         
-        final TestSubscriber<Integer> ts = new TestSubscriber<T>(1L);
+        final TestSubscriber<Integer> ts = new TestSubscriber<Integer>(1L);
         final TestSubscriber<Observable<Integer>> ts1 = new TestSubscriber<Observable<Integer>>(1L) {
             @Override
             public void onNext(Observable<Integer> t) {

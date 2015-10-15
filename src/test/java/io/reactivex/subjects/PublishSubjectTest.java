@@ -61,7 +61,7 @@ public class PublishSubjectTest {
         Subscriber<Object> observerB = TestHelper.mockSubscriber();
         Subscriber<Object> observerC = TestHelper.mockSubscriber();
 
-        TestSubscriber<Object> ts = new TestSubscriber<T>(observerA);
+        TestSubscriber<Object> ts = new TestSubscriber<Object>(observerA);
         
         channel.subscribe(ts);
         channel.subscribe(observerB);
@@ -170,7 +170,7 @@ public class PublishSubjectTest {
         PublishSubject<String> subject = PublishSubject.create();
 
         Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer);
         subject.subscribe(ts);
 
         subject.onNext("one");
@@ -256,7 +256,7 @@ public class PublishSubjectTest {
         final PublishSubject<Integer> ps = PublishSubject.create();
 
         Subscriber<Integer> o1 = TestHelper.mockSubscriber();
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(o1);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(o1);
         ps.subscribe(ts);
 
         // emit
@@ -338,7 +338,7 @@ public class PublishSubjectTest {
 //        PublishSubject<String> ps = PublishSubject.create();
 //
 //        ps.subscribe();
-//        TestSubscriber<String> ts = new TestSubscriber<T>();
+//        TestSubscriber<String> ts = new TestSubscriber<String>();
 //        ps.subscribe(ts);
 //
 //        try {

@@ -332,7 +332,7 @@ public class NbpOperatorBufferTest {
         NbpTestSubscriber<List<Integer>> ts = new NbpTestSubscriber<T>(o);
 
         source.buffer(100, 200, TimeUnit.MILLISECONDS, scheduler)
-        .doOnNext(System.out::println)
+        .doOnNext(pv -> System.out.println(pv))
         .subscribe(ts);
 
         InOrder inOrder = Mockito.inOrder(o);
@@ -575,7 +575,7 @@ public class NbpOperatorBufferTest {
         InOrder inOrder = inOrder(o);
         
         result
-        .doOnNext(System.out::println)
+        .doOnNext(pv -> System.out.println(pv))
         .subscribe(o);
         
         scheduler.advanceTimeBy(5, TimeUnit.SECONDS);

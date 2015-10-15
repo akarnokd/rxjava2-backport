@@ -163,7 +163,7 @@ public class OperatorSkipTest {
     
     @Test
     public void testRequestOverflowDoesNotOccur() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(Long.MAX_VALUE-1);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(Long.MAX_VALUE-1);
         Observable.range(1, 10).skip(5).subscribe(ts);
         ts.assertTerminated();
         ts.assertComplete();

@@ -139,7 +139,7 @@ public class OperatorSwitchIfEmptyTest {
     @Test
     public void testSwitchRequestAlternativeObservableWithBackpressure() {
 
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(1L);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(1L);
         
         Observable.<Integer>empty().switchIfEmpty(Observable.just(1, 2, 3)).subscribe(ts);
         
@@ -152,7 +152,7 @@ public class OperatorSwitchIfEmptyTest {
     }
     @Test
     public void testBackpressureNoRequest() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         Observable.<Integer>empty().switchIfEmpty(Observable.just(1, 2, 3)).subscribe(ts);
         ts.assertNoValues();
         ts.assertNoErrors();
@@ -160,7 +160,7 @@ public class OperatorSwitchIfEmptyTest {
     
     @Test
     public void testBackpressureOnFirstObservable() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>((Long)null);
         Observable.just(1,2,3).switchIfEmpty(Observable.just(4, 5, 6)).subscribe(ts);
         ts.assertNotComplete();
         ts.assertNoErrors();

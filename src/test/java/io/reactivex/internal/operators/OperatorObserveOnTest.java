@@ -62,7 +62,7 @@ public class OperatorObserveOnTest {
         Subscriber<String> observer = TestHelper.mockSubscriber();
 
         InOrder inOrder = inOrder(observer);
-        TestSubscriber<String> ts = new TestSubscriber<T>(observer);
+        TestSubscriber<String> ts = new TestSubscriber<String>(observer);
 
         obs.observeOn(Schedulers.computation()).subscribe(ts);
 
@@ -388,7 +388,7 @@ public class OperatorObserveOnTest {
         final TestScheduler testScheduler = new TestScheduler();
 
         final Subscriber<Integer> observer = TestHelper.mockSubscriber();
-        TestSubscriber<Integer> ts = new TestSubscriber<T>(observer);
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>(observer);
         
         Observable.just(1, 2, 3)
                 .observeOn(testScheduler)
@@ -594,7 +594,7 @@ public class OperatorObserveOnTest {
 
     @Test
     public void testAsyncChild() {
-        TestSubscriber<Integer> ts = new TestSubscriber<T>();
+        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.range(0, 100000).observeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();
@@ -653,7 +653,7 @@ public class OperatorObserveOnTest {
      */
     @Test
     public void testHotOperatorBackpressure() {
-        TestSubscriber<String> ts = new TestSubscriber<T>();
+        TestSubscriber<String> ts = new TestSubscriber<String>();
         Observable.interval(0, 1, TimeUnit.MICROSECONDS)
                 .observeOn(Schedulers.computation())
                 .map(new Function<Long, String>() {

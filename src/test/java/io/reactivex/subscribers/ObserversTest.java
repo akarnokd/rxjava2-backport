@@ -18,11 +18,12 @@ import static org.mockito.Mockito.*;
 
 import java.lang.reflect.*;
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 
 import io.reactivex.exceptions.TestException;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.functions.Functions;
 
 public class ObserversTest {
     @Test
@@ -60,7 +61,7 @@ public class ObserversTest {
 //    @Test
 //    public void testCreate1OnErrorNotImplemented() {
 //        try {
-//            Observers.create(() -> { }).onError(new TestException());
+//            Observers.create(Functions.emptyRunnable()).onError(new TestException());
 //            fail("OnErrorNotImplementedException not thrown!");
 //        } catch (OnErrorNotImplementedException ex) {
 //            if (!(ex.getCause() instanceof TestException)) {
@@ -75,27 +76,30 @@ public class ObserversTest {
     }
     @Test(expected = NullPointerException.class)
     public void testCreate2Null() {
-        Consumer<Throwable> throwAction = e -> { };
+        Consumer<Throwable> throwAction = new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable e) { }
+        };
         Observers.create(null, throwAction);
     }
     @Test(expected = NullPointerException.class)
     public void testCreate3Null() {
-        Observers.create(v -> { }, null);
+        Observers.create(Functions.emptyConsumer(), null);
     }
     
     @Test(expected = NullPointerException.class)
     public void testCreate4Null() {
-        Consumer<Throwable> throwAction = v -> { };
-        Observers.create(null, throwAction, () -> { });
+        Consumer<Throwable> throwAction = Functions.emptyConsumer();
+        Observers.create(null, throwAction, Functions.emptyRunnable());
     }
     @Test(expected = NullPointerException.class)
     public void testCreate5Null() {
-        Observers.create(v -> { }, null, () -> { });
+        Observers.create(Functions.emptyConsumer(), null, Functions.emptyRunnable());
     }
     @Test(expected = NullPointerException.class)
     public void testCreate6Null() {
-        Consumer<Throwable> throwAction = v -> { };
-        Observers.create(v -> { }, throwAction, null);
+        Consumer<Throwable> throwAction = Functions.emptyConsumer();
+        Observers.create(Functions.emptyConsumer(), throwAction, null);
     }
     
     @Test
@@ -120,7 +124,7 @@ public class ObserversTest {
                 value.set(t);
             }
         };
-        Consumer<Throwable> throwAction = v -> { };
+        Consumer<Throwable> throwAction = Functions.emptyConsumer();
         Observers.create(action, throwAction).onNext(1);
         
         assertEquals(1, value.get());
@@ -135,15 +139,15 @@ public class ObserversTest {
                 value.set(t);
             }
         };
-        Consumer<Throwable> throwAction = v -> { };
-        Observers.create(action, throwAction, () -> { }).onNext(1);
+        Consumer<Throwable> throwAction = Functions.emptyConsumer();
+        Observers.create(action, throwAction, Functions.emptyRunnable()).onNext(1);
         
         assertEquals(1, value.get());
     }
     
     @Test
     public void testError2() {
-        final AtomicReference<Throwable> value = new AtomicReference<T>();
+        final AtomicReference<Throwable> value = new AtomicReference<Throwable>();
         Consumer<Throwable> action = new Consumer<Throwable>() {
             @Override
             public void accept(Throwable t) {
@@ -151,14 +155,14 @@ public class ObserversTest {
             }
         };
         TestException exception = new TestException();
-        Observers.create(v -> { }, action).onError(exception);
+        Observers.create(Functions.emptyConsumer(), action).onError(exception);
         
         assertEquals(exception, value.get());
     }
     
     @Test
     public void testError3() {
-        final AtomicReference<Throwable> value = new AtomicReference<T>();
+        final AtomicReference<Throwable> value = new AtomicReference<Throwable>();
         Consumer<Throwable> action = new Consumer<Throwable>() {
             @Override
             public void accept(Throwable t) {
@@ -166,7 +170,7 @@ public class ObserversTest {
             }
         };
         TestException exception = new TestException();
-        Observers.create(v -> { }, action, () -> { }).onError(exception);
+        Observers.create(Functions.emptyConsumer(), action, Functions.emptyRunnable()).onError(exception);
         
         assertEquals(exception, value.get());
     }
@@ -175,17 +179,17 @@ public class ObserversTest {
     public void testCompleted() {
         Runnable action = mock(Runnable.class);
         
-        Consumer<Throwable> throwAction = v -> { };
-        Observers.create(v -> { }, throwAction, action).onComplete();
+        Consumer<Throwable> throwAction = Functions.emptyConsumer();
+        Observers.create(Functions.emptyConsumer(), throwAction, action).onComplete();
 
         verify(action).run();
     }
     
     @Test
     public void testEmptyCompleted() {
-        Observers.create(v -> { }).onComplete();
+        Observers.create(Functions.emptyConsumer()).onComplete();
         
-        Consumer<Throwable> throwAction = v -> { };
-        Observers.create(v -> { }, throwAction).onComplete();
+        Consumer<Throwable> throwAction = Functions.emptyConsumer();
+        Observers.create(Functions.emptyConsumer(), throwAction).onComplete();
     }
 }

@@ -292,7 +292,7 @@ public class ReplaySubjectConcurrencyTest {
     public void testRaceForTerminalState() {
         final List<Integer> expected = Arrays.asList(1);
         for (int i = 0; i < 100000; i++) {
-            TestSubscriber<Integer> ts = new TestSubscriber<T>();
+            TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
             Observable.just(1).subscribeOn(Schedulers.computation()).cache().subscribe(ts);
             ts.awaitTerminalEvent();
             ts.assertValueSequence(expected);
