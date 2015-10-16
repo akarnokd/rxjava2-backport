@@ -63,7 +63,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
         
         System.out.printf("Starting: %.3f MB%n", initial / 1024.0 / 1024.0);
 
-        int n = 200 * 1000;
+        int n = 100 * 1000;
         if (periodic) {
             final CountDownLatch cdl = new CountDownLatch(n);
             final Runnable action = new Runnable() {

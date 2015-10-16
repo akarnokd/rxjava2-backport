@@ -219,6 +219,8 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
                     // if it fails, no worries because we will still have its buffer
                     // so it is going to replay it for us
                     r.add(inner);
+                    // trigger the capturing of the current node and total requested
+                    r.buffer.replay(inner);
                     // the producer has been registered with the current subscriber-to-source so 
                     // at least it will receive the next terminal event
                     // setting the producer will trigger the first request to be considered by 
@@ -838,8 +840,10 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
         /** */
         private static final long serialVersionUID = 245354315435971818L;
         final Object value;
-        public Node(Object value) {
+        final long index;
+        public Node(Object value, long index) {
             this.value = value;
+            this.index = index;
         }
     }
     
@@ -856,8 +860,10 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
         Node tail;
         int size;
         
+        long index;
+        
         public BoundedReplayBuffer() {
-            Node n = new Node(null);
+            Node n = new Node(null, 0);
             tail = n;
             set(n);
         }
@@ -906,7 +912,7 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
         @Override
         public final void next(T value) {
             Object o = enterTransform(NotificationLite.next(value));
-            Node n = new Node(o);
+            Node n = new Node(o, ++index);
             addLast(n);
             truncate();
         }
@@ -914,7 +920,7 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
         @Override
         public final void error(Throwable e) {
             Object o = enterTransform(NotificationLite.error(e));
-            Node n = new Node(o);
+            Node n = new Node(o, ++index);
             addLast(n);
             truncateFinal();
         }
@@ -922,7 +928,7 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
         @Override
         public final void complete() {
             Object o = enterTransform(NotificationLite.complete());
-            Node n = new Node(o);
+            Node n = new Node(o, ++index);
             addLast(n);
             truncateFinal();
         }
@@ -942,13 +948,15 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
                 }
 
                 long r = output.get();
-                long r0 = r;
+                boolean unbounded = r == Long.MAX_VALUE;
                 long e = 0L;
                 
                 Node node = output.index();
                 if (node == null) {
                     node = get();
                     output.index = node;
+
+                    BackpressureHelper.add(output.totalRequested, node.index);
                 }
                 
                 while (r != 0) {
@@ -969,6 +977,7 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
                             return;
                         }
                         e++;
+                        r--;
                         node = v;
                     } else {
                         break;
@@ -980,7 +989,7 @@ public final class OperatorReplay<T> extends ConnectableObservable<T> {
 
                 if (e != 0L) {
                     output.index = node;
-                    if (r0 != Long.MAX_VALUE) {
+                    if (!unbounded) {
                         output.produced(e);
                     }
                 }

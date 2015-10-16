@@ -733,11 +733,11 @@ public class OperatorReplayTest {
     @Test
     public void testBoundedReplayBuffer() {
         BoundedReplayBuffer<Integer> buf = new BoundedReplayBuffer<Integer>();
-        buf.addLast(new Node(1));
-        buf.addLast(new Node(2));
-        buf.addLast(new Node(3));
-        buf.addLast(new Node(4));
-        buf.addLast(new Node(5));
+        buf.addLast(new Node(1, 0));
+        buf.addLast(new Node(2, 1));
+        buf.addLast(new Node(3, 2));
+        buf.addLast(new Node(4, 3));
+        buf.addLast(new Node(5, 4));
         
         List<Integer> values = new ArrayList<Integer>();
         buf.collect(values);
@@ -752,8 +752,8 @@ public class OperatorReplayTest {
         buf.collect(values);
         Assert.assertTrue(values.isEmpty());
 
-        buf.addLast(new Node(5));
-        buf.addLast(new Node(6));
+        buf.addLast(new Node(5, 5));
+        buf.addLast(new Node(6, 6));
         buf.collect(values);
         
         Assert.assertEquals(Arrays.asList(5, 6), values);
@@ -1131,5 +1131,109 @@ public class OperatorReplayTest {
         
         Assert.assertEquals(Arrays.asList(5L, 5L), requests);
     }
+
+    @Test
+    public void testSubscribersComeAndGoAtRequestBoundaries() {
+        ConnectableObservable<Integer> source = Observable.range(1, 10).replay(1);
+        source.connect();
+        
+        TestSubscriber<Integer> ts1 = new TestSubscriber<Integer>(2L);
+        
+        source.subscribe(ts1);
+        
+        ts1.assertValues(1, 2);
+        ts1.assertNoErrors();
+        ts1.dispose();
+        
+        TestSubscriber<Integer> ts2 = new TestSubscriber<Integer>(2L);
+        
+        source.subscribe(ts2);
+        
+        ts2.assertValues(2, 3);
+        ts2.assertNoErrors();
+        ts2.dispose();
+
+        TestSubscriber<Integer> ts21 = new TestSubscriber<Integer>(1L);
+        
+        source.subscribe(ts21);
+        
+        ts21.assertValues(3);
+        ts21.assertNoErrors();
+        ts21.dispose();
+
+        TestSubscriber<Integer> ts22 = new TestSubscriber<Integer>(1L);
+        
+        source.subscribe(ts22);
+        
+        ts22.assertValues(3);
+        ts22.assertNoErrors();
+        ts22.dispose();
+
+        
+        TestSubscriber<Integer> ts3 = new TestSubscriber<Integer>();
+        
+        source.subscribe(ts3);
+        
+        ts3.assertNoErrors();
+        System.out.println(ts3.values());
+        ts3.assertValues(3, 4, 5, 6, 7, 8, 9, 10);
+        ts3.assertComplete();
+    }
     
+    @Test
+    public void testSubscribersComeAndGoAtRequestBoundaries2() {
+        ConnectableObservable<Integer> source = Observable.range(1, 10).replay(2);
+        source.connect();
+        
+        TestSubscriber<Integer> ts1 = new TestSubscriber<Integer>(2L);
+        
+        source.subscribe(ts1);
+        
+        ts1.assertValues(1, 2);
+        ts1.assertNoErrors();
+        ts1.dispose();
+
+        TestSubscriber<Integer> ts11 = new TestSubscriber<Integer>(2L);
+        
+        source.subscribe(ts11);
+        
+        ts11.assertValues(1, 2);
+        ts11.assertNoErrors();
+        ts11.dispose();
+
+        TestSubscriber<Integer> ts2 = new TestSubscriber<Integer>(3L);
+        
+        source.subscribe(ts2);
+        
+        ts2.assertValues(1, 2, 3);
+        ts2.assertNoErrors();
+        ts2.dispose();
+
+        TestSubscriber<Integer> ts21 = new TestSubscriber<Integer>(1L);
+        
+        source.subscribe(ts21);
+        
+        ts21.assertValues(2);
+        ts21.assertNoErrors();
+        ts21.dispose();
+
+        TestSubscriber<Integer> ts22 = new TestSubscriber<Integer>(1L);
+        
+        source.subscribe(ts22);
+        
+        ts22.assertValues(2);
+        ts22.assertNoErrors();
+        ts22.dispose();
+
+        
+        TestSubscriber<Integer> ts3 = new TestSubscriber<Integer>();
+        
+        source.subscribe(ts3);
+        
+        ts3.assertNoErrors();
+        System.out.println(ts3.values());
+        ts3.assertValues(2, 3, 4, 5, 6, 7, 8, 9, 10);
+        ts3.assertComplete();
+    }
+
 }
