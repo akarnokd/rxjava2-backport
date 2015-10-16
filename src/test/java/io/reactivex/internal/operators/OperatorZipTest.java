@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -30,6 +30,7 @@ import io.reactivex.*;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.functions.Function3;
+import io.reactivex.internal.functions.Functions;
 import io.reactivex.internal.subscriptions.*;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -66,7 +67,7 @@ public class OperatorZipTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testCollectionSizeDifferentThanFunction() {
-        Function<Object[], String> zipr = getConcatStringIntegerIntArrayZipr();
+        Function<Object[], String> zipr = Functions.toFunction(getConcatStringIntegerIntArrayZipr());
         //Function3<String, Integer, int[], String>
 
         /* define a Subscriber to receive aggregated events */
@@ -767,7 +768,7 @@ public class OperatorZipTest {
                     }
                 });
 
-        final ArrayList<String> list = new ArrayList<T>();
+        final ArrayList<String> list = new ArrayList<String>();
         os.subscribe(new Consumer<String>() {
 
             @Override
@@ -819,7 +820,7 @@ public class OperatorZipTest {
                     }
                 });
 
-        final ArrayList<String> list = new ArrayList<T>();
+        final ArrayList<String> list = new ArrayList<String>();
         os.subscribe(new Observer<String>() {
 
             @Override
@@ -865,7 +866,7 @@ public class OperatorZipTest {
 
         });
 
-        final ArrayList<String> list = new ArrayList<T>();
+        final ArrayList<String> list = new ArrayList<String>();
         o.subscribe(new Consumer<String>() {
 
             @Override
@@ -914,7 +915,7 @@ public class OperatorZipTest {
 
         });
 
-        final ArrayList<String> list = new ArrayList<T>();
+        final ArrayList<String> list = new ArrayList<String>();
         o.subscribe(new Consumer<String>() {
 
             @Override
@@ -943,7 +944,7 @@ public class OperatorZipTest {
 
         });
 
-        final ArrayList<String> list = new ArrayList<T>();
+        final ArrayList<String> list = new ArrayList<String>();
         o.subscribe(new Consumer<String>() {
 
             @Override
@@ -1173,7 +1174,7 @@ public class OperatorZipTest {
 
             @Override
             public void subscribe(final Subscriber<? super Integer> o) {
-                BooleanSubscription bs = new BooleanSubscription();
+                final BooleanSubscription bs = new BooleanSubscription();
                 o.onSubscribe(bs);
                 Thread t = new Thread(new Runnable() {
 
@@ -1217,7 +1218,7 @@ public class OperatorZipTest {
                         return i1 + i2;
                     }
                 });
-        List<Integer> expected = new ArrayList<T>();
+        List<Integer> expected = new ArrayList<Integer>();
         for (int i = 0; i < 1026; i++) {
             expected.add(i * 3);
         }

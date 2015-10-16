@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -35,7 +35,7 @@ public class NbpOperatorOnErrorReturnTest {
     public void testResumeNext() {
         TestObservable f = new TestObservable("one");
         NbpObservable<String> w = NbpObservable.create(f);
-        final AtomicReference<Throwable> capturedException = new AtomicReference<T>();
+        final AtomicReference<Throwable> capturedException = new AtomicReference<Throwable>();
 
         NbpObservable<String> NbpObservable = w.onErrorReturn(new Function<Throwable, String>() {
 
@@ -71,7 +71,7 @@ public class NbpOperatorOnErrorReturnTest {
     public void testFunctionThrowsError() {
         TestObservable f = new TestObservable("one");
         NbpObservable<String> w = NbpObservable.create(f);
-        final AtomicReference<Throwable> capturedException = new AtomicReference<T>();
+        final AtomicReference<Throwable> capturedException = new AtomicReference<Throwable>();
 
         NbpObservable<String> NbpObservable = w.onErrorReturn(new Function<Throwable, String>() {
 
@@ -130,7 +130,7 @@ public class NbpOperatorOnErrorReturnTest {
 
         @SuppressWarnings("unchecked")
         NbpObserver<String> NbpObserver = mock(NbpObserver.class);
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>(NbpObserver);
         NbpObservable.subscribe(ts);
         ts.awaitTerminalEvent();
 
@@ -144,7 +144,7 @@ public class NbpOperatorOnErrorReturnTest {
     
     @Test
     public void testBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         NbpObservable.range(0, 100000)
                 .onErrorReturn(new Function<Throwable, Integer>() {
 

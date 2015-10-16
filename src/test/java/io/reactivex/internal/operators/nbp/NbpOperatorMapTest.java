@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -49,7 +49,12 @@ public class NbpOperatorMapTest {
         Map<String, String> m2 = getMap("Two");
         NbpObservable<Map<String, String>> o = NbpObservable.just(m1, m2);
 
-        NbpObservable<String> m = o.map(map -> map.get("firstName"));
+        NbpObservable<String> m = o.map(new Function<Map<String, String>, String>() {
+            @Override
+            public String apply(Map<String, String> map) {
+                return map.get("firstName");
+            }
+        });
         
         m.subscribe(stringObserver);
 
@@ -295,7 +300,7 @@ public class NbpOperatorMapTest {
 //    }
 
     private static Map<String, String> getMap(String prefix) {
-        Map<String, String> m = new HashMap<T>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("firstName", prefix + "First");
         m.put("lastName", prefix + "Last");
         return m;

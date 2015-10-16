@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -23,7 +23,7 @@ import io.reactivex.subscribers.nbp.NbpTestSubscriber;
 public class NbpOperatorMapNotificationTest {
     @Test
     public void testJust() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<Object>();
         NbpObservable.just(1)
         .flatMap(
                 new Function<Integer, NbpObservable<Object>>() {

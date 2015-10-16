@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -36,7 +36,7 @@ public class OperatorWindowWithSizeTest {
 
     private static <T> List<List<T>> toLists(Observable<Observable<T>> observables) {
 
-        final List<List<T>> lists = new ArrayList<T>();
+        final List<List<T>> lists = new ArrayList<List<T>>();
         Observable.concat(observables.map(new Function<Observable<T>, Observable<List<T>>>() {
             @Override
             public Observable<List<T>> apply(Observable<T> xs) {
@@ -192,7 +192,7 @@ public class OperatorWindowWithSizeTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<T>();
+        List<String> list = new ArrayList<String>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -203,7 +203,7 @@ public class OperatorWindowWithSizeTest {
     public void testBackpressureOuter() {
         Observable<Observable<Integer>> source = Observable.range(1, 10).window(3);
         
-        final List<Integer> list = new ArrayList<T>();
+        final List<Integer> list = new ArrayList<Integer>();
         
         final Subscriber<Integer> o = TestHelper.mockSubscriber();
         
@@ -290,9 +290,10 @@ public class OperatorWindowWithSizeTest {
         ts.assertValueCount(22);
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testBackpressureOuterInexact() {
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>((Long)null);
         
         Observable.range(1, 5).window(2, 1)
         .map(new Function<Observable<Integer>, Observable<List<Integer>>>() {
@@ -300,7 +301,12 @@ public class OperatorWindowWithSizeTest {
             public Observable<List<Integer>> apply(Observable<Integer> t) {
                 return t.toList();
             }
-        }).concatMap(v -> v)
+        }).concatMap(new Function<Observable<List<Integer>>, Publisher<List<Integer>>>() {
+            @Override
+            public Publisher<List<Integer>> apply(Observable<List<Integer>> v) {
+                return v;
+            }
+        })
         .subscribe(ts);
         
         ts.assertNoErrors();

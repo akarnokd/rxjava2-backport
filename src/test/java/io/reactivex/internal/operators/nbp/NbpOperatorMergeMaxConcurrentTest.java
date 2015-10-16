@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -40,14 +40,14 @@ public class NbpOperatorMergeMaxConcurrentTest {
     @Test
     public void testWhenMaxConcurrentIsOne() {
         for (int i = 0; i < 100; i++) {
-            List<NbpObservable<String>> os = new ArrayList<T>();
+            List<NbpObservable<String>> os = new ArrayList<NbpObservable<String>>();
             os.add(NbpObservable.just("one", "two", "three", "four", "five").subscribeOn(Schedulers.newThread()));
             os.add(NbpObservable.just("one", "two", "three", "four", "five").subscribeOn(Schedulers.newThread()));
             os.add(NbpObservable.just("one", "two", "three", "four", "five").subscribeOn(Schedulers.newThread()));
 
             List<String> expected = Arrays.asList("one", "two", "three", "four", "five", "one", "two", "three", "four", "five", "one", "two", "three", "four", "five");
             Iterator<String> iter = NbpObservable.merge(os, 1).toBlocking().iterator();
-            List<String> actual = new ArrayList<T>();
+            List<String> actual = new ArrayList<String>();
             while (iter.hasNext()) {
                 actual.add(iter.next());
             }
@@ -63,8 +63,8 @@ public class NbpOperatorMergeMaxConcurrentTest {
             int maxConcurrent = 2 + (times % 10);
             AtomicInteger subscriptionCount = new AtomicInteger(0);
 
-            List<NbpObservable<String>> os = new ArrayList<T>();
-            List<SubscriptionCheckObservable> scos = new ArrayList<T>();
+            List<NbpObservable<String>> os = new ArrayList<NbpObservable<String>>();
+            List<SubscriptionCheckObservable> scos = new ArrayList<SubscriptionCheckObservable>();
             for (int i = 0; i < observableCount; i++) {
                 SubscriptionCheckObservable sco = new SubscriptionCheckObservable(subscriptionCount, maxConcurrent);
                 scos.add(sco);
@@ -72,7 +72,7 @@ public class NbpOperatorMergeMaxConcurrentTest {
             }
 
             Iterator<String> iter = NbpObservable.merge(os, maxConcurrent).toBlocking().iterator();
-            List<String> actual = new ArrayList<T>();
+            List<String> actual = new ArrayList<String>();
             while (iter.hasNext()) {
                 actual.add(iter.next());
             }
@@ -124,7 +124,7 @@ public class NbpOperatorMergeMaxConcurrentTest {
     @Test
     public void testMergeALotOfSourcesOneByOneSynchronously() {
         int n = 10000;
-        List<NbpObservable<Integer>> sourceList = new ArrayList<T>(n);
+        List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(n);
         for (int i = 0; i < n; i++) {
             sourceList.add(NbpObservable.just(i));
         }
@@ -139,7 +139,7 @@ public class NbpOperatorMergeMaxConcurrentTest {
     @Test
     public void testMergeALotOfSourcesOneByOneSynchronouslyTakeHalf() {
         int n = 10000;
-        List<NbpObservable<Integer>> sourceList = new ArrayList<T>(n);
+        List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(n);
         for (int i = 0; i < n; i++) {
             sourceList.add(NbpObservable.just(i));
         }
@@ -155,9 +155,9 @@ public class NbpOperatorMergeMaxConcurrentTest {
     @Test
     public void testSimple() {
         for (int i = 1; i < 100; i++) {
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
-            List<NbpObservable<Integer>> sourceList = new ArrayList<T>(i);
-            List<Integer> result = new ArrayList<T>(i);
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
+            List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(i);
+            List<Integer> result = new ArrayList<Integer>(i);
             for (int j = 1; j <= i; j++) {
                 sourceList.add(NbpObservable.just(j));
                 result.add(j);
@@ -173,9 +173,9 @@ public class NbpOperatorMergeMaxConcurrentTest {
     @Test
     public void testSimpleOneLess() {
         for (int i = 2; i < 100; i++) {
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
-            List<NbpObservable<Integer>> sourceList = new ArrayList<T>(i);
-            List<Integer> result = new ArrayList<T>(i);
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
+            List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(i);
+            List<Integer> result = new ArrayList<Integer>(i);
             for (int j = 1; j <= i; j++) {
                 sourceList.add(NbpObservable.just(j));
                 result.add(j);
@@ -203,9 +203,9 @@ public class NbpOperatorMergeMaxConcurrentTest {
     @Test(timeout = 10000)
     public void testSimpleAsync() {
         for (int i = 1; i < 50; i++) {
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
-            List<NbpObservable<Integer>> sourceList = new ArrayList<T>(i);
-            Set<Integer> expected = new HashSet<T>(i);
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
+            List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(i);
+            Set<Integer> expected = new HashSet<Integer>(i);
             for (int j = 1; j <= i; j++) {
                 sourceList.add(NbpObservable.just(j).subscribeOn(Schedulers.io()));
                 expected.add(j);
@@ -215,7 +215,7 @@ public class NbpOperatorMergeMaxConcurrentTest {
         
             ts.awaitTerminalEvent(1, TimeUnit.SECONDS);
             ts.assertNoErrors();
-            Set<Integer> actual = new HashSet<T>(ts.values());
+            Set<Integer> actual = new HashSet<Integer>(ts.values());
             
             assertEquals(expected, actual);
         }
@@ -233,9 +233,9 @@ public class NbpOperatorMergeMaxConcurrentTest {
             if (System.currentTimeMillis() - t > TimeUnit.SECONDS.toMillis(9)) {
                 break;
             }
-            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
-            List<NbpObservable<Integer>> sourceList = new ArrayList<T>(i);
-            Set<Integer> expected = new HashSet<T>(i);
+            NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
+            List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(i);
+            Set<Integer> expected = new HashSet<Integer>(i);
             for (int j = 1; j <= i; j++) {
                 sourceList.add(NbpObservable.just(j).subscribeOn(Schedulers.io()));
                 expected.add(j);
@@ -245,7 +245,7 @@ public class NbpOperatorMergeMaxConcurrentTest {
         
             ts.awaitTerminalEvent(1, TimeUnit.SECONDS);
             ts.assertNoErrors();
-            Set<Integer> actual = new HashSet<T>(ts.values());
+            Set<Integer> actual = new HashSet<Integer>(ts.values());
             
             assertEquals(expected, actual);
         }
@@ -253,13 +253,13 @@ public class NbpOperatorMergeMaxConcurrentTest {
 
     @Test(timeout = 5000)
     public void testTake() throws Exception {
-        List<NbpObservable<Integer>> sourceList = new ArrayList<T>(3);
+        List<NbpObservable<Integer>> sourceList = new ArrayList<NbpObservable<Integer>>(3);
         
         sourceList.add(NbpObservable.range(0, 100000).subscribeOn(Schedulers.io()));
         sourceList.add(NbpObservable.range(0, 100000).subscribeOn(Schedulers.io()));
         sourceList.add(NbpObservable.range(0, 100000).subscribeOn(Schedulers.io()));
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         NbpObservable.merge(sourceList, 2).take(5).subscribe(ts);
         

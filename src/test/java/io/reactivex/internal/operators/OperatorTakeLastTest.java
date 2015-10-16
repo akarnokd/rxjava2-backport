@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -149,7 +149,12 @@ public class OperatorTakeLastTest {
         assertEquals(0, Observable
                 .empty()
                 .count()
-                .filter(v -> false)
+                .filter(new Predicate<Long>() {
+                    @Override
+                    public boolean test(Long v) {
+                        return false;
+                    }
+                })
                 .toList()
                 .toBlocking().single().size());
     }
@@ -288,7 +293,7 @@ public class OperatorTakeLastTest {
     
     @Test(timeout=10000)
     public void testRequestOverflow() {
-        final List<Integer> list = new ArrayList<T>();
+        final List<Integer> list = new ArrayList<Integer>();
         Observable.range(1, 100).takeLast(50).subscribe(new Observer<Integer>() {
 
             @Override

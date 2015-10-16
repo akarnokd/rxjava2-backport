@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -94,7 +94,7 @@ public class NbpOperatorMaterializeTest {
 
     @Test
     public void testWithCompletionCausingError() {
-        NbpTestSubscriber<Try<Optional<Integer>>> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Try<Optional<Integer>>> ts = new NbpTestSubscriber<Try<Optional<Integer>>>();
         final RuntimeException ex = new RuntimeException("boo");
         NbpObservable.<Integer>empty().materialize().doOnNext(new Consumer<Object>() {
             @Override
@@ -111,7 +111,7 @@ public class NbpOperatorMaterializeTest {
 
         boolean onCompleted = false;
         boolean onError = false;
-        List<Try<Optional<String>>> notifications = new Vector<T>();
+        List<Try<Optional<String>>> notifications = new Vector<Try<Optional<String>>>();
 
         @Override
         public void onComplete() {

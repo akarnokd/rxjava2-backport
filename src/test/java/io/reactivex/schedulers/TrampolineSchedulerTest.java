@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -43,7 +43,6 @@ public class TrampolineSchedulerTest extends AbstractSchedulerTests {
 
         Observable<Integer> o1 = Observable.<Integer> just(1, 2, 3, 4, 5);
         Observable<Integer> o2 = Observable.<Integer> just(6, 7, 8, 9, 10);
-        @SuppressWarnings("unchecked")
         Observable<String> o = Observable.<Integer> merge(o1, o2).subscribeOn(Schedulers.trampoline()).map(new Function<Integer, String>() {
 
             @Override

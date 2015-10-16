@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -40,7 +40,7 @@ public class OperatorWindowWithObservableTest {
 
         final Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        final List<Subscriber<Object>> values = new ArrayList<T>();
+        final List<Subscriber<Object>> values = new ArrayList<Subscriber<Object>>();
 
         Subscriber<Observable<Integer>> wo = new Observer<Observable<Integer>>() {
             @Override
@@ -98,7 +98,7 @@ public class OperatorWindowWithObservableTest {
 
         final Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        final List<Subscriber<Object>> values = new ArrayList<T>();
+        final List<Subscriber<Object>> values = new ArrayList<Subscriber<Object>>();
 
         Subscriber<Observable<Integer>> wo = new Observer<Observable<Integer>>() {
             @Override
@@ -154,7 +154,7 @@ public class OperatorWindowWithObservableTest {
 
         final Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        final List<Subscriber<Object>> values = new ArrayList<T>();
+        final List<Subscriber<Object>> values = new ArrayList<Subscriber<Object>>();
 
         Subscriber<Observable<Integer>> wo = new Observer<Observable<Integer>>() {
             @Override
@@ -204,7 +204,7 @@ public class OperatorWindowWithObservableTest {
 
         final Subscriber<Object> o = TestHelper.mockSubscriber();
 
-        final List<Subscriber<Object>> values = new ArrayList<T>();
+        final List<Subscriber<Object>> values = new ArrayList<Subscriber<Object>>();
 
         Subscriber<Observable<Integer>> wo = new Observer<Observable<Integer>>() {
             @Override
@@ -292,7 +292,7 @@ public class OperatorWindowWithObservableTest {
             }
         };
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         source.window(boundary).unsafeSubscribe(ts);
         
         assertFalse(ts.isCancelled());
@@ -309,7 +309,7 @@ public class OperatorWindowWithObservableTest {
             }
         };
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         source.window(boundaryFunc).subscribe(ts);
         
         assertTrue(source.hasSubscribers());
@@ -335,7 +335,7 @@ public class OperatorWindowWithObservableTest {
             }
         };
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         source.window(boundaryFunc).subscribe(ts);
         
         assertTrue(source.hasSubscribers());
@@ -363,7 +363,7 @@ public class OperatorWindowWithObservableTest {
             }
         };
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         source.window(boundaryFunc).subscribe(ts);
         
         assertTrue(source.hasSubscribers());
@@ -430,7 +430,7 @@ public class OperatorWindowWithObservableTest {
             }
         };
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         source.window(boundaryFunc).subscribe(ts);
         
         source.onNext(1);

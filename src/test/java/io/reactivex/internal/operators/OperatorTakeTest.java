@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -134,7 +134,7 @@ public class OperatorTakeTest {
     @Ignore("take(0) is now empty() and doesn't even subscribe to the original source")
     public void testTakeZeroDoesntLeakError() {
         final AtomicBoolean subscribed = new AtomicBoolean(false);
-        BooleanSubscription bs = new BooleanSubscription();
+        final BooleanSubscription bs = new BooleanSubscription();
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
             public void subscribe(Subscriber<? super String> observer) {
@@ -354,7 +354,7 @@ public class OperatorTakeTest {
     
     @Test
     public void testInterrupt() throws InterruptedException {
-        final AtomicReference<Object> exception = new AtomicReference<T>();
+        final AtomicReference<Object> exception = new AtomicReference<Object>();
         final CountDownLatch latch = new CountDownLatch(1);
         Observable.just(1).subscribeOn(Schedulers.computation()).take(1)
         .subscribe(new Consumer<Integer>() {
@@ -380,7 +380,7 @@ public class OperatorTakeTest {
     @Test
     public void testDoesntRequestMoreThanNeededFromUpstream() throws InterruptedException {
         final AtomicLong requests = new AtomicLong();
-        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<Long>((Long)null);
         Observable.interval(100, TimeUnit.MILLISECONDS)
             //
             .doOnRequest(new LongConsumer() {
@@ -424,11 +424,16 @@ public class OperatorTakeTest {
     
     @Test
     public void testReentrantTake() {
-        PublishSubject<Integer> source = PublishSubject.create();
+        final PublishSubject<Integer> source = PublishSubject.create();
         
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         
-        source.take(1).doOnNext(v -> source.onNext(2)).subscribe(ts);
+        source.take(1).doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer v) {
+                source.onNext(2);
+            }
+        }).subscribe(ts);
         
         source.onNext(1);
         

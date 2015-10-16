@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -232,7 +232,7 @@ public class OperatorTimeoutTests {
         final CountDownLatch timeoutSetuped = new CountDownLatch(1);
 
         final Subscriber<String> observer = TestHelper.mockSubscriber();
-        TestSubscriber<String> ts = new TestSubscriber<String>(observer);
+        final TestSubscriber<String> ts = new TestSubscriber<String>(observer);
 
         new Thread(new Runnable() {
 

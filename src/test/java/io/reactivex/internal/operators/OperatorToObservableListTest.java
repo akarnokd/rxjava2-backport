@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -99,7 +99,7 @@ public class OperatorToObservableListTest {
     @Test
     public void testBackpressureHonored() {
         Observable<List<Integer>> w = Observable.just(1, 2, 3, 4, 5).toList();
-        TestSubscriber<List<Integer>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>((Long)null);
         
         w.subscribe(ts);
         
@@ -132,7 +132,7 @@ public class OperatorToObservableListTest {
                 Observable<List<Integer>> sorted = source.toList();
 
                 final CyclicBarrier cb = new CyclicBarrier(2);
-                final TestSubscriber<List<Integer>> ts = new TestSubscriber<T>((Long)null);
+                final TestSubscriber<List<Integer>> ts = new TestSubscriber<List<Integer>>((Long)null);
                 sorted.subscribe(ts);
                 
                 w.schedule(new Runnable() {

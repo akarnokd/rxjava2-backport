@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.reactivestreams.*;
 
+import io.reactivex.Observable;
 import io.reactivex.Single.*;
 import io.reactivex.annotations.*;
 import io.reactivex.disposables.*;
@@ -742,6 +743,38 @@ public class NbpObservable<T> {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> NbpObservable<T> merge(NbpObservable<? extends T> p1, NbpObservable<? extends T> p2) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        return fromArray(p1, p2).flatMap((Function)Functions.identity(), true, 2);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> NbpObservable<T> merge(NbpObservable<? extends T> p1, NbpObservable<? extends T> p2, NbpObservable<? extends T> p3) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        return fromArray(p1, p2, p3).flatMap((Function)Functions.identity(), true, 3);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> NbpObservable<T> merge(
+            NbpObservable<? extends T> p1, NbpObservable<? extends T> p2, 
+            NbpObservable<? extends T> p3, NbpObservable<? extends T> p4) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        Objects.requireNonNull(p4, "p4 is null");
+        return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), true, 4);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @SchedulerSupport(SchedulerKind.NONE)
     public static <T> NbpObservable<T> merge(NbpObservable<? extends T>... sources) {
         return fromArray(sources).flatMap((Function)Functions.identity(), sources.length);
@@ -786,6 +819,38 @@ public class NbpObservable<T> {
     @SchedulerSupport(SchedulerKind.NONE)
     public static <T> NbpObservable<T> mergeDelayError(NbpObservable<? extends NbpObservable<? extends T>> sources, int maxConcurrency) {
         return sources.flatMap((Function)Functions.identity(), true, maxConcurrency);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> NbpObservable<T> mergeDelayError(NbpObservable<? extends T> p1, NbpObservable<? extends T> p2) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        return fromArray(p1, p2).flatMap((Function)Functions.identity(), true, 2);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> NbpObservable<T> mergeDelayError(NbpObservable<? extends T> p1, NbpObservable<? extends T> p2, NbpObservable<? extends T> p3) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        return fromArray(p1, p2, p3).flatMap((Function)Functions.identity(), true, 3);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> NbpObservable<T> mergeDelayError(
+            NbpObservable<? extends T> p1, NbpObservable<? extends T> p2, 
+            NbpObservable<? extends T> p3, NbpObservable<? extends T> p4) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        Objects.requireNonNull(p4, "p4 is null");
+        return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), true, 4);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1993,7 +2058,6 @@ public class NbpObservable<T> {
         return lift(NbpOperatorMaterialize.<T>instance());
     }
 
-    @SuppressWarnings("unchecked")
     @SchedulerSupport(SchedulerKind.NONE)
     public final NbpObservable<T> mergeWith(NbpObservable<? extends T> other) {
         Objects.requireNonNull(other, "other is null");
@@ -2162,12 +2226,12 @@ public class NbpObservable<T> {
     }
 
     @SchedulerSupport(SchedulerKind.NONE)
-    public final NbpObservable<T> repeatWhen(final Function<? super NbpObservable<Object>, ? extends NbpObservable<Object>> handler) {
+    public final NbpObservable<T> repeatWhen(final Function<? super NbpObservable<Object>, ? extends NbpObservable<?>> handler) {
         Objects.requireNonNull(handler, "handler is null");
         
-        Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<Object>> f = new Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<Object>>() {
+        Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<?>> f = new Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<?>>() {
             @Override
-            public NbpObservable<Object> apply(NbpObservable<Try<Optional<Object>>> no) {
+            public NbpObservable<?> apply(NbpObservable<Try<Optional<Object>>> no) {
                 return handler.apply(no.map(new Function<Try<Optional<Object>>, Object>() {
                     @Override
                     public Object apply(Try<Optional<Object>> v) {
@@ -2368,12 +2432,12 @@ public class NbpObservable<T> {
     
     @SchedulerSupport(SchedulerKind.NONE)
     public final NbpObservable<T> retryWhen(
-            final Function<? super NbpObservable<? extends Throwable>, ? extends NbpObservable<Object>> handler) {
+            final Function<? super NbpObservable<? extends Throwable>, ? extends NbpObservable<?>> handler) {
         Objects.requireNonNull(handler, "handler is null");
         
-        Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<Object>> f = new Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<Object>>() {
+        Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<?>> f = new Function<NbpObservable<Try<Optional<Object>>>, NbpObservable<?>>() {
             @Override
-            public NbpObservable<Object> apply(NbpObservable<Try<Optional<Object>>> no) {
+            public NbpObservable<?> apply(NbpObservable<Try<Optional<Object>>> no) {
                 return handler.apply(no
                         .takeWhile(new Predicate<Try<Optional<Object>>>() {
                             @Override

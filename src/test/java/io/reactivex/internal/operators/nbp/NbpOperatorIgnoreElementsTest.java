@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -55,7 +55,7 @@ public class NbpOperatorIgnoreElementsTest {
     
     @Test
     public void testCompletedOk() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<Object>();
         NbpObservable.range(1, 10).ignoreElements().subscribe(ts);
         ts.assertNoErrors();
         ts.assertNoValues();
@@ -66,7 +66,7 @@ public class NbpOperatorIgnoreElementsTest {
     
     @Test
     public void testErrorReceived() {
-        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Object> ts = new NbpTestSubscriber<Object>();
         TestException ex = new TestException("boo");
         NbpObservable.error(ex).ignoreElements().subscribe(ts);
         ts.assertNoValues();

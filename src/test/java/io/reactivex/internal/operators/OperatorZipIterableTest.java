@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -28,7 +28,6 @@ import org.reactivestreams.Subscriber;
 import io.reactivex.Observable;
 import io.reactivex.TestHelper;
 import io.reactivex.exceptions.TestException;
-import io.reactivex.functions.Function3;
 import io.reactivex.subjects.PublishSubject;
 
 public class OperatorZipIterableTest {
@@ -333,7 +332,12 @@ public class OperatorZipIterableTest {
 
     }
     
-    Consumer<String> printer = pv -> System.out.println(pv);
+    Consumer<String> printer = new Consumer<String>() {
+        @Override
+        public void accept(String pv) {
+            System.out.println(pv);
+        }
+    };
 
     static final class SquareStr implements Function<Integer, String> {
         final AtomicInteger counter = new AtomicInteger();

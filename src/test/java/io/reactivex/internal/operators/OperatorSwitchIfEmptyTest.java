@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -24,6 +24,7 @@ import org.reactivestreams.*;
 
 
 import io.reactivex.*;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.subscriptions.*;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -36,7 +37,12 @@ public class OperatorSwitchIfEmptyTest {
         final AtomicBoolean subscribed = new AtomicBoolean(false);
         final Observable<Integer> observable = Observable.just(4)
                 .switchIfEmpty(Observable.just(2)
-                .doOnSubscribe(s -> subscribed.set(true)));
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription s) {
+                        subscribed.set(true);
+                    }
+                }));
 
         assertEquals(4, observable.toBlocking().single().intValue());
         assertFalse(subscribed.get());
@@ -81,7 +87,7 @@ public class OperatorSwitchIfEmptyTest {
     @Test
     public void testSwitchTriggerUnsubscribe() throws Exception {
 
-        BooleanSubscription bs = new BooleanSubscription();
+        final BooleanSubscription bs = new BooleanSubscription();
         
         Observable<Long> withProducer = Observable.create(new Publisher<Long>() {
             @Override
@@ -124,7 +130,7 @@ public class OperatorSwitchIfEmptyTest {
 
     @Test
     public void testSwitchShouldTriggerUnsubscribe() {
-        BooleanSubscription bs = new BooleanSubscription();
+        final BooleanSubscription bs = new BooleanSubscription();
         
         Observable.create(new Publisher<Long>() {
             @Override
@@ -169,7 +175,7 @@ public class OperatorSwitchIfEmptyTest {
     
     @Test(timeout = 10000)
     public void testRequestsNotLost() throws InterruptedException {
-        final TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
+        final TestSubscriber<Long> ts = new TestSubscriber<Long>((Long)null);
         Observable.create(new Publisher<Long>() {
 
             @Override

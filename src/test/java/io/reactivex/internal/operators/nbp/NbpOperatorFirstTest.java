@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -127,7 +127,12 @@ public class NbpOperatorFirstTest {
     @Test
     public void testFirstWithPredicate() {
         NbpObservable<Integer> o = NbpObservable.just(1, 2, 3, 4, 5, 6)
-                .filter(t1 -> t1 % 2 == 0)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer t1) {
+                        return t1 % 2 == 0;
+                    }
+                })
                 .first();
 
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
@@ -142,7 +147,12 @@ public class NbpOperatorFirstTest {
     @Test
     public void testFirstWithPredicateAndOneElement() {
         NbpObservable<Integer> o = NbpObservable.just(1, 2)
-                .filter(t1 -> t1 % 2 == 0)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer t1) {
+                        return t1 % 2 == 0;
+                    }
+                })
                 .first();
 
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
@@ -157,7 +167,12 @@ public class NbpOperatorFirstTest {
     @Test
     public void testFirstWithPredicateAndEmpty() {
         NbpObservable<Integer> o = NbpObservable.just(1)
-                .filter(t1 -> t1 % 2 == 0)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer t1) {
+                        return t1 % 2 == 0;
+                    }
+                })
                 .first();
         
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
@@ -213,7 +228,12 @@ public class NbpOperatorFirstTest {
     @Test
     public void testFirstOrDefaultWithPredicate() {
         NbpObservable<Integer> o = NbpObservable.just(1, 2, 3, 4, 5, 6)
-                .filter(t1 -> t1 % 2 == 0)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer t1) {
+                        return t1 % 2 == 0;
+                    }
+                })
                 .first(8);
 
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
@@ -228,7 +248,12 @@ public class NbpOperatorFirstTest {
     @Test
     public void testFirstOrDefaultWithPredicateAndOneElement() {
         NbpObservable<Integer> o = NbpObservable.just(1, 2)
-                .filter(t1 -> t1 % 2 == 0)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer t1) {
+                        return t1 % 2 == 0;
+                    }
+                })
                 .first(4);
 
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
@@ -243,7 +268,12 @@ public class NbpOperatorFirstTest {
     @Test
     public void testFirstOrDefaultWithPredicateAndEmpty() {
         NbpObservable<Integer> o = NbpObservable.just(1)
-                .filter(t1 -> t1 % 2 == 0)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer t1) {
+                        return t1 % 2 == 0;
+                    }
+                })
                 .first(2);
         
         NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();

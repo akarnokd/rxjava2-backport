@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -44,7 +44,12 @@ public class NbpOperatorReduceTest {
     public void testAggregateAsIntSum() {
 
         NbpObservable<Integer> result = NbpObservable.just(1, 2, 3, 4, 5).reduce(0, sum)
-                .map(v -> v);
+                .map(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                });
 
         result.subscribe(NbpObserver);
 
@@ -57,7 +62,12 @@ public class NbpOperatorReduceTest {
     public void testAggregateAsIntSumSourceThrows() {
         NbpObservable<Integer> result = NbpObservable.concat(NbpObservable.just(1, 2, 3, 4, 5),
                 NbpObservable.<Integer> error(new TestException()))
-                .reduce(0, sum).map(v -> v);
+                .reduce(0, sum).map(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                });
 
         result.subscribe(NbpObserver);
 
@@ -76,7 +86,12 @@ public class NbpOperatorReduceTest {
         };
 
         NbpObservable<Integer> result = NbpObservable.just(1, 2, 3, 4, 5)
-                .reduce(0, sumErr).map(v -> v);
+                .reduce(0, sumErr).map(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                });
 
         result.subscribe(NbpObserver);
 

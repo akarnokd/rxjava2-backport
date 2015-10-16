@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -321,34 +321,37 @@ public class NbpOperatorTimeoutWithSelectorTest {
         final CountDownLatch enteredTimeoutOne = new CountDownLatch(1);
         final AtomicBoolean latchTimeout = new AtomicBoolean(false);
 
-        final Function<Integer, NbpObservable<Integer>> timeoutFunc = t1 -> {
-            if (t1 == 1) {
-                // Force "unsubscribe" run on another thread
-                return NbpObservable.create(new NbpOnSubscribe<Integer>() {
-                    @Override
-                    public void accept(NbpSubscriber<? super Integer> NbpSubscriber) {
-                        NbpSubscriber.onSubscribe(EmptyDisposable.INSTANCE);
-                        enteredTimeoutOne.countDown();
-                        // force the timeout message be sent after NbpObserver.onNext(2)
-                        while (true) {
-                            try {
-                                if (!observerReceivedTwo.await(30, TimeUnit.SECONDS)) {
-                                    // CountDownLatch timeout
-                                    // There should be something wrong
-                                    latchTimeout.set(true);
+        final Function<Integer, NbpObservable<Integer>> timeoutFunc = new Function<Integer, NbpObservable<Integer>>() {
+            @Override
+            public NbpObservable<Integer> apply(Integer t1) {
+                if (t1 == 1) {
+                    // Force "unsubscribe" run on another thread
+                    return NbpObservable.create(new NbpOnSubscribe<Integer>() {
+                        @Override
+                        public void accept(NbpSubscriber<? super Integer> NbpSubscriber) {
+                            NbpSubscriber.onSubscribe(EmptyDisposable.INSTANCE);
+                            enteredTimeoutOne.countDown();
+                            // force the timeout message be sent after NbpObserver.onNext(2)
+                            while (true) {
+                                try {
+                                    if (!observerReceivedTwo.await(30, TimeUnit.SECONDS)) {
+                                        // CountDownLatch timeout
+                                        // There should be something wrong
+                                        latchTimeout.set(true);
+                                    }
+                                    break;
+                                } catch (InterruptedException e) {
+                                    // Since we just want to emulate a busy method,
+                                    // we ignore the interrupt signal from Scheduler.
                                 }
-                                break;
-                            } catch (InterruptedException e) {
-                                // Since we just want to emulate a busy method,
-                                // we ignore the interrupt signal from Scheduler.
                             }
+                            NbpSubscriber.onNext(1);
+                            timeoutEmittedOne.countDown();
                         }
-                        NbpSubscriber.onNext(1);
-                        timeoutEmittedOne.countDown();
-                    }
-                }).subscribeOn(Schedulers.newThread());
-            } else {
-                return NbpPublishSubject.create();
+                    }).subscribeOn(Schedulers.newThread());
+                } else {
+                    return NbpPublishSubject.create();
+                }
             }
         };
 
@@ -372,7 +375,7 @@ public class NbpOperatorTimeoutWithSelectorTest {
 
         }).when(o).onComplete();
 
-        final NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>(o);
+        final NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>(o);
 
         new Thread(new Runnable() {
 

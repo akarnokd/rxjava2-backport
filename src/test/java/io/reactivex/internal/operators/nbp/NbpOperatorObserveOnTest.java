@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -58,7 +58,7 @@ public class NbpOperatorObserveOnTest {
         NbpSubscriber<String> NbpObserver = TestHelper.mockNbpSubscriber();
 
         InOrder inOrder = inOrder(NbpObserver);
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>(NbpObserver);
 
         obs.observeOn(Schedulers.computation()).subscribe(ts);
 
@@ -384,7 +384,7 @@ public class NbpOperatorObserveOnTest {
         final TestScheduler testScheduler = new TestScheduler();
 
         final NbpSubscriber<Integer> NbpObserver = TestHelper.mockNbpSubscriber();
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>(NbpObserver);
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>(NbpObserver);
         
         NbpObservable.just(1, 2, 3)
                 .observeOn(testScheduler)
@@ -425,7 +425,7 @@ public class NbpOperatorObserveOnTest {
             }
         });
 
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         o
                 .take(7)
                 .observeOn(Schedulers.newThread())
@@ -438,7 +438,7 @@ public class NbpOperatorObserveOnTest {
 
     @Test
     public void testAsyncChild() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         NbpObservable.range(0, 100000).observeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(ts);
         ts.awaitTerminalEvent();
         ts.assertNoErrors();

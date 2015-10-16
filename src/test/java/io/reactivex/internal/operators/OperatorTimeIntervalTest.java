@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -57,11 +57,11 @@ public class OperatorTimeIntervalTest {
         subject.onComplete();
 
         inOrder.verify(observer, times(1)).onNext(
-                new Timed<T>(1, 1000, TIME_UNIT));
+                new Timed<Integer>(1, 1000, TIME_UNIT));
         inOrder.verify(observer, times(1)).onNext(
-                new Timed<T>(2, 2000, TIME_UNIT));
+                new Timed<Integer>(2, 2000, TIME_UNIT));
         inOrder.verify(observer, times(1)).onNext(
-                new Timed<T>(3, 3000, TIME_UNIT));
+                new Timed<Integer>(3, 3000, TIME_UNIT));
         inOrder.verify(observer, times(1)).onComplete();
         inOrder.verifyNoMoreInteractions();
     }

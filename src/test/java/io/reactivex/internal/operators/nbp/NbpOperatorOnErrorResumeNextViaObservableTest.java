@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -137,7 +137,7 @@ public class NbpOperatorOnErrorResumeNextViaObservableTest {
 
         @SuppressWarnings("unchecked")
         NbpObserver<String> NbpObserver = mock(NbpObserver.class);
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>(NbpObserver);
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>(NbpObserver);
         NbpObservable.subscribe(ts);
 
         ts.awaitTerminalEvent();
@@ -191,7 +191,7 @@ public class NbpOperatorOnErrorResumeNextViaObservableTest {
     
     @Test
     public void testBackpressure() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         NbpObservable.range(0, 100000)
                 .onErrorResumeNext(NbpObservable.just(1))
                 .observeOn(Schedulers.computation())

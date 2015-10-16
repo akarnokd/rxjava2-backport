@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -27,7 +27,7 @@ public class NbpOperatorTakeLastOneTest {
 
     @Test
     public void testLastOfManyReturnsLast() {
-        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<Integer>();
         NbpObservable.range(1, 10).takeLast(1).subscribe(s);
         s.assertValue(10);
         s.assertNoErrors();
@@ -38,7 +38,7 @@ public class NbpOperatorTakeLastOneTest {
 
     @Test
     public void testLastOfEmptyReturnsEmpty() {
-        NbpTestSubscriber<Object> s = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Object> s = new NbpTestSubscriber<Object>();
         NbpObservable.empty().takeLast(1).subscribe(s);
         s.assertNoValues();
         s.assertNoErrors();
@@ -49,7 +49,7 @@ public class NbpOperatorTakeLastOneTest {
 
     @Test
     public void testLastOfOneReturnsLast() {
-        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> s = new NbpTestSubscriber<Integer>();
         NbpObservable.just(1).takeLast(1).subscribe(s);
         s.assertValue(1);
         s.assertNoErrors();

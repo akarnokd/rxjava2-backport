@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -279,7 +279,7 @@ public class NbpOperatorDebounceTest {
     @Test
     public void debounceWithTimeBackpressure() throws InterruptedException {
         TestScheduler scheduler = new TestScheduler();
-        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<Integer>();
         NbpObservable.merge(
                 NbpObservable.just(1),
                 NbpObservable.just(2).delay(10, TimeUnit.MILLISECONDS, scheduler)

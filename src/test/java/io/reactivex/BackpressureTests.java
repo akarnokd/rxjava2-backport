@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -142,7 +142,6 @@ public class BackpressureTests {
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
-        @SuppressWarnings("unchecked")
         Observable<Integer> merged = Observable.merge(
                 incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                 incrementingIntegers(c2).subscribeOn(Schedulers.computation()));
@@ -172,7 +171,6 @@ public class BackpressureTests {
             AtomicInteger c2 = new AtomicInteger();
             
             TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
-            @SuppressWarnings("unchecked")
             Observable<Integer> merged = Observable.merge(
                     incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                     incrementingIntegers(c2).subscribeOn(Schedulers.computation()));
@@ -197,7 +195,6 @@ public class BackpressureTests {
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
-        @SuppressWarnings("unchecked")
         Observable<Integer> merged = Observable.merge(
                 incrementingIntegers(c1).subscribeOn(Schedulers.computation()),
                 incrementingIntegers(c2).subscribeOn(Schedulers.computation()));

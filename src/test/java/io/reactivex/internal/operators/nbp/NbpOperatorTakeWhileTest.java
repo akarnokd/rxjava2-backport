@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -224,7 +224,7 @@ public class NbpOperatorTakeWhileTest {
                 return t1 < 2;
             }
         });
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         source.unsafeSubscribe(ts);
         
@@ -236,7 +236,7 @@ public class NbpOperatorTakeWhileTest {
     
     @Test
     public void testErrorCauseIncludesLastValue() {
-        NbpTestSubscriber<String> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<String> ts = new NbpTestSubscriber<String>();
         NbpObservable.just("abc").takeWhile(new Predicate<String>() {
             @Override
             public boolean test(String t1) {

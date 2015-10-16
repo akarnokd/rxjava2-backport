@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -160,7 +160,7 @@ public class NbpOperatorRepeatTest {
                 .repeat(3)
                 .distinct();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         src.subscribe(ts);
         
@@ -172,8 +172,8 @@ public class NbpOperatorRepeatTest {
     /** Issue #2844: wrong target of request. */
     @Test(timeout = 3000)
     public void testRepeatRetarget() {
-        final List<Integer> concatBase = new ArrayList<T>();
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        final List<Integer> concatBase = new ArrayList<Integer>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         NbpObservable.just(1, 2)
         .repeat(5)
         .concatMap(new Function<Integer, NbpObservable<Integer>>() {

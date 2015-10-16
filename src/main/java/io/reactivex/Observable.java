@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -816,7 +816,6 @@ public class Observable<T> implements Publisher<T> {
         Objects.requireNonNull(p4, "p4 is null");
         return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), true, 4);
     }
-
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @BackpressureSupport(BackpressureKind.FULL)
@@ -2446,12 +2445,12 @@ public class Observable<T> implements Publisher<T> {
     
     @BackpressureSupport(BackpressureKind.FULL)
     @SchedulerSupport(SchedulerKind.NONE)
-    public final Observable<T> repeatWhen(final Function<? super Observable<Object>, ? extends Publisher<Object>> handler) {
+    public final Observable<T> repeatWhen(final Function<? super Observable<Object>, ? extends Publisher<?>> handler) {
         Objects.requireNonNull(handler, "handler is null");
         
-        Function<Observable<Try<Optional<Object>>>, Publisher<Object>> f = new Function<Observable<Try<Optional<Object>>>, Publisher<Object>>() {
+        Function<Observable<Try<Optional<Object>>>, Publisher<?>> f = new Function<Observable<Try<Optional<Object>>>, Publisher<?>>() {
             @Override
-            public Publisher<Object> apply(Observable<Try<Optional<Object>>> no) {
+            public Publisher<?> apply(Observable<Try<Optional<Object>>> no) {
                 return handler.apply(no.map(new Function<Try<Optional<Object>>, Object>() {
                     @Override
                     public Object apply(Try<Optional<Object>> v) {
@@ -2676,12 +2675,12 @@ public class Observable<T> implements Publisher<T> {
     @BackpressureSupport(BackpressureKind.FULL)
     @SchedulerSupport(SchedulerKind.NONE)
     public final Observable<T> retryWhen(
-            final Function<? super Observable<? extends Throwable>, ? extends Publisher<Object>> handler) {
+            final Function<? super Observable<? extends Throwable>, ? extends Publisher<?>> handler) {
         Objects.requireNonNull(handler, "handler is null");
         
-        Function<Observable<Try<Optional<Object>>>, Publisher<Object>> f = new Function<Observable<Try<Optional<Object>>>, Publisher<Object>>() {
+        Function<Observable<Try<Optional<Object>>>, Publisher<?>> f = new Function<Observable<Try<Optional<Object>>>, Publisher<?>>() {
             @Override
-            public Publisher<Object> apply(Observable<Try<Optional<Object>>> no) {
+            public Publisher<?> apply(Observable<Try<Optional<Object>>> no) {
                 Observable<Throwable> map = no.takeWhile(new Predicate<Try<Optional<Object>>>() {
                     @Override
                     public boolean test(Try<Optional<Object>> e) {

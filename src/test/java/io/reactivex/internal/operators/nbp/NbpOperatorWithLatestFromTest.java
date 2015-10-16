@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -84,7 +84,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -110,7 +110,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -137,7 +137,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -164,7 +164,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -191,7 +191,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -219,7 +219,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER_ERROR);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.subscribe(ts);
 
@@ -245,7 +245,7 @@ public class NbpOperatorWithLatestFromTest {
         
         NbpObservable<Integer> result = source.withLatestFrom(other, COMBINER);
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         result.unsafeSubscribe(ts);
         

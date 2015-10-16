@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -108,7 +108,7 @@ public class NbpOperatorScanTest {
     
     @Test
     public void shouldNotEmitUntilAfterSubscription() {
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         NbpObservable.range(1, 100).scan(0, new BiFunction<Integer, Integer, Integer>() {
 
             @Override
@@ -175,7 +175,7 @@ public class NbpOperatorScanTest {
 
                     @Override
                     public List<Integer> get() {
-                        return new ArrayList<T>();
+                        return new ArrayList<Integer>();
                     }
                     
                 }, new BiConsumer<List<Integer>, Integer>() {
@@ -201,7 +201,7 @@ public class NbpOperatorScanTest {
             }
 
         }).take(1);
-        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> NbpSubscriber = new NbpTestSubscriber<Integer>();
         o.subscribe(NbpSubscriber);
         NbpSubscriber.assertValue(0);
         NbpSubscriber.assertTerminated();
@@ -212,7 +212,7 @@ public class NbpOperatorScanTest {
     public void testInitialValueEmittedNoProducer() {
         NbpPublishSubject<Integer> source = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         source.scan(0, new BiFunction<Integer, Integer, Integer>() {
             @Override

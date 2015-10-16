@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -54,17 +54,24 @@ public class NbpOnSubscribeAmbTest {
                 
                 long delay = interval;
                 for (final String value : values) {
-                    parentSubscription.add(innerScheduler.schedule(() ->
-                            NbpSubscriber.onNext(value)
+                    parentSubscription.add(innerScheduler.schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            NbpSubscriber.onNext(value);
+                        }
+                    }
                     , delay, TimeUnit.MILLISECONDS));
                     delay += interval;
                 }
-                parentSubscription.add(innerScheduler.schedule(() -> {
-                        if (e == null) {
-                            NbpSubscriber.onComplete();
-                        } else {
-                            NbpSubscriber.onError(e);
-                        }
+                parentSubscription.add(innerScheduler.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                            if (e == null) {
+                                NbpSubscriber.onComplete();
+                            } else {
+                                NbpSubscriber.onError(e);
+                            }
+                    }
                 }, delay, TimeUnit.MILLISECONDS));
             }
         });
@@ -79,6 +86,7 @@ public class NbpOnSubscribeAmbTest {
         NbpObservable<String> observable3 = createObservable(new String[] {
                 "3", "33", "333", "3333" }, 3000, null);
 
+        @SuppressWarnings("unchecked")
         NbpObservable<String> o = NbpObservable.amb(observable1,
                 observable2, observable3);
 
@@ -107,6 +115,7 @@ public class NbpOnSubscribeAmbTest {
         NbpObservable<String> observable3 = createObservable(new String[] {},
                 3000, new IOException("fake exception"));
 
+        @SuppressWarnings("unchecked")
         NbpObservable<String> o = NbpObservable.amb(observable1,
                 observable2, observable3);
 
@@ -133,6 +142,7 @@ public class NbpOnSubscribeAmbTest {
         NbpObservable<String> observable3 = createObservable(new String[] {
                 "3" }, 3000, null);
 
+        @SuppressWarnings("unchecked")
         NbpObservable<String> o = NbpObservable.amb(observable1,
                 observable2, observable3);
 
@@ -145,10 +155,16 @@ public class NbpOnSubscribeAmbTest {
         inOrder.verifyNoMoreInteractions();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testSubscriptionOnlyHappensOnce() throws InterruptedException {
         final AtomicLong count = new AtomicLong();
-        Consumer<Disposable> incrementer = s -> count.incrementAndGet();
+        Consumer<Disposable> incrementer = new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable s) {
+                count.incrementAndGet();
+            }
+        };
         
         //this aync stream should emit first
         NbpObservable<Integer> o1 = NbpObservable.just(1).doOnSubscribe(incrementer)
@@ -156,7 +172,7 @@ public class NbpOnSubscribeAmbTest {
         //this stream emits second
         NbpObservable<Integer> o2 = NbpObservable.just(1).doOnSubscribe(incrementer)
                 .delay(100, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.computation());
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         NbpObservable.amb(o1, o2).subscribe(ts);
         ts.awaitTerminalEvent(5, TimeUnit.SECONDS);
         ts.assertNoErrors();
@@ -170,23 +186,27 @@ public class NbpOnSubscribeAmbTest {
         // then second NbpObservable does not get subscribed to before first
         // subscription completes hence first NbpObservable emits result through
         // amb
-        int result = NbpObservable.just(1).doOnNext(t -> {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    //
-                }
+        int result = NbpObservable.just(1).doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer t) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        //
+                    }
+            }
         }).ambWith(NbpObservable.just(2)).toBlocking().single();
         assertEquals(1, result);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testAmbCancelsOthers() {
         NbpPublishSubject<Integer> source1 = NbpPublishSubject.create();
         NbpPublishSubject<Integer> source2 = NbpPublishSubject.create();
         NbpPublishSubject<Integer> source3 = NbpPublishSubject.create();
         
-        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<T>();
+        NbpTestSubscriber<Integer> ts = new NbpTestSubscriber<Integer>();
         
         NbpObservable.amb(source1, source2, source3).subscribe(ts);
         

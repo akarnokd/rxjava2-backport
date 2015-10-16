@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -43,8 +43,8 @@ public class OperatorWindowWithStartEndObservableTest {
 
     @Test
     public void testObservableBasedOpenerAndCloser() {
-        final List<String> list = new ArrayList<T>();
-        final List<List<String>> lists = new ArrayList<T>();
+        final List<String> list = new ArrayList<String>();
+        final List<List<String>> lists = new ArrayList<List<String>>();
 
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
@@ -94,8 +94,8 @@ public class OperatorWindowWithStartEndObservableTest {
 
     @Test
     public void testObservableBasedCloser() {
-        final List<String> list = new ArrayList<T>();
-        final List<List<String>> lists = new ArrayList<T>();
+        final List<String> list = new ArrayList<String>();
+        final List<List<String>> lists = new ArrayList<List<String>>();
 
         Observable<String> source = Observable.create(new Publisher<String>() {
             @Override
@@ -143,7 +143,7 @@ public class OperatorWindowWithStartEndObservableTest {
     }
 
     private List<String> list(String... args) {
-        List<String> list = new ArrayList<T>();
+        List<String> list = new ArrayList<String>();
         for (String arg : args) {
             list.add(arg);
         }
@@ -175,7 +175,7 @@ public class OperatorWindowWithStartEndObservableTest {
                 stringObservable.subscribe(new Observer<String>() {
                     @Override
                     public void onComplete() {
-                        lists.add(new ArrayList<T>(list));
+                        lists.add(new ArrayList<String>(list));
                         list.clear();
                     }
 
@@ -200,7 +200,7 @@ public class OperatorWindowWithStartEndObservableTest {
         PublishSubject<Integer> open = PublishSubject.create();
         final PublishSubject<Integer> close = PublishSubject.create();
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         
         source.window(open, new Function<Integer, Observable<Integer>>() {
             @Override
@@ -237,7 +237,7 @@ public class OperatorWindowWithStartEndObservableTest {
         PublishSubject<Integer> open = PublishSubject.create();
         final PublishSubject<Integer> close = PublishSubject.create();
         
-        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<T>();
+        TestSubscriber<Observable<Integer>> ts = new TestSubscriber<Observable<Integer>>();
         
         source.window(open, new Function<Integer, Observable<Integer>>() {
             @Override

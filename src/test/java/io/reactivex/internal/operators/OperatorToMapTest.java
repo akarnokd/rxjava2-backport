@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -52,7 +52,7 @@ public class OperatorToMapTest {
 
         Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc);
 
-        Map<Integer, String> expected = new HashMap<T>();
+        Map<Integer, String> expected = new HashMap<Integer, String>();
         expected.put(1, "a");
         expected.put(2, "bb");
         expected.put(3, "ccc");
@@ -71,7 +71,7 @@ public class OperatorToMapTest {
 
         Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc, duplicate);
 
-        Map<Integer, String> expected = new HashMap<T>();
+        Map<Integer, String> expected = new HashMap<Integer, String>();
         expected.put(1, "aa");
         expected.put(2, "bbbb");
         expected.put(3, "cccccc");
@@ -99,7 +99,7 @@ public class OperatorToMapTest {
         };
         Observable<Map<Integer, String>> mapped = source.toMap(lengthFuncErr);
 
-        Map<Integer, String> expected = new HashMap<T>();
+        Map<Integer, String> expected = new HashMap<Integer, String>();
         expected.put(1, "a");
         expected.put(2, "bb");
         expected.put(3, "ccc");
@@ -129,7 +129,7 @@ public class OperatorToMapTest {
 
         Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc, duplicateErr);
 
-        Map<Integer, String> expected = new HashMap<T>();
+        Map<Integer, String> expected = new HashMap<Integer, String>();
         expected.put(1, "aa");
         expected.put(2, "bbbb");
         expected.put(3, "cccccc");
@@ -168,9 +168,14 @@ public class OperatorToMapTest {
                 return t1.length();
             }
         };
-        Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc, v -> v, mapFactory);
+        Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc, new Function<String, String>() {
+            @Override
+            public String apply(String v) {
+                return v;
+            }
+        }, mapFactory);
 
-        Map<Integer, String> expected = new LinkedHashMap<T>();
+        Map<Integer, String> expected = new LinkedHashMap<Integer, String>();
         expected.put(2, "bb");
         expected.put(3, "ccc");
         expected.put(4, "dddd");
@@ -199,9 +204,14 @@ public class OperatorToMapTest {
                 return t1.length();
             }
         };
-        Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc, v -> v, mapFactory);
+        Observable<Map<Integer, String>> mapped = source.toMap(lengthFunc, new Function<String, String>() {
+            @Override
+            public String apply(String v) {
+                return v;
+            }
+        }, mapFactory);
 
-        Map<Integer, String> expected = new LinkedHashMap<T>();
+        Map<Integer, String> expected = new LinkedHashMap<Integer, String>();
         expected.put(2, "bb");
         expected.put(3, "ccc");
         expected.put(4, "dddd");

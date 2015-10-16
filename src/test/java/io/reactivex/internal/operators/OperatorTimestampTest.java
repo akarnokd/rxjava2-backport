@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -50,9 +50,9 @@ public class OperatorTimestampTest {
 
         InOrder inOrder = inOrder(observer);
 
-        inOrder.verify(observer, times(1)).onNext(new Timed<T>(1, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<T>(2, 100, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<T>(3, 200, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<Integer>(1, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<Integer>(2, 100, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<Integer>(3, 200, TimeUnit.MILLISECONDS));
 
         verify(observer, never()).onError(any(Throwable.class));
         verify(observer, never()).onComplete();
@@ -74,9 +74,9 @@ public class OperatorTimestampTest {
 
         InOrder inOrder = inOrder(observer);
 
-        inOrder.verify(observer, times(1)).onNext(new Timed<T>(1, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<T>(2, 0, TimeUnit.MILLISECONDS));
-        inOrder.verify(observer, times(1)).onNext(new Timed<T>(3, 200, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<Integer>(1, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<Integer>(2, 0, TimeUnit.MILLISECONDS));
+        inOrder.verify(observer, times(1)).onNext(new Timed<Integer>(3, 200, TimeUnit.MILLISECONDS));
 
         verify(observer, never()).onError(any(Throwable.class));
         verify(observer, never()).onComplete();

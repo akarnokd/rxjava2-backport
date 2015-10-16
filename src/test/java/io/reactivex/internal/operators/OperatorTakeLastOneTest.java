@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -29,7 +29,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastOfManyReturnsLast() {
-        TestSubscriber<Integer> s = new TestSubscriber<T>();
+        TestSubscriber<Integer> s = new TestSubscriber<Integer>();
         Observable.range(1, 10).takeLast(1).subscribe(s);
         s.assertValue(10);
         s.assertNoErrors();
@@ -40,7 +40,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastOfEmptyReturnsEmpty() {
-        TestSubscriber<Object> s = new TestSubscriber<T>();
+        TestSubscriber<Object> s = new TestSubscriber<Object>();
         Observable.empty().takeLast(1).subscribe(s);
         s.assertNoValues();
         s.assertNoErrors();
@@ -51,7 +51,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastOfOneReturnsLast() {
-        TestSubscriber<Integer> s = new TestSubscriber<T>();
+        TestSubscriber<Integer> s = new TestSubscriber<Integer>();
         Observable.just(1).takeLast(1).subscribe(s);
         s.assertValue(1);
         s.assertNoErrors();
@@ -76,7 +76,7 @@ public class OperatorTakeLastOneTest {
 
     @Test
     public void testLastWithBackpressure() {
-        MySubscriber<Integer> s = new MySubscriber<T>(0);
+        MySubscriber<Integer> s = new MySubscriber<Integer>(0);
         Observable.just(1).takeLast(1).subscribe(s);
         assertEquals(0, s.list.size());
         s.requestMore(1);

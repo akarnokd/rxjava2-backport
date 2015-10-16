@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 David Karnok
+ * Copyright 2015 David Karnok and Netflix, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -64,7 +64,6 @@ public class MergeTests {
         Observable<Movie> o1 = Observable.just(new HorrorMovie(), new Movie());
         Observable<Media> o2 = Observable.just(new Media(), new HorrorMovie());
 
-        @SuppressWarnings("unchecked")
         List<Media> values = Observable.merge(o1, o2).toList().toBlocking().single();
 
         assertTrue(values.get(0) instanceof HorrorMovie);
@@ -88,7 +87,6 @@ public class MergeTests {
         
         Observable<Media> o2 = Observable.just(new Media(), new HorrorMovie());
 
-        @SuppressWarnings("unchecked")
         List<Media> values = Observable.merge(o1, o2).toList().toBlocking().single();
 
         assertTrue(values.get(0) instanceof HorrorMovie);
