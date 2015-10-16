@@ -96,3 +96,8 @@ plugins.withType(EclipsePlugin) {
 javadoc {
     failOnError = false
 }
+
+test {
+    maxHeapSize = "2g"
+    testLogging.showStandardStreams = true
+}
