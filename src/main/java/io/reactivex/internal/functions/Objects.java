@@ -16,6 +16,7 @@ import io.reactivex.functions.BiPredicate;
 
 /**
  * Utility methods containing the backport of Java 7's Objects utility class.
+ * <p>Named as such to avoid clash with java.util.Objects.
  */
 public enum Objects {
     ;

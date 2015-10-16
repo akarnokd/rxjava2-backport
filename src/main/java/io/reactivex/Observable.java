@@ -30,6 +30,8 @@ import io.reactivex.observables.*;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.*;
 import io.reactivex.subscribers.*;
+import io.reactivex.Optional;
+import io.reactivex.internal.functions.Objects;
 
 public class Observable<T> implements Publisher<T> {
     /**
@@ -359,7 +361,7 @@ public class Observable<T> implements Publisher<T> {
 
     /**
      *
-     * TODO named this way because of overload conflict with concat(Publisher&lt;Publisher&gt)
+     * TODO named this way because of overload conflict with concat(Publisher&lt;Publisher&gt;)
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @BackpressureSupport(BackpressureKind.FULL)

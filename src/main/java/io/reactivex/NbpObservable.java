@@ -34,6 +34,7 @@ import io.reactivex.observables.nbp.*;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.*;
 import io.reactivex.subscribers.nbp.*;
+import io.reactivex.Optional;
 
 /**
  * Observable for delivering a sequence of values without backpressure. 

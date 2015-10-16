@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 import org.reactivestreams.*;
@@ -25,6 +24,8 @@ import org.reactivestreams.*;
 import io.reactivex.*;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Optional;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.subscriptions.EmptySubscription;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;

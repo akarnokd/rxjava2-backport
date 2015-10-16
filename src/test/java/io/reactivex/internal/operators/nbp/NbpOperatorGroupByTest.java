@@ -20,15 +20,16 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 import org.mockito.Matchers;
 
 import io.reactivex.*;
 import io.reactivex.NbpObservable.*;
+import io.reactivex.Optional;
 import io.reactivex.disposables.*;
 import io.reactivex.exceptions.TestException;
+import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.observables.nbp.NbpGroupedObservable;
 import io.reactivex.schedulers.Schedulers;

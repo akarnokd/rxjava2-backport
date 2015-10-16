@@ -28,6 +28,7 @@ import org.reactivestreams.Subscriber;
 import io.reactivex.*;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Optional;
 import io.reactivex.functions.*;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;

@@ -117,13 +117,18 @@ public enum NotificationLite {
     
     /**
      * Converts a Subscription into a notification value.
-     * @param e the Subscription to convert
+     * @param s the Subscription to convert
      * @return the notification representing the Subscription
      */
     public static Object subscription(Subscription s) {
         return new SubscriptionNotification(s);
     }
     
+    /**
+     * Converts a Disposable into a notification value.
+     * @param d the disposable to convert
+     * @return the notification representing the Disposable
+     */
     public static Object disposable(Disposable d) {
         return new DisposableNotification(d);
     }

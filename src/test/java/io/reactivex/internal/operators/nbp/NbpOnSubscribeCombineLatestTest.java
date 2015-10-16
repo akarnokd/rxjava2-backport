@@ -26,6 +26,7 @@ import org.mockito.*;
 
 import io.reactivex.*;
 import io.reactivex.NbpObservable.NbpSubscriber;
+import io.reactivex.Optional;
 import io.reactivex.functions.*;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.nbp.NbpPublishSubject;

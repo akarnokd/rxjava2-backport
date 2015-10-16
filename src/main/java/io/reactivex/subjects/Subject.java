@@ -44,7 +44,7 @@ public abstract class Subject<T, R> extends Observable<R> implements Processor<T
      * <p>The method is thread-safe.
      * @return true if the subject has reached a terminal state through an error event
      * @see #getThrowable()
-     * &see {@link #hasComplete()}
+     * @see #hasComplete()
      */
     public boolean hasThrowable() {
         throw new UnsupportedOperationException();

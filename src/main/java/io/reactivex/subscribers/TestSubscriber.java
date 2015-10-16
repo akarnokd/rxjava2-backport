@@ -691,7 +691,7 @@ public class TestSubscriber<T> implements Subscriber<T>, Subscription, Disposabl
     /**
      * Awaits the specified amount of time or until this TestSubscriber 
      * receives an onError or onComplete events, whichever happens first.
-     * @param time the waiting time
+     * @param duration the waiting time
      * @param unit the time unit of the waiting time
      * @return true if the TestSubscriber terminated, false if timeout or interrupt happened
      */

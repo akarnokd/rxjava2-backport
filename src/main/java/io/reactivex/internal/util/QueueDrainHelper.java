@@ -30,8 +30,8 @@ public enum QueueDrainHelper {
     /**
      * A fast-path queue-drain serialization logic.
      * <p>The decrementing of the state is left to the drain callback.
-     * @param updater
-     * @param instance
+     * @param updater the field updater
+     * @param instance the instance holding the field
      * @param fastPath called if the instance is uncontended.
      * @param queue called if the instance is contended to queue up work
      * @param drain called if the instance transitions to the drain state successfully
@@ -56,8 +56,8 @@ public enum QueueDrainHelper {
      * A fast-path queue-drain serialization logic with the ability to leave the state
      * in fastpath/drain mode or not continue after the call to queue.
      * <p>The decrementing of the state is left to the drain callback.
-     * @param updater
-     * @param instance
+     * @param updater the field updater
+     * @param instance the instance holding the field
      * @param fastPath
      * @param queue
      * @param drain
@@ -85,8 +85,8 @@ public enum QueueDrainHelper {
     /**
      * A fast-path queue-drain serialization logic where the drain is looped until
      * the instance state reaches 0 again.
-     * @param updater
-     * @param instance
+     * @param updater the field updater
+     * @param instance the instance holding the field
      * @param fastPath
      * @param queue
      * @param drain
@@ -118,8 +118,8 @@ public enum QueueDrainHelper {
     /**
      * A fast-path queue-drain serialization logic with looped drain call and the ability to leave the state
      * in fastpath/drain mode or not continue after the call to queue.
-     * @param updater
-     * @param instance
+     * @param updater the field updater
+     * @param instance the instance holding the field
      * @param fastPath
      * @param queue
      * @param drain
@@ -158,7 +158,6 @@ public enum QueueDrainHelper {
     /**
      * A fast-path queue-drain serialization logic.
      * <p>The decrementing of the state is left to the drain callback.
-     * @param updater
      * @param instance
      * @param fastPath called if the instance is uncontended.
      * @param queue called if the instance is contended to queue up work
@@ -184,7 +183,6 @@ public enum QueueDrainHelper {
      * A fast-path queue-drain serialization logic with the ability to leave the state
      * in fastpath/drain mode or not continue after the call to queue.
      * <p>The decrementing of the state is left to the drain callback.
-     * @param updater
      * @param instance
      * @param fastPath
      * @param queue
@@ -213,7 +211,6 @@ public enum QueueDrainHelper {
     /**
      * A fast-path queue-drain serialization logic where the drain is looped until
      * the instance state reaches 0 again.
-     * @param updater
      * @param instance
      * @param fastPath
      * @param queue
@@ -246,7 +243,6 @@ public enum QueueDrainHelper {
     /**
      * A fast-path queue-drain serialization logic with looped drain call and the ability to leave the state
      * in fastpath/drain mode or not continue after the call to queue.
-     * @param updater
      * @param instance
      * @param fastPath
      * @param queue

@@ -20,7 +20,6 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import io.reactivex.functions.*;
 
 import org.junit.*;
 import org.mockito.InOrder;
@@ -28,8 +27,9 @@ import org.mockito.InOrder;
 import io.reactivex.*;
 import io.reactivex.NbpObservable.*;
 import io.reactivex.Observable;
+import io.reactivex.Optional;
 import io.reactivex.disposables.BooleanDisposable;
-import io.reactivex.functions.Function3;
+import io.reactivex.functions.*;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.internal.functions.Functions;
 import io.reactivex.schedulers.Schedulers;

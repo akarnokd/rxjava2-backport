@@ -17,12 +17,13 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 
 import io.reactivex.*;
 import io.reactivex.NbpObservable.*;
+import io.reactivex.Optional;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.subscribers.nbp.NbpTestSubscriber;
 

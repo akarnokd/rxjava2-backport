@@ -25,9 +25,10 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.reactivestreams.*;
 
-import io.reactivex.*;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Optional;
+import io.reactivex.Try;
 import io.reactivex.exceptions.TestException;
 import io.reactivex.functions.*;
 import io.reactivex.internal.subscriptions.*;

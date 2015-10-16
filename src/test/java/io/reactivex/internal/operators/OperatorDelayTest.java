@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import io.reactivex.functions.*;
 
 import org.junit.*;
 import org.mockito.InOrder;
@@ -27,7 +26,9 @@ import org.reactivestreams.*;
 
 import io.reactivex.*;
 import io.reactivex.Observable;
+import io.reactivex.Optional;
 import io.reactivex.exceptions.TestException;
+import io.reactivex.functions.*;
 import io.reactivex.schedulers.*;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subscribers.TestSubscriber;
