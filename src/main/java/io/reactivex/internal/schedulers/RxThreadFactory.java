@@ -32,4 +32,9 @@ public final class RxThreadFactory extends AtomicLong implements ThreadFactory {
         t.setDaemon(true);
         return t;
     }
+    
+    @Override
+    public String toString() {
+        return "RxThreadFactory[" + prefix + "]";
+    }
 }

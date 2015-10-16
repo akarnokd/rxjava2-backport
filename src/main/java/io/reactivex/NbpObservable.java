@@ -748,7 +748,7 @@ public class NbpObservable<T> {
     public static <T> NbpObservable<T> merge(NbpObservable<? extends T> p1, NbpObservable<? extends T> p2) {
         Objects.requireNonNull(p1, "p1 is null");
         Objects.requireNonNull(p2, "p2 is null");
-        return fromArray(p1, p2).flatMap((Function)Functions.identity(), true, 2);
+        return fromArray(p1, p2).flatMap((Function)Functions.identity(), false, 2);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -758,7 +758,7 @@ public class NbpObservable<T> {
         Objects.requireNonNull(p1, "p1 is null");
         Objects.requireNonNull(p2, "p2 is null");
         Objects.requireNonNull(p3, "p3 is null");
-        return fromArray(p1, p2, p3).flatMap((Function)Functions.identity(), true, 3);
+        return fromArray(p1, p2, p3).flatMap((Function)Functions.identity(), false, 3);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -771,7 +771,7 @@ public class NbpObservable<T> {
         Objects.requireNonNull(p2, "p2 is null");
         Objects.requireNonNull(p3, "p3 is null");
         Objects.requireNonNull(p4, "p4 is null");
-        return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), true, 4);
+        return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), false, 4);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1489,6 +1489,30 @@ public class NbpObservable<T> {
         return delaySubscription(delaySupplier).delay(itemDelay);
     }
 
+    /**
+     * Returns an Observable that delays the subscription to this Observable
+     * until the other Observable emits an element or completes normally.
+     * <p>
+     * <dl>
+     *  <dt><b>Backpressure:</b></dt>
+     *  <dd>The operator forwards the backpressure requests to this Observable once
+     *  the subscription happens and requests Long.MAX_VALUE from the other Observable</dd>
+     *  <dt><b>Scheduler:</b></dt>
+     *  <dd>This method does not operate by default on a particular {@link Scheduler}.</dd>
+     * </dl>
+     * 
+     * @param <U> the value type of the other Observable, irrelevant
+     * @param other the other Observable that should trigger the subscription
+     *        to this Observable.
+     * @return an Observable that delays the subscription to this Observable
+     *         until the other Observable emits an element or completes normally.
+     */
+    @Experimental
+    public final <U> NbpObservable<T> delaySubscription(NbpObservable<U> other) {
+        Objects.requireNonNull(other, "other is null");
+        return create(new NbpOnSubscribeDelaySubscriptionOther<T, U>(this, other));
+    }
+    
     @SchedulerSupport(SchedulerKind.COMPUTATION)
     public final NbpObservable<T> delaySubscription(long delay, TimeUnit unit) {
         return delaySubscription(delay, unit, Schedulers.computation());

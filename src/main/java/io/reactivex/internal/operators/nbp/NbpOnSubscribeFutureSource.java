@@ -46,8 +46,12 @@ public final class NbpOnSubscribeFutureSource<T> implements NbpOnSubscribe<T> {
                 future.cancel(true); // TODO ?? not sure about this
             }
             if (!bd.isDisposed()) {
-                s.onNext(v);
-                s.onComplete();
+                if (v != null) {
+                    s.onNext(v);
+                    s.onComplete();
+                } else {
+                    s.onError(new NullPointerException("Future returned null"));
+                }
             }
         }
     }

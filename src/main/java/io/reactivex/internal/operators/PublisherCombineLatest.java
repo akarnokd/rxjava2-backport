@@ -266,6 +266,13 @@ public final class PublisherCombineLatest<T, R> implements Publisher<R> {
                         return;
                     }
                     
+                    if (v == null) {
+                        cancelled = true;
+                        cancel(q);
+                        a.onError(new NullPointerException("The combiner returned a null"));
+                        return;
+                    }
+                    
                     a.onNext(v);
                     
                     cs.request(1);

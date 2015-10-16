@@ -273,11 +273,10 @@ public class ObservableNullTests {
     @Test
     public void fromFutureReturnsNull() {
         FutureTask<Object> f = new FutureTask<Object>(Functions.emptyRunnable(), null);
-        TestSubscriber<Object> ts = new TestSubscriber<Object>();
-        Observable.fromFuture(f).subscribe(ts);
-        
         f.run();
         
+        TestSubscriber<Object> ts = new TestSubscriber<Object>();
+        Observable.fromFuture(f).subscribe(ts);
         ts.assertNoValues();
         ts.assertNotComplete();
         ts.assertError(NullPointerException.class);
@@ -1065,10 +1064,15 @@ public class ObservableNullTests {
     }
     
     @Test(expected = NullPointerException.class)
-    public void delaySubscriptionFunctionNull() {
-        just1.delaySubscription(null);
+    public void delaySubscriptionSupplierNull() {
+        just1.delaySubscription((Supplier<Publisher<Object>>)null);
     }
-    
+
+    @Test(expected = NullPointerException.class)
+    public void delaySubscriptionFunctionNull() {
+        just1.delaySubscription((Publisher<Object>)null);
+    }
+
     @Test(expected = NullPointerException.class)
     public void delayBothInitialSupplierNull() {
         just1.delay(null, new Function<Integer, Publisher<Integer>>() {
@@ -2444,7 +2448,7 @@ public class ObservableNullTests {
         just1.toSortedList(null);
     }
     
-    @Test
+    @Test(expected = NullPointerException.class)
     public void toMapKeyNullAllowed() {
         just1.toMap(null);
     }

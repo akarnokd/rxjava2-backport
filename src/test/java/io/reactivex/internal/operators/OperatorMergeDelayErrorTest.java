@@ -197,7 +197,7 @@ public class OperatorMergeDelayErrorTest {
 
         assertNotNull(w.e);
         
-        assertEquals(1, ((CompositeException)w.e).size());
+        assertEquals(2, ((CompositeException)w.e).size());
         
 //        if (w.e instanceof CompositeException) {
 //            assertEquals(2, ((CompositeException) w.e).getExceptions().size());

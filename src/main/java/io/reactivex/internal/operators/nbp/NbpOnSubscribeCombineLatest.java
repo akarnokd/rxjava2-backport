@@ -248,6 +248,13 @@ public final class NbpOnSubscribeCombineLatest<T, R> implements NbpOnSubscribe<R
                         return;
                     }
                     
+                    if (v == null) {
+                        cancelled = true;
+                        cancel(q);
+                        a.onError(new NullPointerException("The combiner returned a null"));
+                        return;
+                    }
+                    
                     a.onNext(v);
                 }
                 

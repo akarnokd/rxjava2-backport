@@ -149,6 +149,12 @@ public final class OperatorGroupBy<T, K, V> implements Operator<GroupedObservabl
                 errorAll(a, q, ex);
                 return;
             }
+            
+            if (v == null) {
+                s.cancel();
+                errorAll(a, q, new NullPointerException("The valueSelector returned null"));
+                return;
+            }
 
             group.onNext(v);
 

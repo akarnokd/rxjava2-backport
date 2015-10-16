@@ -107,15 +107,14 @@ public final class SubscriptionArbiter extends AtomicInteger implements Subscrip
         
         if (get() == 0 && compareAndSet(0, 1)) {
             long r = requested;
-            if (r == Long.MAX_VALUE) {
-                return;
+            if (r != Long.MAX_VALUE) {
+                long u = r - n;
+                if (u < 0L) {
+                    RxJavaPlugins.onError(new IllegalArgumentException("More produced than requested: " + u));
+                    u = 0;
+                }
+                requested = u;
             }
-            long u = r - n;
-            if (u < 0L) {
-                RxJavaPlugins.onError(new IllegalArgumentException("More produced than requested: " + u));
-                u = 0;
-            }
-            requested = u;
             if (decrementAndGet() == 0) {
                 return;
             }

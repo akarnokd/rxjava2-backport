@@ -100,6 +100,7 @@ public final class Schedulers {
         newThread().shutdown();
         single().shutdown();
         trampoline().shutdown();
+        SchedulerPoolFactory.shutdown();
     }
     
     public static void start() {
@@ -108,5 +109,6 @@ public final class Schedulers {
         newThread().start();
         single().start();
         trampoline().start();
+        SchedulerPoolFactory.start();
     }
 }

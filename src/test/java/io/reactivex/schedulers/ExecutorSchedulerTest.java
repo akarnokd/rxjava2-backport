@@ -25,7 +25,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.Scheduler.Worker;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.schedulers.RxThreadFactory;
+import io.reactivex.internal.schedulers.*;
 
 public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
 
@@ -63,7 +63,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
         
         System.out.printf("Starting: %.3f MB%n", initial / 1024.0 / 1024.0);
 
-        int n = 500 * 1000;
+        int n = 200 * 1000;
         if (periodic) {
             final CountDownLatch cdl = new CountDownLatch(n);
             final Runnable action = new Runnable() {
@@ -97,7 +97,16 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
         w.dispose();
         
         System.out.println("Wait before second GC");
-        Thread.sleep(1000 + 2000);
+        Thread.sleep(1000 + SchedulerPoolFactory.PURGE_PERIOD_SECONDS * 1000);
+        if (periodic) {
+            System.out.println("JDK 6 purge is N log N because it removes and shifts one by one");
+            int t = (int)(n * Math.log(n) / 100);
+            while (t > 0) {
+                System.out.printf("  >> Waiting for purge: %.2f s remaining%n", t / 1000d);
+                Thread.sleep(1000);
+                t -= 1000;
+            }
+        }
         
         System.out.println("Second GC");
         System.gc();
@@ -113,7 +122,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
         }
     }
     
-    @Test(timeout = 30000)
+    @Test(timeout = 60000)
     public void testCancelledTaskRetention() throws InterruptedException {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Scheduler s = Schedulers.from(exec);

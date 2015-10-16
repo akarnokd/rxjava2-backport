@@ -45,7 +45,11 @@ public final class NbpOnSubscribeScalarAsyncSource<T> implements NbpOnSubscribe<
         if (bd.isDisposed()) {
             return;
         }
-        s.onNext(value);
-        s.onComplete();
+        if (value != null) {
+            s.onNext(value);
+            s.onComplete();
+        } else {
+            s.onError(new NullPointerException("Callable returned null"));
+        }
     }
 }

@@ -2208,7 +2208,7 @@ public class Completable {
         return Observable.create(new Publisher<T>() {
             @Override
             public void subscribe(Subscriber<? super T> s) {
-                subscribe(s);
+                Completable.this.subscribe(s);
             }
         });
     }

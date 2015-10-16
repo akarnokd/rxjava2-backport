@@ -259,9 +259,10 @@ public class NbpObservableNullTests {
     @Test
     public void fromFutureReturnsNull() {
         FutureTask<Object> f = new FutureTask<Object>(Functions.emptyRunnable(), null);
+        f.run();
+
         NbpTestSubscriber<Object> ts = new NbpTestSubscriber<Object>();
         NbpObservable.fromFuture(f).subscribe(ts);
-        f.run();
         ts.assertNoValues();
         ts.assertNotComplete();
         ts.assertError(NullPointerException.class);
@@ -1054,10 +1055,15 @@ public class NbpObservableNullTests {
     }
     
     @Test(expected = NullPointerException.class)
-    public void delaySubscriptionFunctionNull() {
-        just1.delaySubscription(null);
+    public void delaySubscriptionOtherNull() {
+        just1.delaySubscription((NbpObservable<Object>)null);
     }
-    
+
+    @Test(expected = NullPointerException.class)
+    public void delaySubscriptionFunctionNull() {
+        just1.delaySubscription((Supplier<NbpObservable<Object>>)null);
+    }
+
     @Test(expected = NullPointerException.class)
     public void delayBothInitialSupplierNull() {
         just1.delay(null, new Function<Integer, NbpObservable<Integer>>() {

@@ -46,7 +46,11 @@ public final class PublisherFutureSource<T> implements Publisher<T> {
             } finally {
                 future.cancel(true); // TODO ?? not sure about this
             }
-            sas.setValue(v);
+            if (v == null) {
+                s.onError(new NullPointerException("The future returned null"));
+            } else {
+                sas.setValue(v);
+            }
         }
     }
 }

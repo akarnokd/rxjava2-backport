@@ -1865,8 +1865,9 @@ public class CompletableTest {
             c.await();
         } catch (CompositeException ex) {
             List<Throwable> a = ex.getExceptions();
-            Assert.assertEquals(1, a.size());
-            Assert.assertTrue(a.get(0) instanceof TestException);
+            Assert.assertEquals(2, a.size());
+            Assert.assertTrue(a.get(0) instanceof IllegalStateException);
+            Assert.assertTrue(a.get(1) instanceof TestException);
         }
     }
     
@@ -2208,11 +2209,8 @@ public class CompletableTest {
         try {
             c.await();
             Assert.fail("Did not throw an exception");
-        } catch (CompositeException ex) {
-            List<Throwable> a = ex.getExceptions();
-                    
-            Assert.assertEquals(1, a.size());
-            Assert.assertTrue(a.get(0) instanceof TestException);
+        } catch (NullPointerException ex) {
+            Assert.assertTrue(ex.getCause() instanceof TestException);
         }
     }
     
@@ -2229,8 +2227,9 @@ public class CompletableTest {
         } catch (CompositeException ex) {
             List<Throwable> a = ex.getExceptions();
             
-            Assert.assertEquals(1, a.size());
+            Assert.assertEquals(2, a.size());
             Assert.assertTrue(a.get(0) instanceof TestException);
+            Assert.assertTrue(a.get(1) instanceof TestException);
         }
     }
     

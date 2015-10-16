@@ -54,10 +54,10 @@ public enum SchedulerPoolFactory {
     public static void start() {
         for (;;) {
             ScheduledExecutorService curr = PURGE_THREAD.get();
-            if (!curr.isShutdown()) {
+            if (curr != null && !curr.isShutdown()) {
                 return;
             }
-            ScheduledExecutorService next = Executors.newScheduledThreadPool(1, new RxThreadFactory("RxSchedulerPurge"));
+            ScheduledExecutorService next = Executors.newScheduledThreadPool(1, new RxThreadFactory("RxSchedulerPurge-"));
             if (PURGE_THREAD.compareAndSet(curr, next)) {
                 
                 next.scheduleAtFixedRate(new Runnable() {
@@ -87,7 +87,7 @@ public enum SchedulerPoolFactory {
     /**
      * Stops the purge thread.
      */
-    public static void stop() {
+    public static void shutdown() {
         PURGE_THREAD.get().shutdownNow();
         POOLS.clear();
     }
@@ -108,6 +108,8 @@ public enum SchedulerPoolFactory {
         
         PURGE_ENABLED = purgeEnable;
         PURGE_PERIOD_SECONDS = purgePeriod;
+        
+        start();
     }
     
     /**

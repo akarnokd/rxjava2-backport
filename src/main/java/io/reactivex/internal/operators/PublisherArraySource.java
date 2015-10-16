@@ -74,7 +74,12 @@ public final class PublisherArraySource<T> implements Publisher<T> {
                             return;
                         }
                         for (int j = i; j < len; j++) {
-                            s.onNext(a[j]);
+                            T t = a[j];
+                            if (t == null) {
+                                s.onError(new NullPointerException("The " + j + "th array element is null"));
+                                return;
+                            }
+                            s.onNext(t);
                             if (cancelled) {
                                 return;
                             }
@@ -87,7 +92,12 @@ public final class PublisherArraySource<T> implements Publisher<T> {
                         return;
                     }
                     while (r != 0 && i < len) {
-                        s.onNext(a[i]);
+                        T t = a[i];
+                        if (t == null) {
+                            s.onError(new NullPointerException("The " + i + "th array element is null"));
+                            return;
+                        }
+                        s.onNext(t);
                         if (cancelled) {
                             return;
                         }
@@ -144,7 +154,12 @@ public final class PublisherArraySource<T> implements Publisher<T> {
                             return;
                         }
                         for (int j = i; j < len; j++) {
-                            s.onNext(a[j]);
+                            T t = a[j];
+                            if (t == null) {
+                                s.onError(new NullPointerException("The " + j + "th array element is null"));
+                                return;
+                            }
+                            s.onNext(t);
                             if (cancelled) {
                                 return;
                             }
