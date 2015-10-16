@@ -121,7 +121,6 @@ public class BackpressureTests {
         AtomicInteger c1 = new AtomicInteger();
         AtomicInteger c2 = new AtomicInteger();
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
-        @SuppressWarnings("unchecked")
         Observable<Integer> merged = Observable.merge(incrementingIntegers(c1), incrementingIntegers(c2));
 
         merged.take(NUM).subscribe(ts);

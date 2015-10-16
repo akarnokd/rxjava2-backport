@@ -47,7 +47,7 @@ public class OperatorOnExceptionResumeNextViaObservableTest {
             fail(e.getMessage());
         }
 
-        verify(observer).onSubscribe(any());
+        verify(observer).onSubscribe((Subscription)any());
         verify(observer, times(1)).onNext("one");
         verify(observer, Mockito.never()).onNext("two");
         verify(observer, Mockito.never()).onNext("three");
@@ -75,7 +75,7 @@ public class OperatorOnExceptionResumeNextViaObservableTest {
             fail(e.getMessage());
         }
 
-        verify(observer).onSubscribe(any());
+        verify(observer).onSubscribe((Subscription)any());
         verify(observer, times(1)).onNext("one");
         verify(observer, Mockito.never()).onNext("two");
         verify(observer, Mockito.never()).onNext("three");
@@ -103,7 +103,7 @@ public class OperatorOnExceptionResumeNextViaObservableTest {
             fail(e.getMessage());
         }
 
-        verify(observer).onSubscribe(any());
+        verify(observer).onSubscribe((Subscription)any());
         verify(observer, times(1)).onNext("one");
         verify(observer, never()).onNext("two");
         verify(observer, never()).onNext("three");
@@ -131,7 +131,7 @@ public class OperatorOnExceptionResumeNextViaObservableTest {
             fail(e.getMessage());
         }
 
-        verify(observer).onSubscribe(any());
+        verify(observer).onSubscribe((Subscription)any());
         verify(observer, times(1)).onNext("one");
         verify(observer, never()).onNext("two");
         verify(observer, never()).onNext("three");

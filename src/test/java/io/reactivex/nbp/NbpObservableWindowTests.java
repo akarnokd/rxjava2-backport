@@ -20,19 +20,30 @@ import java.util.*;
 import org.junit.Test;
 
 import io.reactivex.NbpObservable;
+import io.reactivex.functions.*;
 
 public class NbpObservableWindowTests {
 
     @Test
     public void testWindow() {
-        final ArrayList<List<Integer>> lists = new ArrayList<T>();
+        final ArrayList<List<Integer>> lists = new ArrayList<List<Integer>>();
 
         NbpObservable.concat(
             NbpObservable.just(1, 2, 3, 4, 5, 6)
             .window(3)
-            .map(xs -> xs.toList())
+            .map(new Function<NbpObservable<Integer>, NbpObservable<List<Integer>>>() {
+                @Override
+                public NbpObservable<List<Integer>> apply(NbpObservable<Integer> xs) {
+                    return xs.toList();
+                }
+            })
         )
-        .toBlocking().forEach(xs -> lists.add(xs));
+        .toBlocking().forEach(new Consumer<List<Integer>>() {
+            @Override
+            public void accept(List<Integer> xs) {
+                lists.add(xs);
+            }
+        });
 
         assertArrayEquals(lists.get(0).toArray(new Integer[3]), new Integer[] { 1, 2, 3 });
         assertArrayEquals(lists.get(1).toArray(new Integer[3]), new Integer[] { 4, 5, 6 });

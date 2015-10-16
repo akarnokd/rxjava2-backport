@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.*;
 import java.util.concurrent.*;
-import io.reactivex.functions.*;
 
 import org.junit.*;
 import org.mockito.InOrder;
@@ -28,7 +27,8 @@ import org.reactivestreams.*;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.TestHelper;
-import io.reactivex.exceptions.TestException;
+import io.reactivex.exceptions.*;
+import io.reactivex.functions.LongConsumer;
 import io.reactivex.internal.subscriptions.EmptySubscription;
 import io.reactivex.subscribers.TestSubscriber;
 
@@ -197,7 +197,7 @@ public class OperatorMergeDelayErrorTest {
 
         assertNotNull(w.e);
         
-        assertEquals(1, w.e.getSuppressed().length);
+        assertEquals(1, ((CompositeException)w.e).size());
         
 //        if (w.e instanceof CompositeException) {
 //            assertEquals(2, ((CompositeException) w.e).getExceptions().size());
@@ -254,7 +254,7 @@ public class OperatorMergeDelayErrorTest {
     public void testMergeList() {
         final Observable<String> o1 = Observable.create(new TestSynchronousObservable());
         final Observable<String> o2 = Observable.create(new TestSynchronousObservable());
-        List<Observable<String>> listOfObservables = new ArrayList<T>();
+        List<Observable<String>> listOfObservables = new ArrayList<Observable<String>>();
         listOfObservables.add(o1);
         listOfObservables.add(o2);
 
@@ -557,7 +557,7 @@ public class OperatorMergeDelayErrorTest {
     }
     @Test
     public void testDelayErrorMaxConcurrent() {
-        final List<Long> requests = new ArrayList<T>();
+        final List<Long> requests = new ArrayList<Long>();
         Observable<Integer> source = Observable.mergeDelayError(Observable.just(
                 Observable.just(1).asObservable(), 
                 Observable.<Integer>error(new TestException()))

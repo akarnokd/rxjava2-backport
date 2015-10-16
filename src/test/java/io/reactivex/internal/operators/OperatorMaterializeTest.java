@@ -97,7 +97,7 @@ public class OperatorMaterializeTest {
 
     @Test
     public void testBackpressureOnEmptyStream() {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>((Long)null);
         Observable.<Integer> empty().materialize().subscribe(ts);
         ts.assertNoValues();
         ts.request(1);
@@ -108,7 +108,7 @@ public class OperatorMaterializeTest {
 
     @Test
     public void testBackpressureNoError() {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>((Long)null);
         Observable.just(1, 2, 3).materialize().subscribe(ts);
         ts.assertNoValues();
         ts.request(1);
@@ -122,7 +122,7 @@ public class OperatorMaterializeTest {
     
     @Test
     public void testBackpressureNoErrorAsync() throws InterruptedException {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>((Long)null);
         Observable.just(1, 2, 3)
             .materialize()
             .subscribeOn(Schedulers.computation())
@@ -143,7 +143,7 @@ public class OperatorMaterializeTest {
 
     @Test
     public void testBackpressureWithError() {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>((Long)null);
         Observable.<Integer> error(new IllegalArgumentException()).materialize().subscribe(ts);
         ts.assertNoValues();
         ts.request(1);
@@ -153,7 +153,7 @@ public class OperatorMaterializeTest {
 
     @Test
     public void testBackpressureWithEmissionThenError() {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>((Long)null);
         IllegalArgumentException ex = new IllegalArgumentException();
         Observable.fromIterable(Arrays.asList(1)).concatWith(Observable.<Integer> error(ex)).materialize()
                 .subscribe(ts);
@@ -170,7 +170,7 @@ public class OperatorMaterializeTest {
 
     @Test
     public void testWithCompletionCausingError() {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>();
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>();
         final RuntimeException ex = new RuntimeException("boo");
         Observable.<Integer>empty().materialize().doOnNext(new Consumer<Object>() {
             @Override
@@ -185,7 +185,7 @@ public class OperatorMaterializeTest {
     
     @Test
     public void testUnsubscribeJustBeforeCompletionNotificationShouldPreventThatNotificationArriving() {
-        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Try<Optional<Integer>>> ts = new TestSubscriber<Try<Optional<Integer>>>((Long)null);
 
         Observable.<Integer>empty().materialize()
                 .subscribe(ts);
@@ -201,7 +201,7 @@ public class OperatorMaterializeTest {
 
         boolean onCompleted = false;
         boolean onError = false;
-        List<Try<Optional<String>>> notifications = new Vector<T>();
+        List<Try<Optional<String>>> notifications = new Vector<Try<Optional<String>>>();
 
         @Override
         public void onComplete() {

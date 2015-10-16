@@ -173,7 +173,7 @@ public class OperatorRepeatTest {
     /** Issue #2844: wrong target of request. */
     @Test(timeout = 3000)
     public void testRepeatRetarget() {
-        final List<Integer> concatBase = new ArrayList<T>();
+        final List<Integer> concatBase = new ArrayList<Integer>();
         TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
         Observable.just(1, 2)
         .repeat(5)

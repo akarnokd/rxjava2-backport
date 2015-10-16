@@ -50,7 +50,12 @@ public class OperatorMapTest {
         Map<String, String> m2 = getMap("Two");
         Observable<Map<String, String>> observable = Observable.just(m1, m2);
 
-        Observable<String> m = observable.map(map -> map.get("firstName"));
+        Observable<String> m = observable.map(new Function<Map<String, String>, String>() {
+            @Override
+            public String apply(Map<String, String> map) {
+                return map.get("firstName");
+            }
+        });
         
         m.subscribe(stringObserver);
 
@@ -296,7 +301,7 @@ public class OperatorMapTest {
 //    }
 
     private static Map<String, String> getMap(String prefix) {
-        Map<String, String> m = new HashMap<T>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("firstName", prefix + "First");
         m.put("lastName", prefix + "Last");
         return m;

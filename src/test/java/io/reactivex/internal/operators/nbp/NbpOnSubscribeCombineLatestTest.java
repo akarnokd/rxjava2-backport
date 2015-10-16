@@ -20,7 +20,6 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import io.reactivex.functions.*;
 
 import org.junit.Test;
 import org.mockito.*;

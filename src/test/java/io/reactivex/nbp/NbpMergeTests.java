@@ -20,6 +20,7 @@ import java.util.List;
 import org.junit.Test;
 
 import io.reactivex.NbpObservable;
+import io.reactivex.functions.Supplier;
 import io.reactivex.nbp.NbpCovarianceTest.*;
 
 public class NbpMergeTests {
@@ -63,6 +64,7 @@ public class NbpMergeTests {
         NbpObservable<Movie> o1 = NbpObservable.just(new HorrorMovie(), new Movie());
         NbpObservable<Media> o2 = NbpObservable.just(new Media(), new HorrorMovie());
 
+        @SuppressWarnings("unchecked")
         List<Media> values = NbpObservable.merge(o1, o2).toList().toBlocking().single();
 
         assertTrue(values.get(0) instanceof HorrorMovie);
@@ -74,13 +76,19 @@ public class NbpMergeTests {
     @Test
     public void testMergeCovariance4() {
 
-        NbpObservable<Movie> o1 = NbpObservable.defer(() -> NbpObservable.just(
-                new HorrorMovie(),
-                new Movie()
-        ));
+        NbpObservable<Movie> o1 = NbpObservable.defer(new Supplier<NbpObservable<Movie>>() {
+            @Override
+            public NbpObservable<Movie> get() {
+                return NbpObservable.just(
+                        new HorrorMovie(),
+                        new Movie()
+                );
+            }
+        });
         
         NbpObservable<Media> o2 = NbpObservable.just(new Media(), new HorrorMovie());
 
+        @SuppressWarnings("unchecked")
         List<Media> values = NbpObservable.merge(o1, o2).toList().toBlocking().single();
 
         assertTrue(values.get(0) instanceof HorrorMovie);

@@ -34,7 +34,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
 
     @Test
     public void testResumeNextWithSynchronousExecution() {
-        final AtomicReference<Throwable> receivedException = new AtomicReference<T>();
+        final AtomicReference<Throwable> receivedException = new AtomicReference<Throwable>();
         Observable<String> w = Observable.create(new Publisher<String>() {
 
             @Override
@@ -74,7 +74,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
 
     @Test
     public void testResumeNextWithAsyncExecution() {
-        final AtomicReference<Throwable> receivedException = new AtomicReference<T>();
+        final AtomicReference<Throwable> receivedException = new AtomicReference<Throwable>();
         Subscription s = mock(Subscription.class);
         TestObservable w = new TestObservable(s, "one");
         Function<Throwable, Observable<String>> resume = new Function<Throwable, Observable<String>>() {
@@ -187,7 +187,7 @@ public class OperatorOnErrorResumeNextViaFunctionTest {
         Observable.just(1).lift(new Operator<String, Integer>() {
 
             @Override
-            public Subscriber<? super Integer> apply(Subscriber<? super String> t1) {
+            public Subscriber<? super Integer> apply(final Subscriber<? super String> t1) {
                 return new Subscriber<Integer>() {
 
                     @Override

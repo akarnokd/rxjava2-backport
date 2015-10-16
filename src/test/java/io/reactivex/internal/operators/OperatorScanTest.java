@@ -259,7 +259,7 @@ public class OperatorScanTest {
 
                     @Override
                     public List<Integer> get() {
-                        return new ArrayList<T>();
+                        return new ArrayList<Integer>();
                     }
                     
                 }, new BiConsumer<List<Integer>, Integer>() {
@@ -285,7 +285,7 @@ public class OperatorScanTest {
             }
 
         }).take(1);
-        TestSubscriber<Integer> subscriber = new TestSubscriber<T>();
+        TestSubscriber<Integer> subscriber = new TestSubscriber<Integer>();
         o.subscribe(subscriber);
         subscriber.assertValue(0);
         subscriber.assertTerminated();
@@ -294,7 +294,7 @@ public class OperatorScanTest {
 
     @Test
     public void testScanShouldNotRequestZero() {
-        final AtomicReference<Subscription> producer = new AtomicReference<T>();
+        final AtomicReference<Subscription> producer = new AtomicReference<Subscription>();
         Observable<Integer> o = Observable.create(new Publisher<Integer>() {
             @Override
             public void subscribe(final Subscriber<? super Integer> subscriber) {

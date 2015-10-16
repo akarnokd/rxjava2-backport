@@ -22,8 +22,7 @@ import org.reactivestreams.*;
 import io.reactivex.annotations.*;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.*;
-import io.reactivex.internal.functions.Functions;
-import io.reactivex.internal.functions.Objects;
+import io.reactivex.internal.functions.*;
 import io.reactivex.internal.operators.*;
 import io.reactivex.internal.subscribers.*;
 import io.reactivex.internal.subscriptions.EmptySubscription;
@@ -785,6 +784,39 @@ public class Observable<T> implements Publisher<T> {
     public static <T> Observable<T> merge(Publisher<? extends T>... sources) {
         return fromArray(sources).flatMap((Function)Functions.identity(), sources.length);
     }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> Observable<T> merge(Publisher<? extends T> p1, Publisher<? extends T> p2) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        return fromArray(p1, p2).flatMap((Function)Functions.identity(), true, 2);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> Observable<T> merge(Publisher<? extends T> p1, Publisher<? extends T> p2, Publisher<? extends T> p3) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        return fromArray(p1, p2, p3).flatMap((Function)Functions.identity(), true, 3);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> Observable<T> merge(
+            Publisher<? extends T> p1, Publisher<? extends T> p2, 
+            Publisher<? extends T> p3, Publisher<? extends T> p4) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        Objects.requireNonNull(p4, "p4 is null");
+        return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), true, 4);
+    }
+
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @BackpressureSupport(BackpressureKind.FULL)
@@ -841,6 +873,39 @@ public class Observable<T> implements Publisher<T> {
         return fromArray(sources).flatMap((Function)Functions.identity(), true, sources.length);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> Observable<T> mergeDelayError(Publisher<? extends T> p1, Publisher<? extends T> p2) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        return fromArray(p1, p2).flatMap((Function)Functions.identity(), true, 2);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> Observable<T> mergeDelayError(Publisher<? extends T> p1, Publisher<? extends T> p2, Publisher<? extends T> p3) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        return fromArray(p1, p2, p3).flatMap((Function)Functions.identity(), true, 3);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public static <T> Observable<T> mergeDelayError(
+            Publisher<? extends T> p1, Publisher<? extends T> p2, 
+            Publisher<? extends T> p3, Publisher<? extends T> p4) {
+        Objects.requireNonNull(p1, "p1 is null");
+        Objects.requireNonNull(p2, "p2 is null");
+        Objects.requireNonNull(p3, "p3 is null");
+        Objects.requireNonNull(p4, "p4 is null");
+        return fromArray(p1, p2, p3, p4).flatMap((Function)Functions.identity(), true, 4);
+    }
+
+    
     @BackpressureSupport(BackpressureKind.PASS_THROUGH)
     @SchedulerSupport(SchedulerKind.NONE)
     @SuppressWarnings("unchecked")
@@ -2126,7 +2191,6 @@ public class Observable<T> implements Publisher<T> {
         return lift(OperatorMaterialize.<T>instance());
     }
 
-    @SuppressWarnings("unchecked")
     @BackpressureSupport(BackpressureKind.FULL)
     @SchedulerSupport(SchedulerKind.NONE)
     public final Observable<T> mergeWith(Publisher<? extends T> other) {

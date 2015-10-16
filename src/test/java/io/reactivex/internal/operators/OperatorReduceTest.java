@@ -44,7 +44,12 @@ public class OperatorReduceTest {
     public void testAggregateAsIntSum() {
 
         Observable<Integer> result = Observable.just(1, 2, 3, 4, 5).reduce(0, sum)
-                .map(v -> v);
+                .map(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                });
 
         result.subscribe(observer);
 
@@ -57,7 +62,12 @@ public class OperatorReduceTest {
     public void testAggregateAsIntSumSourceThrows() {
         Observable<Integer> result = Observable.concat(Observable.just(1, 2, 3, 4, 5),
                 Observable.<Integer> error(new TestException()))
-                .reduce(0, sum).map(v -> v);
+                .reduce(0, sum).map(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                });
 
         result.subscribe(observer);
 
@@ -76,7 +86,12 @@ public class OperatorReduceTest {
         };
 
         Observable<Integer> result = Observable.just(1, 2, 3, 4, 5)
-                .reduce(0, sumErr).map(v -> v);
+                .reduce(0, sumErr).map(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer v) {
+                        return v;
+                    }
+                });
 
         result.subscribe(observer);
 

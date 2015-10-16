@@ -282,9 +282,12 @@ public class TestSubscriberTest {
         try {
             ts.assertNoErrors();
         } catch (AssertionError ex) {
-            if (ex.getSuppressed().length != 2) {
+            Throwable e = ex.getCause();
+            if (!(e instanceof CompositeException)) {
                 fail("Multiple Error present but the reported error doesn't have a composite cause!");
             }
+            CompositeException ce = (CompositeException)e;
+            assertEquals(2, ce.size());
             // expected
             return;
         }
@@ -299,9 +302,12 @@ public class TestSubscriberTest {
         try {
             ts.assertError(TestException.class);
         } catch (AssertionError ex) {
-            if (ex.getSuppressed().length != 2) {
+            Throwable e = ex.getCause();
+            if (!(e instanceof CompositeException)) {
                 fail("Multiple Error present but the reported error doesn't have a composite cause!");
             }
+            CompositeException ce = (CompositeException)e;
+            assertEquals(2, ce.size());
             // expected
             return;
         }
@@ -316,9 +322,12 @@ public class TestSubscriberTest {
         try {
             ts.assertError(new TestException());
         } catch (AssertionError ex) {
-            if (ex.getSuppressed().length != 2) {
+            Throwable e = ex.getCause();
+            if (!(e instanceof CompositeException)) {
                 fail("Multiple Error present but the reported error doesn't have a composite cause!");
             }
+            CompositeException ce = (CompositeException)e;
+            assertEquals(2, ce.size());
             // expected
             return;
         }
@@ -524,9 +533,12 @@ public class TestSubscriberTest {
             fail("Failed to report there were terminal event(s)!");
         } catch (AssertionError ex) {
             // expected
-            if (ex.getSuppressed().length != 2) {
-                fail("Did not report a composite exception cause: " + ex.getCause());
+            Throwable e = ex.getCause();
+            if (!(e instanceof CompositeException)) {
+                fail("Multiple Error present but the reported error doesn't have a composite cause!");
             }
+            CompositeException ce = (CompositeException)e;
+            assertEquals(2, ce.size());
         }
     }
     

@@ -523,7 +523,7 @@ public class OperatorObserveOnTest {
             }
         });
 
-        TestSubscriber<Integer> testSubscriber = new TestSubscriber<T>();
+        TestSubscriber<Integer> testSubscriber = new TestSubscriber<Integer>();
         observable
                 .take(7)
                 .observeOn(Schedulers.newThread())
@@ -551,7 +551,7 @@ public class OperatorObserveOnTest {
 
         });
 
-        TestSubscriber<Integer> testSubscriber = new TestSubscriber<T>(new Observer<Integer>() {
+        TestSubscriber<Integer> testSubscriber = new TestSubscriber<Integer>(new Observer<Integer>() {
 
             @Override
             public void onComplete() {
@@ -606,7 +606,7 @@ public class OperatorObserveOnTest {
             final PublishSubject<Long> subject = PublishSubject.create();
     
             final AtomicLong counter = new AtomicLong();
-            TestSubscriber<Long> ts = new TestSubscriber<T>(new Observer<Long>() {
+            TestSubscriber<Long> ts = new TestSubscriber<Long>(new Observer<Long>() {
     
                 @Override
                 public void onComplete() {
@@ -701,7 +701,7 @@ public class OperatorObserveOnTest {
 
                 });
 
-        TestSubscriber<Long> ts = new TestSubscriber<T>();
+        TestSubscriber<Long> ts = new TestSubscriber<Long>();
 
         Observable.combineLatest(timer, Observable.<Integer> never(), new BiFunction<Long, Integer, Long>() {
 

@@ -139,4 +139,11 @@ public final class CompositeException extends RuntimeException {
             }
         }
     }
+    
+    public int size() {
+        if (getCause() != null) {
+            return 1 + suppressed.size();
+        }
+        return suppressed.size();
+    }
 }

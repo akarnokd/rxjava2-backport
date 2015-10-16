@@ -235,7 +235,7 @@ public class OperatorRetryWithPredicateTest {
                 .create(so)
                 .retry(retry5);
 
-        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<T>(observer);
+        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<Long>(observer);
 
         o.subscribe(async);
 
@@ -262,7 +262,7 @@ public class OperatorRetryWithPredicateTest {
                 .timeout(80, TimeUnit.MILLISECONDS)
                 .retry(retry5);
 
-        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<T>(observer);
+        OperatorRetryTest.AsyncObserver<Long> async = new OperatorRetryTest.AsyncObserver<Long>(observer);
 
         o.subscribe(async);
 
@@ -311,7 +311,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue3008RetryWithPredicate() {
-        final List<Long> list = new CopyOnWriteArrayList<T>();
+        final List<Long> list = new CopyOnWriteArrayList<Long>();
         final AtomicBoolean isFirst = new AtomicBoolean(true);
         Observable.<Long> just(1L, 2L, 3L).map(new Function<Long, Long>(){
             @Override
@@ -339,7 +339,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testIssue3008RetryInfinite() {
-        final List<Long> list = new CopyOnWriteArrayList<T>();
+        final List<Long> list = new CopyOnWriteArrayList<Long>();
         final AtomicBoolean isFirst = new AtomicBoolean(true);
         Observable.<Long> just(1L, 2L, 3L).map(new Function<Long, Long>(){
             @Override
@@ -363,7 +363,7 @@ public class OperatorRetryWithPredicateTest {
     
     @Test
     public void testBackpressure() {
-        final List<Long> requests = new ArrayList<T>();
+        final List<Long> requests = new ArrayList<Long>();
         
         Observable<Integer> source = Observable
                 .just(1)

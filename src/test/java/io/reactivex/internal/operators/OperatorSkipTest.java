@@ -142,7 +142,7 @@ public class OperatorSkipTest {
     @Test
     public void testBackpressureMultipleSmallAsyncRequests() throws InterruptedException {
         final AtomicLong requests = new AtomicLong(0);
-        TestSubscriber<Long> ts = new TestSubscriber<T>((Long)null);
+        TestSubscriber<Long> ts = new TestSubscriber<Long>((Long)null);
         Observable.interval(100, TimeUnit.MILLISECONDS)
                 .doOnRequest(new LongConsumer() {
                     @Override

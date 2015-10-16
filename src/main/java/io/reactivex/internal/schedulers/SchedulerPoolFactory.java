@@ -16,8 +16,11 @@
 
 package io.reactivex.internal.schedulers;
 
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
+
+import io.reactivex.plugins.RxJavaPlugins;
 
 /**
  * Manages the creating of ScheduledExecutorServices and sets up purging
@@ -39,9 +42,59 @@ public enum SchedulerPoolFactory {
      */
     public static final int PURGE_PERIOD_SECONDS;
     
+    static final AtomicReference<ScheduledExecutorService> PURGE_THREAD = 
+            new AtomicReference<ScheduledExecutorService>();
+    
+    static final ConcurrentHashMap<ScheduledThreadPoolExecutor, Object> POOLS =
+            new ConcurrentHashMap<ScheduledThreadPoolExecutor, Object>();
+    
+    /**
+     * Starts the purge thread if not already started.
+     */
+    public static void start() {
+        for (;;) {
+            ScheduledExecutorService curr = PURGE_THREAD.get();
+            if (!curr.isShutdown()) {
+                return;
+            }
+            ScheduledExecutorService next = Executors.newScheduledThreadPool(1, new RxThreadFactory("RxSchedulerPurge"));
+            if (PURGE_THREAD.compareAndSet(curr, next)) {
+                
+                next.scheduleAtFixedRate(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            for (ScheduledThreadPoolExecutor e : new ArrayList<ScheduledThreadPoolExecutor>(POOLS.keySet())) {
+                                if (e.isShutdown()) {
+                                    POOLS.remove(e);
+                                } else {
+                                    e.purge();
+                                }
+                            }
+                        } catch (Throwable e) {
+                            RxJavaPlugins.onError(e);
+                        }
+                    }
+                }, PURGE_PERIOD_SECONDS, PURGE_PERIOD_SECONDS, TimeUnit.SECONDS);
+                
+                return;
+            } else {
+                next.shutdownNow();
+            }
+        }
+    }
+    
+    /**
+     * Stops the purge thread.
+     */
+    public static void stop() {
+        PURGE_THREAD.get().shutdownNow();
+        POOLS.clear();
+    }
+    
     static {
         boolean purgeEnable = true;
-        int purgePeriod = 2;
+        int purgePeriod = 1;
         
         Properties properties = System.getProperties();
         
@@ -64,14 +117,9 @@ public enum SchedulerPoolFactory {
      */
     public static ScheduledExecutorService create(ThreadFactory factory) {
         final ScheduledExecutorService exec = Executors.newScheduledThreadPool(1, factory);
-        if (PURGE_ENABLED && (exec instanceof ScheduledThreadPoolExecutor)) {
-            final ScheduledThreadPoolExecutor pool = (ScheduledThreadPoolExecutor) exec;
-            exec.scheduleWithFixedDelay(new Runnable() {
-                @Override
-                public void run() {
-                    pool.purge();
-                }
-            }, PURGE_PERIOD_SECONDS, PURGE_PERIOD_SECONDS, TimeUnit.SECONDS);
+        if (exec instanceof ScheduledThreadPoolExecutor) {
+            ScheduledThreadPoolExecutor e = (ScheduledThreadPoolExecutor) exec;
+            POOLS.put(e, exec);
         }
         return exec;
     }
