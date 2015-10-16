@@ -3,6 +3,19 @@ RxJava 2.0 Backport
 
 This is a backport of RxJava 2.0 to Java 6 API level.
 
+Features
+--------
+
+  - The backpressure- and Reactive-Streams supporting `Observable` class and related `Subject`s. Note that this may change to `Flowable`
+  - The non-backpressured `NbpObservable` class and `NbpSubject`s. Note that this may become `Observable`
+  - The `Single` class for single-valued deferred computations.
+  - The `Completable` class for valueless event composition (i.e., `onError` and `onComplete` only).
+  - Includes all (unmerged) bugfixes from RxJava 2.0 (Java 8) and a few recent feature requests.
+  - +3000 unit tests (although ~100 is skipped because of semantic differences with 1.x, these may get resolved once)
+  - Includes a partial backport of `Objects` and `Optional`.
+
+
+
 Package naming
 --------------
 
