@@ -99,5 +99,8 @@ javadoc {
 
 test {
     maxHeapSize = "2g"
-    testLogging.showStandardStreams = true
+    testLogging  {
+        events "started", "skipped", "failed", "passed"
+    //    showStandardStreams = true
+    }
 }
