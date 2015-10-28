@@ -99,7 +99,7 @@ public final class OperatorFlatMap<T, U> implements Operator<U, T> {
             this.delayErrors = delayErrors;
             this.maxConcurrency = maxConcurrency;
             this.bufferSize = bufferSize;
-            this.scalarLimit = maxConcurrency >> 1;
+            this.scalarLimit = Math.max(1, maxConcurrency >> 1);
             SUBSCRIBERS.lazySet(this, EMPTY);
         }
         
