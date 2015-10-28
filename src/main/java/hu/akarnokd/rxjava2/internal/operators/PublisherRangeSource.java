@@ -80,12 +80,13 @@ public final class PublisherRangeSource implements Publisher<Integer> {
         void slowpath(long r) {
             long idx = index;
             
+            long e = 0L;
+            
             for (;;) {
                 long fs = end - idx + 1;
-                long e = Math.min(fs, r);
                 final boolean complete = fs <= r;
 
-                fs = e + idx;
+                fs = Math.min(fs, r) + idx;
                 final Subscriber<? super Integer> o = this.actual;
                 
                 for (long i = idx; i != fs; i++) {
@@ -102,12 +103,19 @@ public final class PublisherRangeSource implements Publisher<Integer> {
                     return;
                 }
                 
+                e -= fs - idx;
+
                 idx = fs;
-                index = fs;
+
+                r = get() + e;
                 
-                r = addAndGet(-r);
                 if (r == 0L) {
-                    return;
+                    index = fs;
+                    r = addAndGet(e);
+                    if (r == 0L) {
+                        return;
+                    }
+                    e = 0L;
                 }
             }
         }
