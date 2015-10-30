@@ -89,6 +89,9 @@ public final class OperatorFlatMap<T, U> implements Operator<U, T> {
         long lastId;
         int lastIndex;
         
+        int scalarEmitted;
+        final int scalarLimit;
+        
         public MergeSubscriber(Subscriber<? super U> actual, Function<? super T, ? extends Publisher<? extends U>> mapper,
                 boolean delayErrors, int maxConcurrency, int bufferSize) {
             this.actual = actual;
@@ -96,6 +99,7 @@ public final class OperatorFlatMap<T, U> implements Operator<U, T> {
             this.delayErrors = delayErrors;
             this.maxConcurrency = maxConcurrency;
             this.bufferSize = bufferSize;
+            this.scalarLimit = Math.max(1, maxConcurrency >> 1);
             SUBSCRIBERS.lazySet(this, EMPTY);
         }
         
@@ -210,8 +214,10 @@ public final class OperatorFlatMap<T, U> implements Operator<U, T> {
                     if (r != Long.MAX_VALUE) {
                         REQUESTED.decrementAndGet(this);
                     }
-                    if (maxConcurrency != Integer.MAX_VALUE && !cancelled) {
-                        s.request(1);
+                    if (maxConcurrency != Integer.MAX_VALUE && !cancelled
+                            && ++scalarEmitted == scalarLimit) {
+                        scalarEmitted = 0;
+                        s.request(scalarLimit);
                     }
                 } else {
                     Queue<U> q = getMainQueue();
@@ -671,4 +677,5 @@ public final class OperatorFlatMap<T, U> implements Operator<U, T> {
         }
         
     }
+
 }

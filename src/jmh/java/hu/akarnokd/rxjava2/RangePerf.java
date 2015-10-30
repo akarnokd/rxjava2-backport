@@ -55,7 +55,7 @@ public class RangePerf {
         return lo;
     }
 
-    @Benchmark
+//    @Benchmark
     public void rangeAsync(Blackhole bh) throws Exception {
         LatchedObserver<Integer> lo = new LatchedObserver<Integer>(bh);
         
@@ -68,7 +68,7 @@ public class RangePerf {
         }
     }
 
-    @Benchmark
+//    @Benchmark
     public void rangePipeline(Blackhole bh) throws Exception {
         LatchedObserver<Integer> lo = new LatchedObserver<Integer>(bh);
         
