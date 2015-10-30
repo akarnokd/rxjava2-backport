@@ -182,6 +182,7 @@ public final class Observers {
             boolean done;
             @Override
             protected void onStart() {
+                super.onStart();
                 try {
                     onStart.run();
                 } catch (Throwable e) {

@@ -157,17 +157,24 @@ public final class Subscribers {
         };
     }
 
+    static final Consumer<Subscription> REQUEST_ALL = new Consumer<Subscription>() {
+        @Override
+        public void accept(Subscription t) {
+            t.request(Long.MAX_VALUE);
+        }
+    };
+    
     public static <T> Subscriber<T> create(
             Consumer<? super T> onNext
     ) {
-        return create(onNext, RxJavaPlugins.errorConsumer(), Functions.emptyRunnable(), Functions.emptyConsumer());
+        return create(onNext, RxJavaPlugins.errorConsumer(), Functions.emptyRunnable(), REQUEST_ALL);
     }
 
     public static <T> Subscriber<T> create(
             Consumer<? super T> onNext,
             Consumer<? super Throwable> onError
     ) {
-        return create(onNext, onError, Functions.emptyRunnable(), Functions.emptyConsumer());
+        return create(onNext, onError, Functions.emptyRunnable(), REQUEST_ALL);
     }
 
     public static <T> Subscriber<T> create(
@@ -175,7 +182,7 @@ public final class Subscribers {
             Consumer<? super Throwable> onError,
             Runnable onComplete
     ) {
-        return create(onNext, onError, onComplete, Functions.emptyConsumer());
+        return create(onNext, onError, onComplete, REQUEST_ALL);
     }
     
     public static <T> Subscriber<T> create(

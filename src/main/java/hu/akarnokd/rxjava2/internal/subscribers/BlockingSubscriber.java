@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.reactivestreams.*;
 
-import hu.akarnokd.rxjava2.Notification;
 import hu.akarnokd.rxjava2.internal.util.NotificationLite;
 
 public final class BlockingSubscriber<T> extends AtomicReference<Subscription> implements Subscriber<T>, Subscription {
@@ -69,7 +68,7 @@ public final class BlockingSubscriber<T> extends AtomicReference<Subscription> i
     
     @Override
     public void onComplete() {
-        queue.offer(Notification.complete());
+        queue.offer(NotificationLite.complete());
     }
     
     @Override
