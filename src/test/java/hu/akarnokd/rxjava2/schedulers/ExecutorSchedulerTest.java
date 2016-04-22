@@ -119,7 +119,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerConcurrencyTests {
         }
     }
     
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void testCancelledTaskRetention() throws InterruptedException {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Scheduler s = Schedulers.from(exec);

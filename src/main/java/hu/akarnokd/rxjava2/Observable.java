@@ -1703,6 +1703,13 @@ public class Observable<T> implements Publisher<T> {
         return lift(OperatorDistinct.untilChanged(keySelector));
     }
     
+    @BackpressureSupport(BackpressureKind.FULL)
+    @SchedulerSupport(SchedulerKind.NONE)
+    public final Observable<T> doAfterTerminate(Runnable run) {
+        Objects.requireNonNull(run, "run is null");
+        return lift(new OperatorDoAfterTerminate<T>(run));
+    }
+    
     @BackpressureSupport(BackpressureKind.PASS_THROUGH)
     @SchedulerSupport(SchedulerKind.NONE)
     public final Observable<T> doOnCancel(Runnable onCancel) {

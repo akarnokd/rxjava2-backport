@@ -64,7 +64,8 @@ public enum SchedulerPoolFactory {
                     @Override
                     public void run() {
                         try {
-                            for (ScheduledThreadPoolExecutor e : new ArrayList<ScheduledThreadPoolExecutor>(POOLS.keySet())) {
+                            Map<ScheduledThreadPoolExecutor, Object> pools2 = POOLS;
+                            for (ScheduledThreadPoolExecutor e : new ArrayList<ScheduledThreadPoolExecutor>(pools2.keySet())) {
                                 if (e.isShutdown()) {
                                     POOLS.remove(e);
                                 } else {
@@ -94,7 +95,7 @@ public enum SchedulerPoolFactory {
     
     static {
         boolean purgeEnable = true;
-        int purgePeriod = 1;
+        int purgePeriod = 15;
         
         Properties properties = System.getProperties();
         

@@ -88,6 +88,7 @@ public final class OperatorObserveOn<T> implements Operator<T, T> {
         final boolean delayError;
         final int bufferSize;
         final Queue<T> queue;
+        final int limit;
         
         Subscription s;
         
@@ -96,11 +97,14 @@ public final class OperatorObserveOn<T> implements Operator<T, T> {
         
         volatile boolean cancelled;
         
+        long emitted;
+        
         public ObserveOnSubscriber(Subscriber<? super T> actual, Scheduler.Worker worker, boolean delayError, int bufferSize) {
             this.actual = actual;
             this.worker = worker;
             this.delayError = delayError;
             this.bufferSize = bufferSize;
+            this.limit = bufferSize - (bufferSize >> 2);
             Queue<T> q;
             if (Pow2.isPowerOfTwo(bufferSize)) {
                 q = new SpscArrayQueue<T>(bufferSize);
@@ -182,24 +186,27 @@ public final class OperatorObserveOn<T> implements Operator<T, T> {
         public void run() {
             int missed = 1;
             
-            final Queue<T> q = queue;
-            final Subscriber<? super T> a = actual;
+            long currentEmission = emitted;
+
+            // these are accessed in a tight loop around atomics so
+            // loading them into local variables avoids the mandatory re-reading
+            // of the constant fields
+            final Queue<T> q = this.queue;
+            final Subscriber<? super T> localChild = this.actual;
+            
+            // requested and counter are not included to avoid JIT issues with register spilling
+            // and their access is is amortized because they are part of the outer loop which runs
+            // less frequently (usually after each bufferSize elements)
             
             for (;;) {
-                if (checkTerminated(done, q.isEmpty(), a)) {
-                    return;
-                }
+                long requestAmount = requested;
                 
-                long r = requested;
-                long e = 0L;
-                boolean unbounded = r == Long.MAX_VALUE;
-                
-                while (r != 0L) {
-                    boolean d = done;
+                while (requestAmount != currentEmission) {
+                    boolean done = this.done;
                     T v = q.poll();
                     boolean empty = v == null;
-
-                    if (checkTerminated(d, empty, a)) {
+                    
+                    if (checkTerminated(done, empty, localChild, q)) {
                         return;
                     }
                     
@@ -207,32 +214,34 @@ public final class OperatorObserveOn<T> implements Operator<T, T> {
                         break;
                     }
                     
-                    a.onNext(v);
-                    
-                    r--;
-                    e++;
-                }
-                
-                if (cancelled) {
-                    return;
-                }
-                if (e != 0L) {
-                    if (!unbounded) {
-                        REQUESTED.addAndGet(this, -e);
+                    localChild.onNext(v);
+
+                    currentEmission++;
+                    if (currentEmission == limit) {
+                        requestAmount = REQUESTED.addAndGet(this, -currentEmission);
+                        s.request(currentEmission);
+                        currentEmission = 0L;
                     }
-                    s.request(e);
                 }
                 
+                if (requestAmount == currentEmission) {
+                    if (checkTerminated(done, q.isEmpty(), localChild, q)) {
+                        return;
+                    }
+                }
+
+                emitted = currentEmission;
                 missed = addAndGet(-missed);
-                if (missed == 0) {
+                if (missed == 0L) {
                     break;
                 }
             }
         }
         
-        boolean checkTerminated(boolean d, boolean empty, Subscriber<? super T> a) {
+        boolean checkTerminated(boolean d, boolean empty, Subscriber<? super T> a, Queue<?> q) {
             if (cancelled) {
                 s.cancel();
+                q.clear();
                 worker.dispose();
                 return true;
             }
@@ -250,6 +259,7 @@ public final class OperatorObserveOn<T> implements Operator<T, T> {
                     }
                 } else {
                     if (e != null) {
+                        q.clear();
                         a.onError(e);
                         worker.dispose();
                         return true;
